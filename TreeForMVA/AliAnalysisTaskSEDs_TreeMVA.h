@@ -1,5 +1,5 @@
-#ifndef ALIANALYSISTASKDS_H
-#define ALIANALYSISTASKDS_H
+#ifndef ALIANALYSISTASKDS_TREEMVA_H
+#define ALIANALYSISTASKDS_TREEMVA_H
 
 /* Copyright(c) 2007-2009, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -19,29 +19,30 @@
 #include <TH2F.h>
 #include <TH3F.h>
 #include <THnSparse.h>
+#include <TTree.h>
 
 #include "AliAnalysisTaskSE.h"
 #include "AliRDHFCutsDstoKKpi.h"
 #include "AliLog.h"
+#include "AliHFCutOptTreeHandler.h"
 
 class AliNormalizationCounter;
 
-
-class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
+class AliAnalysisTaskSEDs_TreeMVA : public AliAnalysisTaskSE
 {
  public:
     
   enum ECentrality {kCentOff,kCentV0M,kCentV0A,kCentCL1,kCentZNA,kCentInvalid};
 
-  AliAnalysisTaskSEDs();
-  AliAnalysisTaskSEDs(const char *name, AliRDHFCutsDstoKKpi* analysiscuts, Int_t fillNtuple=0);
-  virtual ~AliAnalysisTaskSEDs();
+  AliAnalysisTaskSEDs_TreeMVA();
+  AliAnalysisTaskSEDs_TreeMVA(const char *name, AliRDHFCutsDstoKKpi* analysiscuts, Int_t fillTree=0);
+  virtual ~AliAnalysisTaskSEDs_TreeMVA();
   void SetReadMC(Bool_t readMC=kTRUE){fReadMC=readMC;}
-  void SetWriteOnlySignalInNtuple(Bool_t opt=kTRUE){
+  void SetWriteOnlySignalInTree(Bool_t opt=kTRUE){
     if(fReadMC) fWriteOnlySignal=opt;
     else AliError("fReadMC has to be kTRUE");
   }
-  void SetFillNtuple(Int_t fill=0){fFillNtuple=fill;}
+  void SetFillTree(Int_t fill=0){fFillTree=fill;}
   void SetFillNSparse(Bool_t fill=kTRUE){fFillSparse=fill;}
   void SetFillNSparseDplus(Bool_t fill=kTRUE){fFillSparseDplus=fill;if(fill)fFillSparse=fill;}
   void SetFillNSparseImpPar(Bool_t fill=kTRUE){fFillImpParSparse=fill;}
@@ -96,8 +97,8 @@ class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
 
   enum {kMaxPtBins=24,knVarForSparse=15,knVarForSparseAcc=3,knVarForSparseIP=6,kVarForImpPar=3};
     
-  AliAnalysisTaskSEDs(const AliAnalysisTaskSEDs &source);
-  AliAnalysisTaskSEDs& operator=(const AliAnalysisTaskSEDs& source);
+  AliAnalysisTaskSEDs_TreeMVA(const AliAnalysisTaskSEDs_TreeMVA &source);
+  AliAnalysisTaskSEDs_TreeMVA& operator=(const AliAnalysisTaskSEDs_TreeMVA& source);
     
   TList*  fOutput;                    //!<! list send on output slot 0
   TH1F*   fHistNEvents;               //!<! hist. for No. of events
@@ -152,11 +153,17 @@ class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
   TH3F*   fPtProng0Hist3D;   //!<! Pt prong0 vs Ds mass vs pt
   TH3F*   fPtProng1Hist3D;   //!<! Pt prong1 vs Ds mass vs pt
   TH3F*   fPtProng2Hist3D;   //!<! Pt prong2 vs Ds mass vs pt
-  TNtuple *fNtupleDs; //!<! output ntuple
-  Int_t fFillNtuple;                 /// 0 not to fill ntuple
-  /// 1 for filling ntuple for events through Phi
-  /// 2 for filling ntuple for events through K0Star
-  /// 3 for filling all
+  TTree *fTreeDs; //!<! output tree
+  Int_t fFillTree;                 /// 0 not to fill tree
+  /// 1 fill tree with topological vars (only PhiKKpi)
+  /// 2 fill tree with topological vars (only K0starKKpi)
+  /// 3 fill tree with topological vars (all)
+  /// 4 fill tree for impact parameter fit
+  AliHFCutOptTreeHandler* fTreeHandler; ///helper object for the tree with topological variables 
+  Double_t fInvMass; /// invariant mass of the candidate
+  Double_t fPtCand; /// pT of the candidate
+  Double_t fImpParXY; /// impact-parameter XY of the candidate
+  Double_t fCandType; /// 0.5 bgk, 1.5 prompt, 2.5 FD
   Int_t   fUseCentrAxis; /// off =0 (default)
   /// 1 = V0M
   /// 2 = V0A
@@ -165,7 +172,7 @@ class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
 
   Int_t   fSystem;                    /// 0 = pp, 1 = pPb,PbPb
   Bool_t  fReadMC;                    ///  flag for access to MC
-  Bool_t  fWriteOnlySignal;           ///  flag to control ntuple writing in MC
+  Bool_t  fWriteOnlySignal;           ///  flag to control tree writing in MC
   Bool_t  fDoCutVarHistos;            ///  flag to create and fill histos with distributions of cut variables
   Bool_t  fUseSelectionBit;           /// flag for usage of HasSelectionBit
   Bool_t  fFillSparse;                /// flag for usage of THnSparse
@@ -188,7 +195,6 @@ class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
   Double_t fmaxMass;
   Double_t fMaxDeltaPhiMass4Rot;     ///flag to set mass window of phi meson (when using pion rotation to create bkg)
     
-    
   AliNormalizationCounter *fCounter;//!<!Counter for normalization
   AliRDHFCutsDstoKKpi *fAnalysisCuts; /// Cuts for Analysis
     
@@ -207,7 +213,7 @@ class AliAnalysisTaskSEDs : public AliAnalysisTaskSE
   TString fCentEstName; /// name of the centrality estimator (to fill axis of sparse)
     
   /// \cond CLASSIMP
-  ClassDef(AliAnalysisTaskSEDs,27);    ///  AliAnalysisTaskSE for Ds mass spectra
+  ClassDef(AliAnalysisTaskSEDs_TreeMVA,28);    ///  AliAnalysisTaskSE for Ds mass spectra
   /// \endcond
 };
 

@@ -1,5 +1,5 @@
-#ifndef ALIANALYSISTASKSEDPLUS_H
-#define ALIANALYSISTASKSEDPLUS_H
+#ifndef ALIANALYSISTASKSEDPLUS_TREEMVA_H
+#define ALIANALYSISTASKSEDPLUS_TREEMVA_H
 
 /* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -7,7 +7,7 @@
 /* $Id$ */
 
 //*************************************************************************
-/// \class Class AliAnalysisTaskSEDplus
+/// \class Class AliAnalysisTaskSEDplus_TreeMVA
 /// \brief AliAnalysisTaskSE for the D+ candidates Invariant Mass Histogram and
 /// comparison of heavy-flavour decay candidates
 /// to MC truth (kinematics stored in the AOD)
@@ -18,7 +18,7 @@
 
 #include <TROOT.h>
 #include <TSystem.h>
-#include <TNtuple.h>
+#include <TTree.h>
 #include <TH1F.h>
 #include <TH2F.h>
 #include <TH3F.h>
@@ -31,14 +31,15 @@
 #include "AliNormalizationCounter.h"
 #include "AliAODMCHeader.h"
 #include "AliAODMCParticle.h"
+#include "AliHFCutOptTreeHandler.h"
 
-class AliAnalysisTaskSEDplus : public AliAnalysisTaskSE
+class AliAnalysisTaskSEDplus_TreeMVA : public AliAnalysisTaskSE
 {
  public:
 
-  AliAnalysisTaskSEDplus();
-  AliAnalysisTaskSEDplus(const char *name, AliRDHFCutsDplustoKpipi* analysiscuts,Int_t fillNtuple=0);
-  virtual ~AliAnalysisTaskSEDplus();
+  AliAnalysisTaskSEDplus_TreeMVA();
+  AliAnalysisTaskSEDplus_TreeMVA(const char *name, AliRDHFCutsDplustoKpipi* analysiscuts,Int_t fillTree=0);
+  virtual ~AliAnalysisTaskSEDplus_TreeMVA();
 
   void SetReadMC(Bool_t readMC=kTRUE){fReadMC=readMC;}
   void SetDoLikeSign(Int_t dols=0){fDoLS=dols;}
@@ -97,8 +98,8 @@ class AliAnalysisTaskSEDplus : public AliAnalysisTaskSE
 
  private:
 
-  AliAnalysisTaskSEDplus(const AliAnalysisTaskSEDplus &source);
-  AliAnalysisTaskSEDplus& operator=(const AliAnalysisTaskSEDplus& source);
+  AliAnalysisTaskSEDplus_TreeMVA(const AliAnalysisTaskSEDplus_TreeMVA &source);
+  AliAnalysisTaskSEDplus_TreeMVA& operator=(const AliAnalysisTaskSEDplus_TreeMVA& source);
   Int_t GetHistoIndex(Int_t iPtBin) const { return iPtBin*3;}
   Int_t GetSignalHistoIndex(Int_t iPtBin) const { return iPtBin*3+1;}
   Int_t GetBackgroundHistoIndex(Int_t iPtBin) const { return iPtBin*3+2;}
@@ -158,7 +159,13 @@ class AliAnalysisTaskSEDplus : public AliAnalysisTaskSE
   TH1F** fPtMaxHistLS;       //!<!hist. for LS cuts variable 5 (topol+PID)
   TH1F** fDCAHistLS;         //!<!hist. for LS cuts variable 6 (topol+PID)
 
-  TNtuple *fNtupleDplus; //!<! output ntuple
+  TTree *fTreeDplus; //!<! output tree
+  AliHFCutOptTreeHandler* fTreeHandler; ///helper object for the tree with topological variables 
+  Int_t fPDG; /// pdg the candidate (only MC)
+  Double_t fInvMass; /// invariant mass of the candidate
+  Double_t fPtCand; /// pT of the candidate
+  Double_t fImpParXY; /// impact-parameter XY of the candidate
+  Double_t fOrigin; /// 3 bgk, 1 prompt, 2 FD
   Float_t fUpmasslimit;  /// upper inv mass limit for histos
   Float_t fLowmasslimit; /// lower inv mass limit for histos
   Int_t fNPtBins; /// Number of Pt Bins
@@ -166,7 +173,7 @@ class AliAnalysisTaskSEDplus : public AliAnalysisTaskSE
   TList *fListCuts; /// list of cuts
   AliRDHFCutsDplustoKpipi *fRDCutsAnalysis; /// Cuts for Analysis
   AliNormalizationCounter *fCounter;//!<!Counter for normalization
-  Int_t fFillNtuple;   /// flag for filling ntuple 0 no NTuple 1 big Ntuple 2 small NTuple
+  Int_t fFillTree;   /// flag for filling tree 0 no TTree 1 big TTree 2 small TTree
   Int_t fAODProtection;  /// flag to activate protection against AOD-dAOD mismatch.
                          /// -1: no protection,  0: check AOD/dAOD nEvents only,  1: check AOD/dAOD nEvents + TProcessID names
   Bool_t fReadMC;    /// flag for access to MC
@@ -189,7 +196,7 @@ class AliAnalysisTaskSEDplus : public AliAnalysisTaskSE
   Bool_t fCutOnTrckl;  ///flag to activate the cut on the number of tracklets
   
   /// \cond CLASSIMP
-  ClassDef(AliAnalysisTaskSEDplus,31); /// AliAnalysisTaskSE for the MC association of heavy-flavour decay candidates
+  ClassDef(AliAnalysisTaskSEDplus_TreeMVA,32); /// AliAnalysisTaskSE for the MC association of heavy-flavour decay candidates
   /// \endcond
 };
 

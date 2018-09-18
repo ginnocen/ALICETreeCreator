@@ -1,5 +1,5 @@
-AliAnalysisTaskSEDs *AddTaskDs(Int_t system=0/*0=pp,1=PbPb*/,
-			       Int_t storeNtuple=0,Bool_t storeNsparse=kFALSE,Bool_t storeNsparseDplus=kFALSE,Bool_t readMC=kFALSE,
+AliAnalysisTaskSEDs_TreeMVA *AddTaskDs_TreeMVA(Int_t system=0/*0=pp,1=PbPb*/,
+			       Int_t storeTree=0,Bool_t storeNsparse=kFALSE,Bool_t storeNsparseDplus=kFALSE,Bool_t readMC=kFALSE,
 			       TString filename="", TString postname="", Bool_t doCutVarHistos = kFALSE, Int_t AODProtection = 1,
 			       Bool_t fillNTrklAxis = kFALSE, Int_t fillCentrAxis = 0,
 			       Bool_t useRotBkg=kFALSE, Bool_t useBkgFromPhiSB=kFALSE, Bool_t useCutV0multTPCout=kFALSE,
@@ -45,7 +45,7 @@ AliAnalysisTaskSEDs *AddTaskDs(Int_t system=0/*0=pp,1=PbPb*/,
   }
   else analysiscuts = (AliRDHFCutsDstoKKpi*)filecuts->Get("AnalysisCuts");
     
-  AliAnalysisTaskSEDs *dsTask = new AliAnalysisTaskSEDs("DsAnalysis",analysiscuts,storeNtuple);
+  AliAnalysisTaskSEDs_TreeMVA *dsTask = new AliAnalysisTaskSEDs_TreeMVA("DsAnalysis",analysiscuts,storeTree);
     
   dsTask->SetReadMC(readMC);
   //dsTask->SetDoLikeSign(kTRUE);
@@ -92,8 +92,8 @@ AliAnalysisTaskSEDs *AddTaskDs(Int_t system=0/*0=pp,1=PbPb*/,
     
   name="coutputDs2"; name+=postname;
   AliAnalysisDataContainer *coutputDs2 = 0x0; 
-  if(storeNtuple){
-    coutputDs2 = mgr->CreateContainer(name,TNtuple::Class(),
+  if(storeTree){
+    coutputDs2 = mgr->CreateContainer(name,TTree::Class(),
 								AliAnalysisManager::kOutputContainer,
 								outputfile.Data());
     coutputDs2->SetSpecialOutput();
@@ -107,7 +107,7 @@ AliAnalysisTaskSEDs *AddTaskDs(Int_t system=0/*0=pp,1=PbPb*/,
     
   mgr->ConnectOutput(dsTask,3,coutputDsNorm);  
     
-  if(storeNtuple){
+  if(storeTree){
     mgr->ConnectOutput(dsTask,4,coutputDs2);
   }
     
