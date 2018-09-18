@@ -100,7 +100,7 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, AliAODPidHF* pid
     fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();
   }
 
-  if(fDecayChannel==kDplustoKpipi) fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDplusKpipi();
+  if(fDecayChannel==kDplustoKpipi) fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDplus();
   if(fDecayChannel==kDstoKKpi) {
     float massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
     if(masshypo==0){ //phiKKpi
