@@ -71,7 +71,12 @@ class AliAnalysisTaskSEDplus_TreeMVA : public AliAnalysisTaskSE
     fNtrcklMin=Ntrckmin;
     fNtrcklMax=Ntrckmax;
   }
-  
+
+  void SetWriteOnlySignalInTree(Bool_t opt=kTRUE){
+    if(fReadMC) fWriteOnlySignalInTree=opt;
+    else AliError("fReadMC has to be kTRUE");
+  }
+
   Float_t GetUpperMassLimit(){return fUpmasslimit;}
   Float_t GetLowerMassLimit(){return fLowmasslimit;}
   Int_t GetNBinsPt(){return fNPtBins;}
@@ -194,7 +199,8 @@ class AliAnalysisTaskSEDplus_TreeMVA : public AliAnalysisTaskSE
   Int_t fNtrcklMin;   ///minimum number of tracklets
   Int_t fNtrcklMax;   ///maximum number of tracklets
   Bool_t fCutOnTrckl;  ///flag to activate the cut on the number of tracklets
-  
+  Bool_t  fWriteOnlySignalInTree; ///  flag to control tree writing in MC
+
   /// \cond CLASSIMP
   ClassDef(AliAnalysisTaskSEDplus_TreeMVA,32); /// AliAnalysisTaskSE for the MC association of heavy-flavour decay candidates
   /// \endcond

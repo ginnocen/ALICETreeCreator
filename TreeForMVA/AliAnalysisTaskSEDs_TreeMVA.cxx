@@ -386,6 +386,7 @@ AliAnalysisTaskSEDs_TreeMVA::~AliAnalysisTaskSEDs_TreeMVA()
   delete fCounter;
   delete fAnalysisCuts;
   if(fTreeHandler) delete fTreeHandler;
+  if(fFillTree==4) delete fTreeDs;
 }
 
 //________________________________________________________________________
@@ -677,8 +678,9 @@ void AliAnalysisTaskSEDs_TreeMVA::UserCreateOutputObjects()
   if(fFillTree>0 && fFillTree<4){
     OpenFile(4); // 4 is the slot number of the tree
         
-    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDstoKKpi,AliHFCutOptTreeHandler::kNsigmaPID);
+    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDstoKKpi,AliHFCutOptTreeHandler::kNsigmaPID,fReadMC);
     if(fSystem>0) fTreeHandler->SetUseCentrality();
+    if(fReadMC && fWriteOnlySignal) fTreeHandler->SetFillOnlySignal();
     fTreeDs = (TTree*)fTreeHandler->BuildTree("fTreeDs","fTreeDs");
   }
   else if(fFillTree==4) {
@@ -1000,7 +1002,7 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
   if(partDs) orig = AliVertexingHFUtils::CheckOrigin(arrayMC,partDs,kTRUE);
 
 	fCandType = 0.5; //for bkg
-  Float_t kTRUEImpParDsFromB = 99999.;
+  Float_t trueImpParDsFromB = 99999.;
   fImpParXY = d->ImpParXY()*10000.;
 	if(isKKpi){
 	  if(fDoRotBkg && TMath::Abs(massKK-massPhi)<=fMaxDeltaPhiMass4Rot)GenerateRotBkg(d,1,iPtBin);
@@ -1033,7 +1035,7 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
 		  }
 		  else if(orig==5) {
 		    fCandType = 2.5;
-        if(isPhiKKpi && fFillImpParSparse) {kTRUEImpParDsFromB = GetTrueImpactParameterDstoPhiPi(mcHeader,arrayMC,partDs)*10000;}
+        if(isPhiKKpi && fFillImpParSparse) {trueImpParDsFromB = GetTrueImpactParameterDstoPhiPi(mcHeader,arrayMC,partDs)*10000;}
 		  }
 		}
 	      }
@@ -1047,7 +1049,7 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
         if(orig == 4 && indexMCKKpi==GetSignalHistoIndex(iPtBin)) fImpParSparseMC[0]->Fill(array4ImpPar);
         else if(orig == 5 && indexMCKKpi==GetSignalHistoIndex(iPtBin)) {
           fImpParSparseMC[1]->Fill(array4ImpPar);
-          Double_t array4ImpParTrueB[3] = {fInvMass,fPtCand,kTRUEImpParDsFromB};
+          Double_t array4ImpParTrueB[3] = {fInvMass,fPtCand,trueImpParDsFromB};
           fImpParSparseMC[2]->Fill(array4ImpParTrueB);
         }
         else fImpParSparseMC[3]->Fill(array4ImpPar);
@@ -1089,7 +1091,7 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
 		  }
 		  if(orig==5) {
 		    fCandType = 2.5;
-        if(isPhipiKK && fFillImpParSparse) {kTRUEImpParDsFromB = GetTrueImpactParameterDstoPhiPi(mcHeader,arrayMC,partDs)*10000;}
+        if(isPhipiKK && fFillImpParSparse) {trueImpParDsFromB = GetTrueImpactParameterDstoPhiPi(mcHeader,arrayMC,partDs)*10000;}
 		  }
 		}
 	      }
@@ -1103,7 +1105,7 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
 	      if(orig == 4 && indexMCpiKK==GetSignalHistoIndex(iPtBin)) fImpParSparseMC[0]->Fill(array4ImpPar);
         else if(orig == 5 && indexMCpiKK==GetSignalHistoIndex(iPtBin)) {
           fImpParSparseMC[1]->Fill(array4ImpPar);
-          Double_t array4ImpParTrueB[3] = {fInvMass,fPtCand,kTRUEImpParDsFromB};
+          Double_t array4ImpParTrueB[3] = {fInvMass,fPtCand,trueImpParDsFromB};
           fImpParSparseMC[2]->Fill(array4ImpParTrueB);
         }
         else fImpParSparseMC[3]->Fill(array4ImpPar);
@@ -1336,46 +1338,53 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
 
 	if(fFillTree>0 && fFillTree<4){
 	  if ((fFillTree==1 && (isPhiKKpi || isPhipiKK)) || (fFillTree==2 && (isK0starKKpi || isK0starpiKK)) || (fFillTree==3 && (isKKpi || ispiKK))){
-
-    Bool_t issignal = kFALSE;
-    Bool_t isprompt = kFALSE;
-    Bool_t isrefl = kFALSE;
-    if(fReadMC) {
-      if(((ispiKK || isPhipiKK || isK0starpiKK) && indexMCpiKK==GetSignalHistoIndex(iPtBin)) || ((isKKpi || isPhiKKpi || isK0starKKpi) && indexMCKKpi==GetSignalHistoIndex(iPtBin))) {
-        issignal=kTRUE;
-        isrefl=kFALSE;
-        if(orig==4) isprompt=kTRUE;
-        if(orig==5) isprompt=kFALSE;
-      }
-      else if(((ispiKK || isPhipiKK || isK0starpiKK) && indexMCpiKK==GetReflSignalHistoIndex(iPtBin)) || ((isKKpi || isPhiKKpi || isK0starKKpi) && indexMCKKpi==GetReflSignalHistoIndex(iPtBin))) {
-        issignal=kTRUE;
-        isrefl=kTRUE;
-        if(orig==4) isprompt=kTRUE;
-        if(orig==5) isprompt=kFALSE;
-      }
-     }
-
-    AliAODPidHF* pidHF = fAnalysisCuts->GetPidHF();
-
-    if(isPhiKKpi || isK0starKKpi || isKKpi) {
-      fTreeHandler->SetVariables(d,pidHF,0,issignal,isprompt,isrefl);
       if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
-	    if(fReadMC && fWriteOnlySignal){
-	      if(isMCSignal>=0) fTreeHandler->FillTree();
-	    }else{
-	      fTreeHandler->FillTree();
-	    }
-    }
-    else if(isPhipiKK || isK0starpiKK || ispiKK) {
-      fTreeHandler->SetVariables(d,pidHF,1,issignal,isprompt,isrefl);
-      if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
+      AliAODPidHF* pidHF = fAnalysisCuts->GetPidHF();
 
-	    if(fReadMC && fWriteOnlySignal){
-	      if(isMCSignal>=0) fTreeHandler->FillTree();
-	    }else{
-	      fTreeHandler->FillTree();
-	    }
-    }
+      Bool_t issignal = kFALSE;
+      Bool_t isprompt = kFALSE;
+      Bool_t isrefl = kFALSE;
+
+      if(isKKpi || isPhiKKpi || isK0starKKpi) { 
+        if(fReadMC) {
+          if(labDs>=0) issignal=kTRUE;
+          else issignal=kFALSE;
+
+          if(orig==4) isprompt=kTRUE;
+          else if(orig==5) isprompt=kFALSE;
+
+          if(pdgCode0==211) isrefl=kTRUE;
+          else isrefl=kFALSE;
+
+          fTreeHandler->SetCandidateType(issignal,isprompt,isrefl);
+          fTreeHandler->SetVariables(d,0,pidHF,0x0);
+    	    fTreeHandler->FillTree();
+        }
+        else { //real data
+          fTreeHandler->SetVariables(d,0,pidHF,0x0);
+          fTreeHandler->FillTree();
+        }
+      }
+      if(ispiKK || isPhipiKK || isK0starpiKK) { 
+        if(fReadMC) {
+          if(labDs>=0) issignal=kTRUE;
+          else issignal=kFALSE;
+
+          if(orig==4) isprompt=kTRUE;
+          else if(orig==5) isprompt=kFALSE;
+
+          if(pdgCode0==321) isrefl=kTRUE;
+          else isrefl=kFALSE;
+
+          fTreeHandler->SetCandidateType(issignal,isprompt,isrefl);
+          fTreeHandler->SetVariables(d,1,pidHF,0x0);
+    	    fTreeHandler->FillTree();
+        }
+        else { //real data
+          fTreeHandler->SetVariables(d,1,pidHF,0x0);
+          fTreeHandler->FillTree();
+        }
+      }
 
 	    PostData(4,fTreeDs);
 	  }

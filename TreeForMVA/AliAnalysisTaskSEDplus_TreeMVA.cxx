@@ -129,7 +129,8 @@ AliAnalysisTaskSEDplus_TreeMVA::AliAnalysisTaskSEDplus_TreeMVA():
   fSystem(0),
   fNtrcklMin(0),
   fNtrcklMax(10000),
-  fCutOnTrckl(kFALSE)
+  fCutOnTrckl(kFALSE),
+  fWriteOnlySignalInTree(kFALSE)
 {
   /// Default constructor
 
@@ -222,7 +223,8 @@ AliAnalysisTaskSEDplus_TreeMVA::AliAnalysisTaskSEDplus_TreeMVA(const char *name,
   fSystem(0),
   fNtrcklMin(0),
   fNtrcklMax(10000),
-  fCutOnTrckl(kFALSE)
+  fCutOnTrckl(kFALSE),
+  fWriteOnlySignalInTree(kFALSE)
 {
   //
   /// Standrd constructor
@@ -348,6 +350,7 @@ AliAnalysisTaskSEDplus_TreeMVA::~AliAnalysisTaskSEDplus_TreeMVA()
   delete fRDCutsAnalysis;
   delete fCounter;
   if(fTreeHandler) delete fTreeHandler;
+  if(fFillTree==2) delete fTreeDplus;
 
 }
 //_________________________________________________________________
@@ -834,8 +837,9 @@ void AliAnalysisTaskSEDplus_TreeMVA::UserCreateOutputObjects()
   if(fFillTree==1){
     OpenFile(4); // 4 is the slot number of the tree
 
-    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDplustoKpipi,AliHFCutOptTreeHandler::kNsigmaPID);
+    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDplustoKpipi,AliHFCutOptTreeHandler::kNsigmaPID,fReadMC);
     if(fSystem>0) fTreeHandler->SetUseCentrality();
+    if(fReadMC && fWriteOnlySignalInTree) {fTreeHandler->SetFillOnlySignal();}
     fTreeDplus = (TTree*)fTreeHandler->BuildTree("fTreeDplus","fTreeDplus");
   }
 
@@ -1244,7 +1248,8 @@ void AliAnalysisTaskSEDplus_TreeMVA::UserExec(Option_t */*option*/)
 
     Bool_t issignal = kFALSE;
     if(labDp>=0) issignal=kTRUE;
-    fTreeHandler->SetVariables(d,pidHF,0,issignal,isPrimary,kFALSE);
+    fTreeHandler->SetCandidateType(issignal,isPrimary,kFALSE);
+    fTreeHandler->SetVariables(d,0,pidHF,0x0);
     if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
     fTreeHandler->FillTree();
 
