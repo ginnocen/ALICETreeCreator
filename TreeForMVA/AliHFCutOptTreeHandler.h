@@ -83,7 +83,7 @@ class AliHFCutOptTreeHandler : public TObject
     void SetPidVars(AliAODRecoDecayHF* d, AliAODPidHF* pidHF);
     void SetPdgCodes();
 
-    enum {knMaxProngs=3,knPidVars=12,knTopolVars=15};
+    enum {knMaxProngs=3,knPidVars=12,knTopolVars=15,knTopolVarsDzero=4};
 
     TTree* fTreeTopolVar; /// tree for cut optimisation
     int fDecayChannel; /// decay channel

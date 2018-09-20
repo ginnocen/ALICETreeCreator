@@ -93,7 +93,7 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
   if(!d) return false;
 
   //candidate type
-  if(fIsMC && arrayMC) {
+  if(fIsMC) {
     if(fIsSignal==-999 || fIsPrompt==-999 || fIsRefl==-999) { // if not setted, recompute 
       int labD=-1;
       int orig=-1;
@@ -160,11 +160,21 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
     fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
     fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();
   }
-
+  else if(fDecayChannel==kD0toKpi){
+      fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+      fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+      fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
+  }
   switch(fDecayChannel) {
     case 0: //D0 -> Kpi
-      if(masshypo==0) fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0();
-      else fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0bar();
+          if(masshypo==0) {
+              fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0();
+              fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0();
+          }
+          else {
+              fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0bar();
+              fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0bar();
+          }
     break;
     case 1: //D+ -> Kpipi
       fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDplus();
@@ -201,6 +211,7 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
   fTreeTopolVar = new TTree(name.Data(),title.Data());
 
   TString topolvarnames[knTopolVars] = {"inv_mass","pt_cand","d_len","d_len_xy","norm_dl_xy","cos_p","cos_p_xy","imp_par_xy","pt_prong0","pt_prong1","pt_prong2","sig_vert","delta_mass_KK","cos_PiDs","cos_PiKPhi_3"};
+  TString topolvarNamesDzero[knTopolVarsDzero] = {"cos_t_star", "imp_par_prong0", "imp_par_prong1","imp_par_prod"};
   TString PIDvarnamesNsigma[knPidVars] = {"nsigTPC_Pi_0","nsigTPC_K_0","nsigTOF_Pi_0","nsigTOF_K_0","nsigTPC_Pi_1","nsigTPC_K_1","nsigTOF_Pi_1","nsigTOF_K_1","nsigTPC_Pi_2","nsigTPC_K_2","nsigTOF_Pi_2","nsigTOF_K_2"};
   TString PIDvarnamesNsigmaComb[knPidVars] = {"nsigComb_Pi_0","nsigComb_K_0","nsigComb_Pi_1","nsigComb_K_1","nsigComb_Pi_2","nsigComb_K_2","","","","","",""};
 
@@ -209,7 +220,12 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
     if(iVar>11 && fDecayChannel!=kDstoKKpi) continue; 
     fTreeTopolVar->Branch(topolvarnames[iVar].Data(),&fTopolVarVector[iVar],Form("%s/F",topolvarnames[iVar].Data()));
   }
-
+    if(fDecayChannel==kD0toKpi){
+        for(int iVar=0; iVar<knTopolVarsDzero; iVar++){
+            fTreeTopolVar->Branch(topolvarNamesDzero[iVar].Data(),&fTopolVarVector[10+iVar],Form("%s/F",topolvarNamesDzero[iVar].Data()));
+        }
+    }
+    
   switch(fPidOpt) {
     case 0: //no PID
       return fTreeTopolVar;
