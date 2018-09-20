@@ -95,31 +95,34 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
   //candidate type
   if(fIsMC) {
     if(fIsSignal==-999 || fIsPrompt==-999 || fIsRefl==-999) { // if not setted, recompute 
-      int labD=-1;
-      int orig=-1;
-      int labDau0=-1;
-      int pdgdau0=-1;
-      bool isrefl=false;
-      if(fDecayChannel!=kD0toKpi) labD = d->MatchToMC(fPdgCode,arrayMC,3,fPdgCodeProngs);
-      else labD = d->MatchToMC(fPdgCode,arrayMC,2,fPdgCodeProngs);
-      if(labD<0) fIsSignal=0;
+      if(!arrayMC) fIsSignal=0;
       else {
-        fIsSignal=1;
+        int labD=-1;
+        int orig=-1;
+        int labDau0=-1;
+        int pdgdau0=-1;
+        bool isrefl=false;
+        if(fDecayChannel!=kD0toKpi) labD = d->MatchToMC(fPdgCode,arrayMC,3,fPdgCodeProngs);
+        else labD = d->MatchToMC(fPdgCode,arrayMC,2,fPdgCodeProngs);
+        if(labD<0) fIsSignal=0;
+        else {
+          fIsSignal=1;
 
-        AliAODMCParticle *partD = (AliAODMCParticle*)arrayMC->At(labD);
-        if(partD) orig = AliVertexingHFUtils::CheckOrigin(arrayMC,partD,kTRUE); //4 --> prompt, 5 --> FD
+          AliAODMCParticle *partD = (AliAODMCParticle*)arrayMC->At(labD);
+          if(partD) orig = AliVertexingHFUtils::CheckOrigin(arrayMC,partD,kTRUE); //4 --> prompt, 5 --> FD
 
-        if(orig==4) fIsPrompt=1;
-        else if(orig==5) fIsPrompt=0;
-        else fIsSignal=0;
+          if(orig==4) fIsPrompt=1;
+          else if(orig==5) fIsPrompt=0;
+          else fIsSignal=0;
 
-        if(fDecayChannel==kDplustoKpipi) fIsRefl=0; // no reflected signal for D+ -> Kpipi
-        else { 
-          labDau0=((AliAODTrack*)d->GetDaughter(0))->GetLabel();
-          AliAODMCParticle* dau0=(AliAODMCParticle*)arrayMC->UncheckedAt(TMath::Abs(labDau0));
-          if(dau0) pdgdau0=TMath::Abs(dau0->GetPdgCode());
-          if((masshypo==0 && pdgdau0!=321) || (masshypo==1 && pdgdau0!=211)) fIsRefl=1;
-          else fIsRefl=0;
+          if(fDecayChannel==kDplustoKpipi) fIsRefl=0; // no reflected signal for D+ -> Kpipi
+          else { 
+            labDau0=((AliAODTrack*)d->GetDaughter(0))->GetLabel();
+            AliAODMCParticle* dau0=(AliAODMCParticle*)arrayMC->UncheckedAt(TMath::Abs(labDau0));
+            if(dau0) pdgdau0=TMath::Abs(dau0->GetPdgCode());
+            if((masshypo==0 && pdgdau0!=321) || (masshypo==1 && pdgdau0!=211)) fIsRefl=1;
+            else fIsRefl=0;
+          }
         }
       }
     }
@@ -156,30 +159,29 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
   fTopolVarVector[7]=d->ImpParXY();
   fTopolVarVector[8]=d->PtProng(0);
   fTopolVarVector[9]=d->PtProng(1);
-  if(fDecayChannel!=kD0toKpi) { // common to 3prongs
-    fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
-    fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();
-  }
-  else if(fDecayChannel==kD0toKpi){
-      fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
-      fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
-      fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
-  }
+
   switch(fDecayChannel) {
     case 0: //D0 -> Kpi
-          if(masshypo==0) {
-              fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0();
-              fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0();
-          }
-          else {
-              fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0bar();
-              fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0bar();
-          }
+    fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+    fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+    fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
+      if(masshypo==0) {
+        fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0();
+        fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0();
+      }
+      else {
+        fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0bar();
+        fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0bar();
+      }
     break;
     case 1: //D+ -> Kpipi
       fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDplus();
+      fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
+      fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();  
     break;
     case 2: //Ds+ -> KKpi
+      fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
+      fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();
       float massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
       if(masshypo==0){ //phiKKpi
         fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDsKKpi();
@@ -210,22 +212,34 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
   fTreeTopolVar=0x0;
   fTreeTopolVar = new TTree(name.Data(),title.Data());
 
-  TString topolvarnames[knTopolVars] = {"inv_mass","pt_cand","d_len","d_len_xy","norm_dl_xy","cos_p","cos_p_xy","imp_par_xy","pt_prong0","pt_prong1","pt_prong2","sig_vert","delta_mass_KK","cos_PiDs","cos_PiKPhi_3"};
+  TString topolvarnamesCommon[knTopolVarsCommon] = {"inv_mass","pt_cand","d_len","d_len_xy","norm_dl_xy","cos_p","cos_p_xy","imp_par_xy","pt_prong0","pt_prong1"};
   TString topolvarNamesDzero[knTopolVarsDzero] = {"cos_t_star", "imp_par_prong0", "imp_par_prong1","imp_par_prod"};
+  TString topolvarNamesDs[knTopolVarsDs] = {"pt_prong2","sig_vert","delta_mass_KK","cos_PiDs","cos_PiKPhi_3"};
+  TString topolvarNamesDplus[knTopolVarsDplus] = {"pt_prong2","sig_vert"};
   TString PIDvarnamesNsigma[knPidVars] = {"nsigTPC_Pi_0","nsigTPC_K_0","nsigTOF_Pi_0","nsigTOF_K_0","nsigTPC_Pi_1","nsigTPC_K_1","nsigTOF_Pi_1","nsigTOF_K_1","nsigTPC_Pi_2","nsigTPC_K_2","nsigTOF_Pi_2","nsigTOF_K_2"};
   TString PIDvarnamesNsigmaComb[knPidVars] = {"nsigComb_Pi_0","nsigComb_K_0","nsigComb_Pi_1","nsigComb_K_1","nsigComb_Pi_2","nsigComb_K_2","","","","","",""};
 
-  for(int iVar=0; iVar<knTopolVars; iVar++) {
-    if((iVar==10 || iVar==11) && fDecayChannel==kD0toKpi) continue; 
-    if(iVar>11 && fDecayChannel!=kDstoKKpi) continue; 
-    fTreeTopolVar->Branch(topolvarnames[iVar].Data(),&fTopolVarVector[iVar],Form("%s/F",topolvarnames[iVar].Data()));
+  for(int iVar=0; iVar<knTopolVarsCommon; iVar++) {
+    fTreeTopolVar->Branch(topolvarnamesCommon[iVar].Data(),&fTopolVarVector[iVar],Form("%s/F",topolvarnamesCommon[iVar].Data()));
   }
-    if(fDecayChannel==kD0toKpi){
-        for(int iVar=0; iVar<knTopolVarsDzero; iVar++){
-            fTreeTopolVar->Branch(topolvarNamesDzero[iVar].Data(),&fTopolVarVector[10+iVar],Form("%s/F",topolvarNamesDzero[iVar].Data()));
-        }
-    }
-    
+  switch(fDecayChannel){
+    case 0: //D0 -> Kpi
+      for(int iVar=0; iVar<knTopolVarsDzero; iVar++){
+        fTreeTopolVar->Branch(topolvarNamesDzero[iVar].Data(),&fTopolVarVector[knTopolVarsCommon+iVar],Form("%s/F",topolvarNamesDzero[iVar].Data()));
+      }
+    break;
+    case 1: //D+ -> Kpipi
+      for(int iVar=0; iVar<knTopolVarsDplus; iVar++){
+        fTreeTopolVar->Branch(topolvarNamesDplus[iVar].Data(),&fTopolVarVector[knTopolVarsCommon+iVar],Form("%s/F",topolvarNamesDplus[iVar].Data()));
+      }
+    break;
+    case 2: //Ds -> KKpi
+      for(int iVar=0; iVar<knTopolVarsDs; iVar++){
+        fTreeTopolVar->Branch(topolvarNamesDs[iVar].Data(),&fTopolVarVector[knTopolVarsCommon+iVar],Form("%s/F",topolvarNamesDs[iVar].Data()));
+      }
+    break;
+  }
+
   switch(fPidOpt) {
     case 0: //no PID
       return fTreeTopolVar;
