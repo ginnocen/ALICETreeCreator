@@ -11,7 +11,7 @@ const Int_t runsMCen[] = {282343, 282342, 282341, 282340, 282314, 282313, 282312
 
 //_________________________________________________________________________________________________________
 //prototypes
-void RunAnalysisAODVertexingHFDs_TreeMVA_ROOT5(TString pluginmode = "full", Bool_t fIsMC=kFALSE, TString period = "LHC17q"/*"LHC18a4a2_fast"*/, TString recopass = "pass1_CENT_wSDD"/*""*/);
+void RunAnalysisAODVertexingHFDs_TreeMVA_ROOT5(TString pluginmode = "full", Bool_t fIsMC=kFALSE, TString period = "LHC17p"/*"LHC18a4a2_fast"*/, TString recopass = "pass1_FAST"/*""*/);
 AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWithPlugin, Bool_t fIsMC, TString period, TString recopass);
 
 //_________________________________________________________________________________________________________
@@ -78,12 +78,13 @@ void RunAnalysisAODVertexingHFDs_TreeMVA_ROOT5(TString pluginmode, Bool_t fIsMC,
   gROOT->LoadMacro("AliHFCutOptTreeHandler.cxx+g");
   gROOT->LoadMacro("AliAnalysisTaskSEDs_TreeMVA.cxx+g");
   gROOT->LoadMacro("AddTaskDs_TreeMVA.C");
-  TString cutfilename_consPID="alien:///alice/cern.ch/user/f/fgrosa/DstoKKpiCuts_pp_loose_consPID_kINT7.root";
-  TString suffix_consPID_MVA="_MB_Loose_consPID_MVA_kINT7";
+  TString cutfilename_noPID="alien:///alice/cern.ch/user/f/fgrosa/DstoKKpiCuts_pp_loose_noPID_kINT7.root";
+  TString suffix_noPID_MVA="_MB_Loose_noPID_MVA_kINT7";
   Int_t sparseopt=0; //enables THnSparses
   Int_t treeopt=1; //enables TTree
-  AliAnalysisTaskSEDs_TreeMVA* taskDs_consPID_MVA = AddTaskDs_TreeMVA(0,treeopt,sparseopt,sparseopt,fIsMC,cutfilename_consPID.Data(),suffix_consPID_MVA.Data(),0,1,0,0,0,0,0,0);
-
+  AliAnalysisTaskSEDs_TreeMVA* taskDs_noPID_MVA = AddTaskDs_TreeMVA(0,treeopt,sparseopt,sparseopt,fIsMC,cutfilename_noPID.Data(),suffix_noPID_MVA.Data(),0,1,0,0,0,0,0,0);
+  if(fIsMC) taskDs_noPID_MVA->SetWriteOnlySignalInTree(); // writes only signal
+  
   //-------------------------------------------------------------------
   // Run the analysis
   if(chainAOD) printf("CHAIN HAS %d ENTRIES\n",(Int_t)chainAOD->GetEntries());
@@ -107,7 +108,7 @@ AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWit
    plugin->SetUser("fgrosa");
    // Set versions of used packages
    plugin->SetAPIVersion("V1.1x");
-   plugin->SetAliPhysicsVersion("vAN-20180917-1");
+   plugin->SetAliPhysicsVersion("vAN-20180924-1"); //if you want ROOT6: vAN-20180918_ROOT6-1
    plugin->SetNtestFiles(1);
    plugin->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_PHYSICS/include -g");
 
@@ -155,9 +156,9 @@ AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWit
     }
 
    // Define alien work directory where all files will be copied. Relative to alien $HOME.
-   plugin->SetGridWorkingDir(Form("Ds_pp_5TeV_%s_%s",period.Data(),recopass.Data()));
+   plugin->SetGridWorkingDir(Form("2018Sep25_Ds_pp_5TeV_%s_%s",period.Data(),recopass.Data()));
    // Name of executable
-   plugin->SetExecutable(Form("Ds_pp_5TeV_%s_%s.sh",period.Data(),recopass.Data()));
+   plugin->SetExecutable(Form("2018Sep25_Ds_pp_5TeV_%s_%s.sh",period.Data(),recopass.Data()));
    // Declare alien output directory. Relative to working directory.
    plugin->SetGridOutputDir("output");
    // Declare the analysis source files names separated by blancs. To be compiled runtime
