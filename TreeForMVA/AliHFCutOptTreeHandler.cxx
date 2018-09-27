@@ -12,6 +12,7 @@
 // F. Grosa, fabrizio.grosa@cern.ch
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
+// L. Vermunt, luuk.vermunt@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include "AliHFCutOptTreeHandler.h"
@@ -43,7 +44,9 @@ AliHFCutOptTreeHandler::AliHFCutOptTreeHandler():
   fIsMC(false),
   fIsSignal(-999),
   fIsPrompt(-999),
-  fIsRefl(-999)
+  fIsRefl(-999),
+  fIsSelStd(false),
+  fUseSelFlag(true)
 {
   // Default constructor
   SetPdgCodes();
@@ -68,7 +71,9 @@ AliHFCutOptTreeHandler::AliHFCutOptTreeHandler(int decay, int PIDopt, bool isMC)
   fIsMC(isMC),
   fIsSignal(-999),
   fIsPrompt(-999),
-  fIsRefl(-999)
+  fIsRefl(-999),
+  fIsSelStd(false),
+  fUseSelFlag(true)
 {
   // Standard constructor
   SetPdgCodes();
@@ -240,6 +245,10 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
     break;
   }
 
+  fTreeTopolVar->Branch("cand_type",&fCandType,"cand_type/B");
+  if(fUseCentrality) fTreeTopolVar->Branch("centrality",&fCentrality,"centrality/B");
+  if(fUseSelFlag) fTreeTopolVar->Branch("isselectedstd",&fIsSelStd,"isselectedstd/O");
+
   switch(fPidOpt) {
     case 0: //no PID
       return fTreeTopolVar;
@@ -286,9 +295,6 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
       return fTreeTopolVar;
     break;
   }
-
-  fTreeTopolVar->Branch("cand_type",&fCandType,"cand_type/B");
-  if(fUseCentrality) fTreeTopolVar->Branch("centrality",&fCentrality,"centrality/B");
 
   return fTreeTopolVar;
 }

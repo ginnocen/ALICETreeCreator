@@ -15,6 +15,7 @@
 // F. Grosa, fabrizio.grosa@cern.ch
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
+// L. Vermunt, luuk.vermunt@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include <TTree.h>
@@ -65,6 +66,8 @@ class AliHFCutOptTreeHandler : public TObject
     void SetOptPID(int PIDopt) {fPidOpt=PIDopt;}
     void SetCentrality(char centrality) {fCentrality=centrality;}
     void SetUseCentrality(bool usecent=true) {fUseCentrality=usecent;}
+    void SetIsSelectedStd(bool isselected=true) {fIsSelStd=isselected;}
+    void SetUseSelectedStdFlag(bool useselflag=true) {fUseSelFlag=useselflag;}
     void SetFillOnlySignal(bool fillopt=true) {fFillOnlySignal=fillopt;}
     void SetIsMC(bool isMC=true) {fIsMC=isMC;}
     void SetCandidateType(bool issignal, bool isprompt, bool isreflected) {
@@ -101,6 +104,8 @@ class AliHFCutOptTreeHandler : public TObject
     int fIsSignal; ///flag for signal=1 (including prompt, FD, reflected), bkg=0 
     int fIsPrompt; ///flag for prompt=1 (inluding reflected), FD=0
     int fIsRefl; ///flag for reflected signal=1, non-reflected signal=0 
+    char fIsSelStd; ///flag to tag selected candidates by "standard" cuts
+    bool fUseSelFlag; ///flag to enable branch on candidates selected by "standard" cuts
 
   /// \cond CLASSIMP
   ClassDef(AliHFCutOptTreeHandler,1); /// 
