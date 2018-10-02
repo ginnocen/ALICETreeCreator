@@ -146,9 +146,9 @@ void runAnalysis()
         alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
         // make sure your source files get copied to grid
-        alienHandler->SetAdditionalLibs("AliHFCutOptTreeHandler.cxx AliHFCutOptTreeHandler.h");
-        alienHandler->SetAdditionalLibs("AliAnalysisTaskSEHFTreeCreator.cxx AliAnalysisTaskSEHFTreeCreator.h");
-        alienHandler->SetAnalysisSource("AliAnalysisTaskSEHFTreeCreator.cxx");
+        //alienHandler->SetAdditionalLibs("AliHFCutOptTreeHandler.cxx AliHFCutOptTreeHandler.h");
+        alienHandler->SetAdditionalLibs("AliHFCutOptTreeHandler.cxx AliHFCutOptTreeHandler.h AliAnalysisTaskSEHFTreeCreator.cxx AliAnalysisTaskSEHFTreeCreator.h");
+        alienHandler->SetAnalysisSource("AliHFCutOptTreeHandler.cxx AliAnalysisTaskSEHFTreeCreator.cxx");
 
         // select the aliphysics version. all other packages
         // are LOADED AUTOMATICALLY!
