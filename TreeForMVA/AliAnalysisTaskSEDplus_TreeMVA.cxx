@@ -837,8 +837,8 @@ void AliAnalysisTaskSEDplus_TreeMVA::UserCreateOutputObjects()
   if(fFillTree==1){
     OpenFile(4); // 4 is the slot number of the tree
 
-    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDplustoKpipi,AliHFCutOptTreeHandler::kNsigmaPID,fReadMC);
-    if(fSystem>0) fTreeHandler->SetUseCentrality();
+    fTreeHandler = new AliHFTreeHandlerDplustoKpipi(AliHFTreeHandlerDplustoKpipi::kNsigmaPID);
+    if(fSystem>0) fTreeHandler->EnableCentralityBranch();
     if(fReadMC && fWriteOnlySignalInTree) {fTreeHandler->SetFillOnlySignal();}
     fTreeDplus = (TTree*)fTreeHandler->BuildTree("fTreeDplus","fTreeDplus");
   }
@@ -1243,13 +1243,18 @@ void AliAnalysisTaskSEDplus_TreeMVA::UserExec(Option_t */*option*/)
 
 	// fill tree
 	if(fFillTree==1){
-    
+
     AliAODPidHF* pidHF = fRDCutsAnalysis->GetPidHF();
 
     Bool_t issignal = kFALSE;
-    if(labDp>=0) issignal=kTRUE;
-    fTreeHandler->SetCandidateType(issignal,isPrimary,kFALSE);
-    fTreeHandler->SetVariables(d,0,pidHF,0x0);
+    Bool_t isbkg = kFALSE;
+    if(fReadMC) {
+      if(labDp>=0) issignal=kTRUE;
+      else isbkg=kTRUE;
+    }
+    fTreeHandler->SetCandidateType(issignal,isbkg,isPrimary,isFeeddown,kFALSE);
+    fTreeHandler->SetIsSelectedStd(passTopolAndPIDCuts);
+    fTreeHandler->SetVariables(d,0,pidHF);
     if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
     fTreeHandler->FillTree();
 

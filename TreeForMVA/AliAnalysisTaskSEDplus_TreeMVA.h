@@ -31,7 +31,7 @@
 #include "AliNormalizationCounter.h"
 #include "AliAODMCHeader.h"
 #include "AliAODMCParticle.h"
-#include "AliHFCutOptTreeHandler.h"
+#include "AliHFTreeHandlerDplustoKpipi.h"
 
 class AliAnalysisTaskSEDplus_TreeMVA : public AliAnalysisTaskSE
 {
@@ -165,7 +165,7 @@ class AliAnalysisTaskSEDplus_TreeMVA : public AliAnalysisTaskSE
   TH1F** fDCAHistLS;         //!<!hist. for LS cuts variable 6 (topol+PID)
 
   TTree *fTreeDplus; //!<! output tree
-  AliHFCutOptTreeHandler* fTreeHandler; ///helper object for the tree with topological variables 
+  AliHFTreeHandlerDplustoKpipi* fTreeHandler; ///helper object for the tree with topological variables 
   Int_t fPDG; /// pdg the candidate (only MC)
   Double_t fInvMass; /// invariant mass of the candidate
   Double_t fPtCand; /// pT of the candidate

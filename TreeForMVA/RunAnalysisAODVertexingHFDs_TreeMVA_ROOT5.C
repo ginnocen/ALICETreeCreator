@@ -7,7 +7,7 @@ const Int_t runs17p[] = {282343, 282342, 282341, 282340, 282314, 282313, 282312,
 const Int_t runs17q[] = {282367, 282366, 282365};
 
 //MC runs
-const Int_t runsMCen[] = {282343, 282342, 282341, 282340, 282314, 282313, 282312, 282309, 282307, 282306, 282305, 282304, 282303, 282302, 282247, 282230, 282229, 282227, 282224, 282206, 282189, 282147, 282146, 282127, 282126, 282125, 282123, 282122, 282120, 282119, 282118, 282099, 282098, 282078, 282051, 282050, 282031, 282030, 282025, 282021, 282016, 282008, 282367, 282366, 282365};
+const Int_t runsMCen[] = {282343};//, 282342, 282341, 282340, 282314, 282313, 282312, 282309, 282307, 282306, 282305, 282304, 282303, 282302, 282247, 282230, 282229, 282227, 282224, 282206, 282189, 282147, 282146, 282127, 282126, 282125, 282123, 282122, 282120, 282119, 282118, 282099, 282098, 282078, 282051, 282050, 282031, 282030, 282025, 282021, 282016, 282008, 282367, 282366, 282365};
 
 //_________________________________________________________________________________________________________
 //prototypes
@@ -75,7 +75,8 @@ void RunAnalysisAODVertexingHFDs_TreeMVA_ROOT5(TString pluginmode, Bool_t fIsMC,
   else if(period.Contains("cent")) {imptask = AddTaskImproveITS(kFALSE,"LHC17pq_G3MC_cent","central",0);}
   
   //Ds task
-  gROOT->LoadMacro("AliHFCutOptTreeHandler.cxx+g");
+  gROOT->LoadMacro("AliHFTreeHandler.cxx+g");
+  gROOT->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx+g");
   gROOT->LoadMacro("AliAnalysisTaskSEDs_TreeMVA.cxx+g");
   gROOT->LoadMacro("AddTaskDs_TreeMVA.C");
   TString cutfilename_noPID="alien:///alice/cern.ch/user/f/fgrosa/DstoKKpiCuts_pp_loose_noPID_kINT7.root";
@@ -108,7 +109,7 @@ AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWit
    plugin->SetUser("fgrosa");
    // Set versions of used packages
    plugin->SetAPIVersion("V1.1x");
-   plugin->SetAliPhysicsVersion("vAN-20180924-1"); //if you want ROOT6: vAN-20180918_ROOT6-1
+   plugin->SetAliPhysicsVersion("vAN-20181004-1"); //if you want ROOT6: vAN-20180918_ROOT6-1
    plugin->SetNtestFiles(1);
    plugin->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_PHYSICS/include -g");
 
@@ -156,15 +157,16 @@ AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWit
     }
 
    // Define alien work directory where all files will be copied. Relative to alien $HOME.
-   plugin->SetGridWorkingDir(Form("2018Sep25_Ds_pp_5TeV_%s_%s",period.Data(),recopass.Data()));
+   plugin->SetGridWorkingDir(Form("Ds_pp_5TeV_%s_%s",period.Data(),recopass.Data()));
    // Name of executable
-   plugin->SetExecutable(Form("2018Sep25_Ds_pp_5TeV_%s_%s.sh",period.Data(),recopass.Data()));
+   plugin->SetExecutable(Form("Ds_pp_5TeV_%s_%s.sh",period.Data(),recopass.Data()));
    // Declare alien output directory. Relative to working directory.
    plugin->SetGridOutputDir("output");
    // Declare the analysis source files names separated by blancs. To be compiled runtime
-   gROOT->ProcessLine(".L AliHFCutOptTreeHandler.cxx++g");
+   gROOT->ProcessLine(".L AliHFTreeHandler.cxx++g");
+   gROOT->ProcessLine(".L AliHFTreeHandlerDstoKKpi.cxx++g");
    gROOT->ProcessLine(".L AliAnalysisTaskSEDs_TreeMVA.cxx+g");
-   plugin->SetAnalysisSource("AliHFCutOptTreeHandler.cxx AliAnalysisTaskSEDs_TreeMVA.cxx");
+   plugin->SetAnalysisSource("AliHFTreeHandler.cxx AliHFTreeHandlerDstoKKpi.cxx AliAnalysisTaskSEDs_TreeMVA.cxx");
 
    // Declare all libraries (other than the default ones for the framework. These will be
    // loaded by the generated analysis macro. Add all extra files (task .cxx/.h) here.

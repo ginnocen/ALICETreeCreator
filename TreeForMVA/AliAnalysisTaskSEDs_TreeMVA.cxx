@@ -678,8 +678,8 @@ void AliAnalysisTaskSEDs_TreeMVA::UserCreateOutputObjects()
   if(fFillTree>0 && fFillTree<4){
     OpenFile(4); // 4 is the slot number of the tree
         
-    fTreeHandler = new AliHFCutOptTreeHandler(AliHFCutOptTreeHandler::kDstoKKpi,AliHFCutOptTreeHandler::kNsigmaPID,fReadMC);
-    if(fSystem>0) fTreeHandler->SetUseCentrality();
+    fTreeHandler = new AliHFTreeHandlerDstoKKpi(AliHFTreeHandler::kNsigmaPID);
+    if(fSystem>0) fTreeHandler->EnableCentralityBranch();
     if(fReadMC && fWriteOnlySignal) fTreeHandler->SetFillOnlySignal();
     fTreeDs = (TTree*)fTreeHandler->BuildTree("fTreeDs","fTreeDs");
   }
@@ -1337,57 +1337,55 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
 	}
 
 	if(fFillTree>0 && fFillTree<4){
-	  if ((fFillTree==1 && (isPhiKKpi || isPhipiKK)) || (fFillTree==2 && (isK0starKKpi || isK0starpiKK)) || (fFillTree==3 && (isKKpi || ispiKK))){
-      if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
-      AliAODPidHF* pidHF = fAnalysisCuts->GetPidHF();
+    if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
+    AliAODPidHF* pidHF = fAnalysisCuts->GetPidHF();
 
-      Bool_t issignal = kFALSE;
-      Bool_t isprompt = kFALSE;
-      Bool_t isrefl = kFALSE;
+    //do not apply cuts, but enable flag if is selected
+    if ((fFillTree==1 && (isPhiKKpi || isPhipiKK)) || (fFillTree==2 && (isK0starKKpi || isK0starpiKK)) || (fFillTree==3 && (isKKpi || ispiKK))) {
+      fTreeHandler->SetIsSelectedStd(kTRUE);
+    }
 
-      if(isKKpi || isPhiKKpi || isK0starKKpi) { 
-        if(fReadMC) {
-          if(labDs>=0) issignal=kTRUE;
-          else issignal=kFALSE;
-
-          if(orig==4) isprompt=kTRUE;
-          else if(orig==5) isprompt=kFALSE;
-
-          if(pdgCode0==211) isrefl=kTRUE;
-          else isrefl=kFALSE;
-
-          fTreeHandler->SetCandidateType(issignal,isprompt,isrefl);
-          fTreeHandler->SetVariables(d,0,pidHF,0x0);
-    	    fTreeHandler->FillTree();
+    Bool_t issignal = kFALSE;
+    Bool_t isbkg = kFALSE;
+    Bool_t isprompt = kFALSE;
+    Bool_t isFD = kFALSE;
+    Bool_t isrefl = kFALSE;
+  
+    if(isKKpi || isPhiKKpi || isK0starKKpi) { 
+      if(fReadMC) {
+        if(labDs>=0) {
+          if(pdgCode0==321) issignal = kTRUE;
+          else if(pdgCode0==211) isrefl = kTRUE;
+          if(orig==4) isprompt = kTRUE;
+          else if(orig==5) isFD = kTRUE;
         }
-        else { //real data
-          fTreeHandler->SetVariables(d,0,pidHF,0x0);
-          fTreeHandler->FillTree();
-        }
+        else isbkg = kTRUE; //put also D+ -->KKpi in bkg
+        fTreeHandler->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
       }
-      if(ispiKK || isPhipiKK || isK0starpiKK) { 
-        if(fReadMC) {
-          if(labDs>=0) issignal=kTRUE;
-          else issignal=kFALSE;
-
-          if(orig==4) isprompt=kTRUE;
-          else if(orig==5) isprompt=kFALSE;
-
-          if(pdgCode0==321) isrefl=kTRUE;
-          else isrefl=kFALSE;
-
-          fTreeHandler->SetCandidateType(issignal,isprompt,isrefl);
-          fTreeHandler->SetVariables(d,1,pidHF,0x0);
-    	    fTreeHandler->FillTree();
+      fTreeHandler->SetVariables(d,0,pidHF);
+      fTreeHandler->FillTree();
+    }
+    issignal = kFALSE;
+    isbkg = kFALSE;
+    isprompt = kFALSE;
+    isFD = kFALSE;
+    isrefl = kFALSE;
+    if(ispiKK || isPhipiKK || isK0starKKpi) {
+      if(fReadMC) {
+        if(labDs>=0) {
+          if(pdgCode0==211) issignal = kTRUE;
+          else if(pdgCode0==321) isrefl = kTRUE;
+          if(orig==4) isprompt = kTRUE;
+          else if(orig==5) isFD = kTRUE;
         }
-        else { //real data
-          fTreeHandler->SetVariables(d,1,pidHF,0x0);
-          fTreeHandler->FillTree();
-        }
+        else isbkg = kTRUE; //put also D+ -->KKpi in bkg
+        fTreeHandler->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
       }
+      fTreeHandler->SetVariables(d,1,pidHF);
+      fTreeHandler->FillTree();
+    }
 
 	    PostData(4,fTreeDs);
-	  }
 	}
       } //if(retCodeAnalysisCuts
     } // if(isFidAcc)

@@ -24,7 +24,7 @@
 #include "AliAnalysisTaskSE.h"
 #include "AliRDHFCutsDstoKKpi.h"
 #include "AliLog.h"
-#include "AliHFCutOptTreeHandler.h"
+#include "AliHFTreeHandlerDstoKKpi.h"
 
 class AliNormalizationCounter;
 
@@ -159,7 +159,7 @@ class AliAnalysisTaskSEDs_TreeMVA : public AliAnalysisTaskSE
   /// 2 fill tree with topological vars (only K0starKKpi)
   /// 3 fill tree with topological vars (all)
   /// 4 fill tree for impact parameter fit
-  AliHFCutOptTreeHandler* fTreeHandler; ///helper object for the tree with topological variables 
+  AliHFTreeHandlerDstoKKpi* fTreeHandler; ///helper object for the tree with topological variables 
   Double_t fInvMass; /// invariant mass of the candidate
   Double_t fPtCand; /// pT of the candidate
   Double_t fImpParXY; /// impact-parameter XY of the candidate
