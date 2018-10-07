@@ -173,7 +173,7 @@ void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt
 //________________________________________________________________
 void AliHFTreeHandler::AddCommonDmesonVarBranches() {
 
-  fTreeVar->Branch("cand_type",&fCandType,"cand_type/B");
+  fTreeVar->Branch("cand_type",&fCandType,"cand_type/b");
   for(int iVar=0; iVar<knCommonDmesonVars; iVar++) {
     fTreeVar->Branch(commonDvarnames[iVar].Data(),&fCommonVarVector[iVar],Form("%s/F",commonDvarnames[iVar].Data()));
   }

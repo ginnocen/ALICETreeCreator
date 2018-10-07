@@ -135,7 +135,7 @@ class AliHFTreeHandler : public TObject
     float fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables
     int fPIDVarCharVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables (char)
     int fPidOpt; /// option for PID variables
-    char fCandType; ///flag for candidate type (bit map above)
+    unsigned char fCandType; ///flag for candidate type (bit map above)
     bool fEnableCentrality; ///flag to enable centrality branch
     char fCentrality; ///centrality in case of p-Pb or Pb-Pb
     bool fEnableNormd0MeasMinusExp; ///flag to enable max normalised single-track imp-par residual
