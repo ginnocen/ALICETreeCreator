@@ -10,8 +10,8 @@
 #include "makeInputCutsDstoKKpi.C"
 #include "makeInputCutsDplustoKpipi.C"
 
-Float_ minCent=0.;
-Float_ maxCent=100.;
+Float_t minCent=0.;
+Float_t maxCent=100.;
 
 
 void makeCutsTreeCreator()
