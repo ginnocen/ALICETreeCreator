@@ -26,7 +26,8 @@ ClassImp(AliHFTreeHandlerDstoKKpi);
 
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
-  AliHFTreeHandler()
+  AliHFTreeHandler(),
+  fMassKKOpt(kDeltaMassKKPhi)
 {
   //
   // Default constructor
@@ -38,7 +39,8 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
 
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
-  AliHFTreeHandler(PIDopt)
+  AliHFTreeHandler(PIDopt),
+  fMassKKOpt(kDeltaMassKKPhi)
 {
   //
   // Standard constructor
@@ -50,7 +52,8 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
 
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(const AliHFTreeHandlerDstoKKpi& source):
-  AliHFTreeHandler(source)
+  AliHFTreeHandler(source),
+  fMassKKOpt(source.fMassKKOpt)
 {
   //
   // Copy constructor
@@ -68,6 +71,7 @@ AliHFTreeHandlerDstoKKpi &AliHFTreeHandlerDstoKKpi::operator=(const AliHFTreeHan
 
   if(&source == this) return *this;
   AliHFTreeHandler::operator=(source); 
+  fMassKKOpt = source.fMassKKOpt;
 
   for(int iVar=0; iVar<knDstoKKpiVars; iVar++) fDsVarVector[iVar] = source.fDsVarVector[iVar];
 
@@ -128,7 +132,8 @@ bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, int masshyp
   //Ds+ -> KKpi variables
   fDsVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->PtProng(2);
   fDsVarVector[1]=((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert();
-  float massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
+  float massPhi = 0;
+  if(fMassKKOpt==kDeltaMassKKPhi) massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
   if(masshypo==0){ //phiKKpi
     fCommonVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->InvMassDsKKpi();
     fDsVarVector[2]=TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(0,1,321,321)-massPhi);

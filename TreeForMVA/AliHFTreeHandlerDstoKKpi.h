@@ -23,6 +23,9 @@
 class AliHFTreeHandlerDstoKKpi : public AliHFTreeHandler
 {
   public:
+
+    enum massKKopt {kMassKK,kDeltaMassKKPhi};
+
     AliHFTreeHandlerDstoKKpi();
     AliHFTreeHandlerDstoKKpi(int PIDopt);
     AliHFTreeHandlerDstoKKpi(const AliHFTreeHandlerDstoKKpi& source);
@@ -33,12 +36,14 @@ class AliHFTreeHandlerDstoKKpi : public AliHFTreeHandler
     virtual TTree* BuildTree(TString name="tree", TString title="tree");
     virtual bool SetVariables(AliAODRecoDecayHF* cand, int masshypo=0, AliAODPidHF* pidHF=0x0);
 
-
+    void SetMassKKOption(int opt);
+  
   private:
 
     static const int knDstoKKpiVars = 5;
 
     float fDsVarVector[knDstoKKpiVars]; /// array with variables 
+    int fMassKKOpt; /// option for massKK variable (mass or delta mass wrt phi)
 
     /// \cond CLASSIMP
     ClassDef(AliHFTreeHandlerDstoKKpi,1); /// 
