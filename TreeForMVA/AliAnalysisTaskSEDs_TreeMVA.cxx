@@ -1340,11 +1340,6 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
     if(fSystem>0) fTreeHandler->SetCentrality((Char_t)evCentr);
     AliAODPidHF* pidHF = fAnalysisCuts->GetPidHF();
 
-    //do not apply cuts, but enable flag if is selected
-    if ((fFillTree==1 && (isPhiKKpi || isPhipiKK)) || (fFillTree==2 && (isK0starKKpi || isK0starpiKK)) || (fFillTree==3 && (isKKpi || ispiKK))) {
-      fTreeHandler->SetIsSelectedStd(kTRUE);
-    }
-
     Bool_t issignal = kFALSE;
     Bool_t isbkg = kFALSE;
     Bool_t isprompt = kFALSE;
@@ -1360,6 +1355,8 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
           else if(orig==5) isFD = kTRUE;
         }
         else isbkg = kTRUE; //put also D+ -->KKpi in bkg
+        //do not apply cuts, but enable flag if is selected
+        if( (fFillTree==1 && isPhiKKpi) || (fFillTree==2 && isK0starKKpi) || (fFillTree==3 && isKKpi)) fTreeHandler->SetIsSelectedStd(kTRUE);
         fTreeHandler->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
       }
       fTreeHandler->SetVariables(d,0,pidHF);
@@ -1379,6 +1376,8 @@ void AliAnalysisTaskSEDs_TreeMVA::UserExec(Option_t */*option*/)
           else if(orig==5) isFD = kTRUE;
         }
         else isbkg = kTRUE; //put also D+ -->KKpi in bkg
+        //do not apply cuts, but enable flag if is selected
+        if( (fFillTree==1 && isPhipiKK) || (fFillTree==2 && isK0starpiKK) || (fFillTree==3 && ispiKK)) fTreeHandler->SetIsSelectedStd(kTRUE);
         fTreeHandler->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
       }
       fTreeHandler->SetVariables(d,1,pidHF);

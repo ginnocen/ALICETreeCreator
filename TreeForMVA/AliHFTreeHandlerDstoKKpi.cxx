@@ -99,7 +99,9 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
   AddCommonDmesonVarBranches();
 
   //set Ds variables
-  TString varnames[knDstoKKpiVars] = {"pt_prong2","sig_vert","delta_mass_KK","cos_PiDs","cos_PiKPhi_3"};
+  TString varnames[knDstoKKpiVars] = {"pt_prong2","sig_vert","","cos_PiDs","cos_PiKPhi_3"};
+  if(fMassKKOpt==kMassKK) varnames[2] = "mass_KK";
+  else if(fMassKKOpt==kDeltaMassKKPhi) varnames[2] = "delta_mass_KK";
   for(int iVar=0; iVar<knDstoKKpiVars; iVar++) {
     fTreeVar->Branch(varnames[iVar].Data(),&fDsVarVector[iVar],Form("%s/F",varnames[iVar].Data()));
   }

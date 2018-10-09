@@ -170,7 +170,7 @@ AliAnalysisGrid* CreateAlienHandler(TString pluginmode, TString testfileslistWit
 
    // Declare all libraries (other than the default ones for the framework. These will be
    // loaded by the generated analysis macro. Add all extra files (task .cxx/.h) here.
-   plugin->SetAdditionalLibs("libPWGflowBase.so libPWGflowTasks.so libPWGHFbase.so libPWGHFvertexingHF.so AliHFCutOptTreeHandler.h AliHFCutOptTreeHandler.cxx AliAnalysisTaskSEDs_TreeMVA.h AliAnalysisTaskSEDs_TreeMVA.cxx");
+   plugin->SetAdditionalLibs("libPWGflowBase.so libPWGflowTasks.so libPWGHFbase.so libPWGHFvertexingHF.so AliHFTreeHandler.h AliHFTreeHandler.cxx AliHFTreeHandlerDstoKKpi.h AliHFTreeHandlerDstoKKpi.cxx AliAnalysisTaskSEDs_TreeMVA.h AliAnalysisTaskSEDs_TreeMVA.cxx");
 
    plugin->SetDefaultOutputs(kTRUE);
    // merging via jdl
