@@ -1,0 +1,5 @@
+$HOME/cernbox/ALICE_WORK/HFMachineLearning/DsMassKK/LHC17p_fast.root
+PWG3_D2H_InvMassDs_MB_Loose_strongPID_massKK_kINT7
+coutputDs_MB_Loose_strongPID_massKK_kINT7
+
+2 3 4 5 6 8 12 16 24
