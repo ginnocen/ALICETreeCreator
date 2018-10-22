@@ -5,18 +5,18 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
                                                      Int_t AODProtection = 1,
                                                      Bool_t writeOnlySignalTree=kFALSE,
                                                      Int_t fillTreeD0=1,
-                                                     Int_t fillTreeDs=3,
+                                                     Int_t fillTreeDs=1,
                                                      Int_t fillTreeDplus=1,
-                                                     Int_t pidOptD0=AliHFTreeHandler::kNsigmaPIDchar,
-                                                     Int_t pidOptDs=AliHFTreeHandler::kNsigmaPIDchar,
-                                                     Int_t pidOptDplus=AliHFTreeHandler::kNsigmaPIDchar,
+                                                     Int_t pidOptD0=AliHFTreeHandler::kNsigmaPIDint,
+                                                     Int_t pidOptDs=AliHFTreeHandler::kNsigmaPIDint,
+                                                     Int_t pidOptDplus=AliHFTreeHandler::kNsigmaPIDint,
                                                      Bool_t enableFillCent=kTRUE,
                                                      Bool_t enableFillNormd0MeasMinusExp=kFALSE)
 {
     //
     //
-    
-    
+
+
     // Get the pointer to the existing analysis manager via the static access method.
     //==============================================================================
     AliAnalysisManager *mgr = AliAnalysisManager::GetAnalysisManager();
@@ -24,7 +24,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
         ::Error("AddTaskD0Distr", "No analysis manager to connect to.");
         return NULL;
     }
-    
+
     //getting the cuts
     TFile* filecuts;
     if( cutsfile.EqualTo("") ) {
@@ -35,7 +35,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
             ::Fatal("AddTaskHFTreeCreator", "Input file not found : check your cut object");
         }
     }
-    
+
     AliRDHFCutsD0toKpi*      looseCutsD0toKpi        =(AliRDHFCutsD0toKpi*)filecuts->Get("D0toKpiFilteringCuts");
     if(!looseCutsD0toKpi)         ::Fatal("AddTaskHFTreeCreator", "looseCutsD0toKpi : check your cut file");
     AliRDHFCutsDstoKKpi*     looseCutsDstoKKpi       =(AliRDHFCutsDstoKKpi*)filecuts->Get("DstoKKpiFilteringCuts");
@@ -48,7 +48,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     if(!analysisCutsDstoKKpi)     ::Fatal("AddTaskHFTreeCreator", "analysisCutsDstoKKpi : check your cut file");
     AliRDHFCutsDplustoKpipi* analysisCutsDplustoKpipi=(AliRDHFCutsDplustoKpipi*)filecuts->Get("DplustoKpipiAnalysisCuts");
     if(!analysisCutsDplustoKpipi) ::Fatal("AddTaskHFTreeCreator", "analysisCutsDplustoKpipi : check your cut file");
-    
+
     TList *cutsList=new TList();
     cutsList->SetOwner(kTRUE);
     cutsList->SetName("cut_objects");
@@ -58,7 +58,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     cutsList->Add(analysisCutsD0toKpi);
     cutsList->Add(analysisCutsDstoKKpi);
     cutsList->Add(analysisCutsDplustoKpipi);
-    
+
     AliAnalysisTaskSEHFTreeCreator_v1 *task = new AliAnalysisTaskSEHFTreeCreator_v1("TreeCreatorTask",cutsList);
 
     task->SetReadMC(readMC);
@@ -75,11 +75,11 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     task->SetEnableFillNormd0MeasMinusExp(enableFillNormd0MeasMinusExp);
 
     //task->SetDebugLevel(4);
-    
+
     mgr->AddTask(task);
-    
+
     // Create containers for input/output
-    
+
     TString inname = "cinput";
     TString histoname = "coutputEntries";
     TString cutsname = "coutputCuts";
@@ -91,28 +91,27 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     cutsname += finDirname.Data();
     normname += finDirname.Data();
     treename += finDirname.Data();
-   
-    
-    
+
+
+
     AliAnalysisDataContainer *cinput = mgr->CreateContainer(inname,TChain::Class(),AliAnalysisManager::kInputContainer);
     TString outputfile = AliAnalysisManager::GetCommonFileName();
     outputfile += ":PWGHF_TreeCreator";
-    
+
     AliAnalysisDataContainer *coutputEntries = mgr->CreateContainer(histoname,TH1F::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputCuts    = mgr->CreateContainer(cutsname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputNorm    = mgr->CreateContainer(normname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputTree    = mgr->CreateContainer(treename,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
 
-    
+
     mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
     mgr->ConnectOutput(task,1,coutputEntries);
     mgr->ConnectOutput(task,2,coutputCuts);
     mgr->ConnectOutput(task,3,coutputNorm);
     mgr->ConnectOutput(task,4,coutputTree);
-       
-    return task;
-    
-    
-    
-}
 
+    return task;
+
+
+
+}
