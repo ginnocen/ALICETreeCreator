@@ -99,7 +99,7 @@ TTree* AliHFTreeHandlerD0toKpi::BuildTree(TString name, TString title)
     fTreeVar->Branch(varnames[iVar].Data(),&fD0VarVector[iVar],Form("%s/F",varnames[iVar].Data()));
   }
 
-  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/B");
+  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/I");
   if(fEnableNormd0MeasMinusExp) fTreeVar->Branch("normd0d0exp",&fNormd0MeasMinusExp,"normd0d0exp/F");
   
   //set PID variables
