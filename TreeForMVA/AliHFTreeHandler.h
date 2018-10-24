@@ -39,11 +39,11 @@ class AliHFTreeHandler : public TObject
     enum optpid {
       kNoPID,
       kNsigmaPID,
-      kNsigmaPIDchar,
-      kNsigmaPIDfloatandchar, //--> to test
+      kNsigmaPIDint,
+      kNsigmaPIDfloatandint, //--> to test
       kNsigmaCombPID,
-      kNsigmaCombPIDchar,
-      kNsigmaCombPIDfloatandchar, //--> to test
+      kNsigmaCombPIDint,
+      kNsigmaCombPIDfloatandint, //--> to test
       kRawPID
     };
 
@@ -80,7 +80,7 @@ class AliHFTreeHandler : public TObject
     void EnableMaxNormd0MeasMinusExpBranch(bool enablenormd0measminusexp=true) {fEnableNormd0MeasMinusExp=enablenormd0measminusexp;}
     void SetFillOnlySignal(bool fillopt=true) {fFillOnlySignal=fillopt;}
 
-    void SetCentrality(char centrality) {fCentrality=centrality;}
+    void SetCentrality(int centrality) {fCentrality=centrality;}
     void SetMaxNormd0MeasMinusExp(float normd0measminuexp) {fNormd0MeasMinusExp=normd0measminuexp;}
     void SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected);
     void SetIsSelectedStd(bool isselected) {
@@ -88,24 +88,28 @@ class AliHFTreeHandler : public TObject
       else fCandType &= ~kSelected;
     }
 
-    static bool IsSignal(unsigned char candtype) {
-      if(candtype & kSignal) return true;
+    static bool IsSelectedStd(int candtype) {
+      if(candtype&1) return true;
       return false;
     }
-    static bool IsBkg(unsigned char candtype) {
-      if(candtype & kBkg) return true;
+    static bool IsSignal(int candtype) {
+      if(candtype>>1&1) return true;
       return false;
     }
-    static bool IsPrompt(unsigned char candtype) {
-      if(candtype & kPrompt) return true;
+    static bool IsBkg(int candtype) {
+      if(candtype>>2&1) return true;
       return false;
     }
-    static bool IsFD(unsigned char candtype) {
-      if(candtype & kFD) return true;
+    static bool IsPrompt(int candtype) {
+      if(candtype>>3&1) return true;
       return false;
     }
-    static bool IsRefl(unsigned char candtype) {
-      if(candtype & kRefl) return true;
+    static bool IsFD(int candtype) {
+      if(candtype>>4&1) return true;
+      return false;
+    }
+    static bool IsRefl(int candtype) {
+      if(candtype>>5&1) return true;
       return false;
     }
 
@@ -125,7 +129,7 @@ class AliHFTreeHandler : public TObject
 
     //utils methods
     double CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF);
-    int RoundFloatForChar(double num);
+    int RoundFloatToInt(double num);
 
     TTree* fTreeVar; /// tree with variables
     int fPdgCode; /// absolute value of pdg code of the particle of interest
@@ -133,11 +137,11 @@ class AliHFTreeHandler : public TObject
     int fPdgCodeProngs[knMaxProngs]; ///absolute values of pdg codes of the prongs
     float fCommonVarVector[knCommonDmesonVars]; /// array with common variables 
     float fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables
-    int fPIDVarCharVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables (char)
+    int fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables (int)
     int fPidOpt; /// option for PID variables
-    unsigned char fCandType; ///flag for candidate type (bit map above)
+    int fCandType; ///flag for candidate type (bit map above)
     bool fEnableCentrality; ///flag to enable centrality branch
-    char fCentrality; ///centrality in case of p-Pb or Pb-Pb
+    int fCentrality; ///centrality in case of p-Pb or Pb-Pb
     bool fEnableNormd0MeasMinusExp; ///flag to enable max normalised single-track imp-par residual
     float fNormd0MeasMinusExp; /// topomatic variable
     bool fFillOnlySignal; ///flag to enable only signal filling

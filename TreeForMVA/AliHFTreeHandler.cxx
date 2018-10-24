@@ -16,6 +16,7 @@
 /////////////////////////////////////////////////////////////
 
 #include <cmath>
+#include <limits>
 #include "AliHFTreeHandler.h"
 #include "AliPID.h"
 #include "AliAODRecoDecayHF.h"
@@ -48,7 +49,7 @@ AliHFTreeHandler::AliHFTreeHandler():
     for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         fPIDVarVector[iProng][iDet][iPartHypo]=-999;
-        fPIDVarCharVector[iProng][iDet][iPartHypo]=-127;
+        fPIDVarIntVector[iProng][iDet][iPartHypo]=-127;
       }
     }
   }
@@ -77,7 +78,7 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
     for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         fPIDVarVector[iProng][iDet][iPartHypo]=-999;
-        fPIDVarCharVector[iProng][iDet][iPartHypo]=-127;
+        fPIDVarIntVector[iProng][iDet][iPartHypo]=-127;
       }
     }
   }
@@ -106,7 +107,7 @@ AliHFTreeHandler::AliHFTreeHandler(const AliHFTreeHandler &source) :
     for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         fPIDVarVector[iProng][iDet][iPartHypo]=source.fPIDVarVector[iProng][iDet][iPartHypo];
-        fPIDVarCharVector[iProng][iDet][iPartHypo]=source.fPIDVarCharVector[iProng][iDet][iPartHypo];
+        fPIDVarIntVector[iProng][iDet][iPartHypo]=source.fPIDVarIntVector[iProng][iDet][iPartHypo];
       }
     }
   }
@@ -137,7 +138,7 @@ AliHFTreeHandler &AliHFTreeHandler::operator=(const AliHFTreeHandler &source)
     for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         fPIDVarVector[iProng][iDet][iPartHypo]=source.fPIDVarVector[iProng][iDet][iPartHypo];
-        fPIDVarCharVector[iProng][iDet][iPartHypo]=source.fPIDVarCharVector[iProng][iDet][iPartHypo];
+        fPIDVarIntVector[iProng][iDet][iPartHypo]=source.fPIDVarIntVector[iProng][iDet][iPartHypo];
       }
     }
   }
@@ -173,7 +174,7 @@ void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt
 //________________________________________________________________
 void AliHFTreeHandler::AddCommonDmesonVarBranches() {
 
-  fTreeVar->Branch("cand_type",&fCandType,"cand_type/b");
+  fTreeVar->Branch("cand_type",&fCandType,"cand_type/I");
   for(int iVar=0; iVar<knCommonDmesonVars; iVar++) {
     fTreeVar->Branch(commonDvarnames[iVar].Data(),&fCommonVarVector[iVar],Form("%s/F",commonDvarnames[iVar].Data()));
   }
@@ -196,28 +197,28 @@ void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool u
   TString rawPidName[knMaxDet4Pid] = {"dEdxTPC","ToF"};
 
   for(int iProng=0; iProng<fNProngs; iProng++) {
-    if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaPIDfloatandchar) {
+    if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaPIDfloatandint) {
       for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
         if(!useDet[iDet]) continue;
         for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
           if(!useHypo[iPartHypo]) continue;
           if(fPidOpt==kNsigmaPID) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/F",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
-          else if(fPidOpt==kNsigmaPIDchar) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarCharVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/B",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
-          else if(fPidOpt==kNsigmaPIDfloatandchar) {
+          else if(fPidOpt==kNsigmaPIDint) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/I",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
+          else if(fPidOpt==kNsigmaPIDfloatandint) {
             fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/F",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
-            fTreeVar->Branch(Form("char_nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarCharVector[iProng][iDet][iPartHypo],Form("char_nsig%s_%s_%d/B",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
+            fTreeVar->Branch(Form("int_nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo],Form("int_nsig%s_%s_%d/I",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
           }
         }
       }
     }
-    else if(fPidOpt>=kNsigmaCombPID && fPidOpt<=kNsigmaCombPIDfloatandchar) {
+    else if(fPidOpt>=kNsigmaCombPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         if(!useHypo[iPartHypo]) continue;
         if(fPidOpt==kNsigmaCombPID) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/F",partHypoName[iPartHypo].Data(),iProng));
-        else if(fPidOpt==kNsigmaCombPIDchar) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarCharVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/B",partHypoName[iPartHypo].Data(),iProng));
-        else if(fPidOpt==kNsigmaCombPIDfloatandchar) {
+        else if(fPidOpt==kNsigmaCombPIDint) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/I",partHypoName[iPartHypo].Data(),iProng));
+        else if(fPidOpt==kNsigmaCombPIDfloatandint) {
           fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/F",partHypoName[iPartHypo].Data(),iProng));
-          fTreeVar->Branch(Form("char_nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarCharVector[iProng][0][iPartHypo],Form("char_nsigComb_%s_%d/B",partHypoName[iPartHypo].Data(),iProng));
+          fTreeVar->Branch(Form("int_nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo],Form("int_nsigComb_%s_%d/I",partHypoName[iPartHypo].Data(),iProng));
         }
       }
     }
@@ -250,12 +251,12 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
 
   //compute PID variables for different options
   for(int iProng=0; iProng<fNProngs; iProng++) {
-    if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaCombPIDfloatandchar) {
+    if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
       for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         if(useHypo[iPartHypo]) {
           if(useTPC) pidHF->GetnSigmaTPC(prongtracks[iProng],parthypo[iPartHypo],sig[iProng][kTPC][iPartHypo]);
           if(useTOF) pidHF->GetnSigmaTOF(prongtracks[iProng],parthypo[iPartHypo],sig[iProng][kTOF][iPartHypo]);
-          if(fPidOpt>=kNsigmaCombPID && fPidOpt<=kNsigmaCombPIDfloatandchar) {
+          if(fPidOpt>=kNsigmaCombPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
             sigComb[iProng][iPartHypo] = CombineNsigmaDiffDet(sig[iProng][kTPC][iPartHypo],sig[iProng][kTOF][iPartHypo]);
           }
         }
@@ -281,22 +282,21 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
         }
       }
     break;
-    case 2: //kNsigmaPIDchar
+    case 2: //kNsigmaPIDint
       for(int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
           for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-            fPIDVarCharVector[iProng][iDet][iPartHypo] = RoundFloatForChar(sig[iProng][iDet][iPartHypo]*10);
+            fPIDVarIntVector[iProng][iDet][iPartHypo] = RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100);
           }
         }
       }
     break;
-    case 3: //kNsigmaPIDfloatandchar
+    case 3: //kNsigmaPIDfloatandint
       for(int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
           for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-            fPIDVarVector[iProng][iDet][iPartHypo] = sig[iProng][iDet][iPartHypo]*10;  
-            fPIDVarCharVector[iProng][iDet][iPartHypo] = RoundFloatForChar(fPIDVarVector[iProng][iDet][iPartHypo]);
-            std::cout << fPIDVarVector[iProng][iDet][iPartHypo] << " " << fPIDVarCharVector[iProng][iDet][iPartHypo]+0.1 << endl;
+            fPIDVarVector[iProng][iDet][iPartHypo] = sig[iProng][iDet][iPartHypo]*100;  
+            fPIDVarIntVector[iProng][iDet][iPartHypo] = RoundFloatToInt(fPIDVarVector[iProng][iDet][iPartHypo]*100);
           }
         }
       }
@@ -308,18 +308,18 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
         }
       }
     break;
-    case 5: //kNsigmaCombPIDchar
+    case 5: //kNsigmaCombPIDint
       for(int iProng=0; iProng<fNProngs; iProng++) {
         for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-          fPIDVarCharVector[iProng][0][iPartHypo] = RoundFloatForChar(sigComb[iProng][iPartHypo]*10);
+          fPIDVarIntVector[iProng][0][iPartHypo] = RoundFloatToInt(sigComb[iProng][iPartHypo]*100);
         }
       }
     break;
-    case 6: //kNsigmaCombPIDfloatandchar
+    case 6: //kNsigmaCombPIDfloatandint
       for(int iProng=0; iProng<fNProngs; iProng++) {
         for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-          fPIDVarVector[iProng][0][iPartHypo] = sigComb[iProng][iPartHypo]*10;     
-          fPIDVarCharVector[iProng][0][iPartHypo] = RoundFloatForChar(fPIDVarVector[iProng][0][iPartHypo]);
+          fPIDVarVector[iProng][0][iPartHypo] = sigComb[iProng][iPartHypo]*100;     
+          fPIDVarIntVector[iProng][0][iPartHypo] = RoundFloatToInt(fPIDVarVector[iProng][0][iPartHypo]*100);
         }
       }
     break;
@@ -349,11 +349,10 @@ double AliHFTreeHandler::CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF
 }
 
 //________________________________________________________________
-int AliHFTreeHandler::RoundFloatForChar(double num) 
+int AliHFTreeHandler::RoundFloatToInt(double num) 
 {
-  num = std::round(num);
-  if(num>=127) num=127;
-  else if(num<=-127) num=-127;
-  
-  return (int)num;
+  if(num>=static_cast<double>(numeric_limits<int>::max())) return numeric_limits<int>::max();
+  else if(num<=static_cast<double>(numeric_limits<int>::min())) return numeric_limits<int>::min();
+ 
+  return static_cast<int>(num);
 }

@@ -100,9 +100,9 @@ fWriteOnlySignal(kFALSE),
 fTreeHandlerD0(0x0),
 fTreeHandlerDs(0x0),
 fTreeHandlerDplus(0x0),
-fPIDoptD0(AliHFTreeHandler::kNsigmaPIDchar),
-fPIDoptDs(AliHFTreeHandler::kNsigmaPIDchar),
-fPIDoptDplus(AliHFTreeHandler::kNsigmaPIDchar),
+fPIDoptD0(AliHFTreeHandler::kNsigmaPIDint),
+fPIDoptDs(AliHFTreeHandler::kNsigmaPIDint),
+fPIDoptDplus(AliHFTreeHandler::kNsigmaPIDint),
 fEnableFillCent(kFALSE),
 fEnableFillNormd0MeasMinusExp(kFALSE)
 
@@ -139,9 +139,9 @@ fWriteOnlySignal(kFALSE),
 fTreeHandlerD0(0x0),
 fTreeHandlerDs(0x0),
 fTreeHandlerDplus(0x0),
-fPIDoptD0(AliHFTreeHandler::kNsigmaPIDchar),
-fPIDoptDs(AliHFTreeHandler::kNsigmaPIDchar),
-fPIDoptDplus(AliHFTreeHandler::kNsigmaPIDchar),
+fPIDoptD0(AliHFTreeHandler::kNsigmaPIDint),
+fPIDoptDs(AliHFTreeHandler::kNsigmaPIDint),
+fPIDoptDplus(AliHFTreeHandler::kNsigmaPIDint),
 fEnableFillCent(kFALSE),
 fEnableFillNormd0MeasMinusExp(kFALSE)
 {
@@ -537,8 +537,10 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
         if(isFidAcc){
             Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
             Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
-            Bool_t isSelAnCuts=kFALSE;
-            if(isSelectedAnalysis) isSelAnCuts=kTRUE;
+            Bool_t isSelAnCutsD0=kFALSE;
+            Bool_t isSelAnCutsD0bar=kFALSE;
+            if(isSelectedAnalysis==1 || isSelectedAnalysis==3) isSelAnCutsD0=kTRUE;
+            if(isSelectedAnalysis==2 || isSelectedAnalysis==3) isSelAnCutsD0bar=kTRUE;
             if(isSelectedFilt){
                 fNentries->Fill(13);
                 nSelectedD0++;
@@ -587,7 +589,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
                     }
                     fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                 }//end read MC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCuts);
+                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
                 fTreeHandlerD0->SetVariables(d,masshypo,pidHF);
                 fTreeHandlerD0->FillTree();
                 
@@ -615,7 +617,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
                     }
                 fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                 }//end readMC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCuts);
+                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
                 fTreeHandlerD0->SetVariables(d,masshypo,pidHF);
                 fTreeHandlerD0->FillTree();
             }//end D0bar
@@ -673,10 +675,22 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
                 Bool_t isFidAcc=fFiltCutsDstoKKpi->IsInFiducialAcceptance(ds->Pt(),ds->YDs());
                 if(isFidAcc){
                     Int_t isSelectedAnalysis=fCutsDstoKKpi->IsSelected(ds,AliRDHFCuts::kAll,aod);
-                    Bool_t isSelAnCuts=kFALSE;
-                    if(isSelectedAnalysis) isSelAnCuts=kTRUE;
+                    Bool_t isSelAnCutsKKpi=kFALSE;
+                    Bool_t isSelAnCutspiKK=kFALSE;
+                    if(fWriteVariableTreeDs==1) {
+                      if(isSelectedAnalysis&4) isSelAnCutsKKpi=kTRUE;
+                      if(isSelectedAnalysis&8) isSelAnCutspiKK=kTRUE;
+                    }
+                    else if(fWriteVariableTreeDs==2) {
+                      if(isSelectedAnalysis&16) isSelAnCutsKKpi=kTRUE;
+                      if(isSelectedAnalysis&32) isSelAnCutspiKK=kTRUE;
+                    }
+                    else if(fWriteVariableTreeDs==3) {
+                      if(isSelectedAnalysis&1) isSelAnCutsKKpi=kTRUE;
+                      if(isSelectedAnalysis&2) isSelAnCutspiKK=kTRUE;
+                    }
+                  
                     Int_t isSelectedFilt=fFiltCutsDstoKKpi->IsSelected(ds,AliRDHFCuts::kAll,aod);
-                    
                     Int_t isKKpi=isSelectedFilt&1;
                     Int_t ispiKK=isSelectedFilt&2;
                     Int_t isPhiKKpi=isSelectedFilt&4;
@@ -753,7 +767,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
     								//do not apply cuts, but enable flag if is selected        								
     								fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
       							}
-      							fTreeHandlerDs->SetIsSelectedStd(isSelAnCuts);
+      							fTreeHandlerDs->SetIsSelectedStd(isSelAnCutsKKpi);
       							fTreeHandlerDs->SetVariables(ds,0,pidHFDs);
       							fTreeHandlerDs->FillTree();
                             }
@@ -775,7 +789,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
        							   //do not apply cuts, but enable flag if is selected
                                    fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                                 }
-                                fTreeHandlerDs->SetIsSelectedStd(isSelAnCuts);
+                                fTreeHandlerDs->SetIsSelectedStd(isSelAnCutspiKK);
       						    fTreeHandlerDs->SetVariables(ds,1,pidHFDs);
       						    fTreeHandlerDs->FillTree();
                             }

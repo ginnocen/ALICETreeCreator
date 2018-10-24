@@ -99,7 +99,7 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
     fTreeVar->Branch(varnames[iVar].Data(),&fDplusVarVector[iVar],Form("%s/F",varnames[iVar].Data()));
   }
 
-  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/B");
+  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/I");
   if(fEnableNormd0MeasMinusExp) fTreeVar->Branch("normd0d0exp",&fNormd0MeasMinusExp,"normd0d0exp/F");
 
   //Set PID variables
@@ -109,7 +109,7 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, int masshypo, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, int /*masshypo*/, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
   fCandType &= ~kRefl; //protection --> D+ ->Kpipi cannot be reflected
