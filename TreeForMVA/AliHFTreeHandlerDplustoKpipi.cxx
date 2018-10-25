@@ -25,52 +25,26 @@ ClassImp(AliHFTreeHandlerDplustoKpipi);
 
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
-  AliHFTreeHandler()
+  AliHFTreeHandler(),
+  fSigmaVertex()
 {
   //
   // Default constructor
   //
 
   fNProngs=3; // --> cannot be changed
-  for(int iVar=0; iVar<knDplustoKpipiVars; iVar++) fDplusVarVector[iVar] = -999.;
 }
 
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(int PIDopt):
-  AliHFTreeHandler(PIDopt)
+  AliHFTreeHandler(PIDopt),
+  fSigmaVertex()
 {
   //
   // Standard constructor
   //
 
   fNProngs=3; // --> cannot be changed
-  for(int iVar=0; iVar<knDplustoKpipiVars; iVar++) fDplusVarVector[iVar] = -999.;
-}
-
-//________________________________________________________________
-AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(const AliHFTreeHandlerDplustoKpipi& source):
-  AliHFTreeHandler(source)
-{
-  //
-  // Copy constructor
-  //
-
-  for(int iVar=0; iVar<knDplustoKpipiVars; iVar++) fDplusVarVector[iVar] = source.fDplusVarVector[iVar];
-}
-
-//________________________________________________________________
-AliHFTreeHandlerDplustoKpipi &AliHFTreeHandlerDplustoKpipi::operator=(const AliHFTreeHandlerDplustoKpipi& source)
-{
-  //
-  // assignment operator
-  //
-
-  if(&source == this) return *this;
-  AliHFTreeHandler::operator=(source); 
-
-  for(int iVar=0; iVar<knDplustoKpipiVars; iVar++) fDplusVarVector[iVar] = source.fDplusVarVector[iVar];
-
-  return *this;
 }
 
 //________________________________________________________________
@@ -93,50 +67,72 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
   //set common variables
   AddCommonDmesonVarBranches();
 
-  //Set D+ variables
-  TString varnames[knDplustoKpipiVars] = {"pt_prong2","sig_vert"};
-  for(int iVar=0; iVar<knDplustoKpipiVars; iVar++) {
-    fTreeVar->Branch(varnames[iVar].Data(),&fDplusVarVector[iVar],Form("%s/F",varnames[iVar].Data()));
-  }
+  //set D+ variables
+  fTreeVar->Branch("sig_vert",&fSigmaVertex);
 
-  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/I");
-  if(fEnableNormd0MeasMinusExp) fTreeVar->Branch("normd0d0exp",&fNormd0MeasMinusExp,"normd0d0exp/F");
+  //set single-track variables
+  AddSingleTrackBranches();
 
-  //Set PID variables
+  //set PID variables
   if(fPidOpt!=kNoPID) AddPidBranches(true,true,false,true,true);
 
   return fTreeVar;
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, int /*masshypo*/, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
-  fCandType &= ~kRefl; //protection --> D+ ->Kpipi cannot be reflected
+  if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
+    if(!(fCandTypeMap&kSignal)) return true;
+  }
+  fNCandidates++;
+
+  fCandTypeMap &= ~kRefl; //protection --> D+ ->Kpipi cannot be reflected
 
   //topological variables
   //common
-  fCommonVarVector[1]=cand->Pt();
-  fCommonVarVector[2]=cand->DecayLength();
-  fCommonVarVector[3]=cand->DecayLengthXY();
-  fCommonVarVector[4]=cand->NormalizedDecayLengthXY();
-  fCommonVarVector[5]=cand->CosPointingAngle();
-  fCommonVarVector[6]=cand->CosPointingAngleXY();
-  fCommonVarVector[7]=cand->ImpParXY();
-  fCommonVarVector[8]=cand->PtProng(0);
-  fCommonVarVector[9]=cand->PtProng(1);
+  fCandType.push_back(fCandTypeMap);
+  fPt.push_back(cand->Pt());
+  fY.push_back(cand->Y(411));
+  fEta.push_back(cand->Eta());
+  fPhi.push_back(cand->Phi());
+  fDecayLength.push_back(cand->DecayLength());
+  fDecayLengthXY.push_back(cand->DecayLengthXY());
+  fNormDecayLengthXY.push_back(cand->NormalizedDecayLengthXY());
+  fCosP.push_back(cand->CosPointingAngle());
+  fCosPXY.push_back(cand->CosPointingAngleXY());
+  fImpParXY.push_back(cand->ImpParXY());
+  fNormd0MeasMinusExp.push_back(ComputeMaxd0MeasMinusExp(cand,bfield));
+
   //D+ -> Kpipi variables
-  fCommonVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->InvMassDplus();
-  fDplusVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->PtProng(2);
-  fDplusVarVector[1]=((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert();
+  fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDplus());
+  fSigmaVertex.push_back(((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert());
+
+  //single track variables
+  AliAODTrack* prongtracks[3];
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
+  bool setsingletrack = SetSingleTrackVars(prongtracks,cand);  
+  if(!setsingletrack) return false;
 
   //pid variables
   if(fPidOpt==kNoPID) return true;
 
-  AliAODTrack* prongtracks[3];
-  for(int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
   bool setpid = SetPidVars(prongtracks,pidHF,true,true,false,true,true);
   if(!setpid) return false;
 
   return true;
+}
+
+//________________________________________________________________
+void AliHFTreeHandlerDplustoKpipi::FillTree() {
+  fTreeVar->Fill();
+  
+  //VERY IMPORTANT: CLEAR ALL VECTORS
+  ResetDmesonCommonVarVectors();
+  fSigmaVertex.clear();
+  ResetSingleTrackVarVectors();
+  if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  fCandTypeMap=0;
+  fNCandidates=0;
 }

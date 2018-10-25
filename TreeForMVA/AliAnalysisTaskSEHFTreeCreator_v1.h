@@ -68,14 +68,13 @@ public:
     void SetPIDoptD0Tree(Int_t opt){fPIDoptD0=opt;}
     void SetPIDoptDsTree(Int_t opt){fPIDoptDs=opt;}
     void SetPIDoptDplusTree(Int_t opt){fPIDoptDplus=opt;}
-    void SetEnableFillNormd0MeasMinusExp(Int_t opt){fEnableFillNormd0MeasMinusExp=opt;}
         
     
     Int_t  GetSystem() const {return fSys;}
     Bool_t GetWriteOnlySignalTree() const {return fWriteOnlySignal;}
     
-    void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC);
-    void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC);
+    void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield);
+    void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield);
     
 private:
     

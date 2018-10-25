@@ -9,8 +9,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
                                                      Int_t fillTreeDplus=1,
                                                      Int_t pidOptD0=AliHFTreeHandler::kRawPID,
                                                      Int_t pidOptDs=AliHFTreeHandler::kRawPID,
-                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawPID,
-                                                     Bool_t enableFillNormd0MeasMinusExp=kFALSE)
+                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawPID)
 {
     //
     //
@@ -70,7 +69,6 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     task->SetPIDoptD0Tree(pidOptD0);
     task->SetPIDoptDsTree(pidOptDs);
     task->SetPIDoptDplusTree(pidOptDplus);
-    task->SetEnableFillNormd0MeasMinusExp(enableFillNormd0MeasMinusExp);
 
     //task->SetDebugLevel(4);
 

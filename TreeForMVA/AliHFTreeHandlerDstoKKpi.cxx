@@ -27,6 +27,10 @@ ClassImp(AliHFTreeHandlerDstoKKpi);
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   AliHFTreeHandler(),
+  fSigmaVertex(),
+  fMassKK(),
+  fCosPiDs(),
+  fCosPiKPhi(),
   fMassKKOpt(kDeltaMassKKPhi)
 {
   //
@@ -34,12 +38,15 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   //
 
   fNProngs=3; // --> cannot be changed
-  for(int iVar=0; iVar<knDstoKKpiVars; iVar++) fDsVarVector[iVar] = -999.;
 }
 
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   AliHFTreeHandler(PIDopt),
+  fSigmaVertex(),
+  fMassKK(),
+  fCosPiDs(),
+  fCosPiKPhi(),
   fMassKKOpt(kDeltaMassKKPhi)
 {
   //
@@ -47,35 +54,6 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   //
 
   fNProngs=3; // --> cannot be changed
-  for(int iVar=0; iVar<knDstoKKpiVars; iVar++) fDsVarVector[iVar] = -999.;
-}
-
-//________________________________________________________________
-AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(const AliHFTreeHandlerDstoKKpi& source):
-  AliHFTreeHandler(source),
-  fMassKKOpt(source.fMassKKOpt)
-{
-  //
-  // Copy constructor
-  //
-
-  for(int iVar=0; iVar<knDstoKKpiVars; iVar++) fDsVarVector[iVar] = source.fDsVarVector[iVar];
-}
-
-//________________________________________________________________
-AliHFTreeHandlerDstoKKpi &AliHFTreeHandlerDstoKKpi::operator=(const AliHFTreeHandlerDstoKKpi& source)
-{
-  //
-  // assignment operator
-  //
-
-  if(&source == this) return *this;
-  AliHFTreeHandler::operator=(source); 
-  fMassKKOpt = source.fMassKKOpt;
-
-  for(int iVar=0; iVar<knDstoKKpiVars; iVar++) fDsVarVector[iVar] = source.fDsVarVector[iVar];
-
-  return *this;
 }
 
 //________________________________________________________________
@@ -99,16 +77,17 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
   AddCommonDmesonVarBranches();
 
   //set Ds variables
-  TString varnames[knDstoKKpiVars] = {"pt_prong2","sig_vert","","cos_PiDs","cos_PiKPhi_3"};
-  if(fMassKKOpt==kMassKK) varnames[2] = "mass_KK";
-  else if(fMassKKOpt==kDeltaMassKKPhi) varnames[2] = "delta_mass_KK";
-  for(int iVar=0; iVar<knDstoKKpiVars; iVar++) {
-    fTreeVar->Branch(varnames[iVar].Data(),&fDsVarVector[iVar],Form("%s/F",varnames[iVar].Data()));
-  }
+  TString massKKname="";
+  if(fMassKKOpt==kMassKK) massKKname = "mass_KK";
+  else if(fMassKKOpt==kDeltaMassKKPhi) massKKname = "delta_mass_KK";
+  fTreeVar->Branch("sig_vert",&fSigmaVertex);
+  fTreeVar->Branch(massKKname.Data(),&fMassKK);
+  fTreeVar->Branch("cos_PiDs",&fCosPiDs);
+  fTreeVar->Branch("cos_PiKPhi_3",&fCosPiKPhi);
 
-  if(fEnableCentrality) fTreeVar->Branch("centrality",&fCentrality,"centrality/I");
-  if(fEnableNormd0MeasMinusExp) fTreeVar->Branch("normd0d0exp",&fNormd0MeasMinusExp,"normd0d0exp/F");
-
+  //set single-track variables
+  AddSingleTrackBranches();
+  
   //sed pid variables
   if(fPidOpt!=kNoPID) AddPidBranches(true,true,false,true,true);
 
@@ -116,47 +95,75 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, int masshypo, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
+  if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
+    if(!(fCandTypeMap&kSignal)) return true;
+  }
+  fNCandidates++;
 
   //topological variables
   //common
-  fCommonVarVector[1]=cand->Pt();
-  fCommonVarVector[2]=cand->DecayLength();
-  fCommonVarVector[3]=cand->DecayLengthXY();
-  fCommonVarVector[4]=cand->NormalizedDecayLengthXY();
-  fCommonVarVector[5]=cand->CosPointingAngle();
-  fCommonVarVector[6]=cand->CosPointingAngleXY();
-  fCommonVarVector[7]=cand->ImpParXY();
-  fCommonVarVector[8]=cand->PtProng(0);
-  fCommonVarVector[9]=cand->PtProng(1);
+  fCandType.push_back(fCandTypeMap);
+  fPt.push_back(cand->Pt());
+  fY.push_back(cand->Y(431));
+  fEta.push_back(cand->Eta());
+  fPhi.push_back(cand->Phi());
+  fDecayLength.push_back(cand->DecayLength());
+  fDecayLengthXY.push_back(cand->DecayLengthXY());
+  fNormDecayLengthXY.push_back(cand->NormalizedDecayLengthXY());
+  fCosP.push_back(cand->CosPointingAngle());
+  fCosPXY.push_back(cand->CosPointingAngleXY());
+  fImpParXY.push_back(cand->ImpParXY());
+  fNormd0MeasMinusExp.push_back(ComputeMaxd0MeasMinusExp(cand,bfield));
+
   //Ds+ -> KKpi variables
-  fDsVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->PtProng(2);
-  fDsVarVector[1]=((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert();
+  fSigmaVertex.push_back(((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert());
   float massPhi = 0;
+  float cospikphi=-2;
   if(fMassKKOpt==kDeltaMassKKPhi) massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
   if(masshypo==0){ //phiKKpi
-    fCommonVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->InvMassDsKKpi();
-    fDsVarVector[2]=TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(0,1,321,321)-massPhi);
-    fDsVarVector[3]=((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFrameKKpi();
-    fDsVarVector[4]=((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFrameKKpi();
+    fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDsKKpi());
+    fMassKK.push_back(TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(0,1,321,321)-massPhi));
+    fCosPiDs.push_back(((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFrameKKpi());
+    cospikphi = ((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFrameKKpi();
   }
   else if(masshypo==1){ //phipiKK
-    fCommonVarVector[0]=((AliAODRecoDecayHF3Prong*)cand)->InvMassDspiKK();
-    fDsVarVector[2]=TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(1,2,321,321)-massPhi);
-    fDsVarVector[3]=((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFramepiKK();
-    fDsVarVector[4]=((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFramepiKK();
+    fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDspiKK());
+    fMassKK.push_back(TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(1,2,321,321)-massPhi));
+    fCosPiDs.push_back(((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFramepiKK());
+    cospikphi = ((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFramepiKK();
   }
-  fDsVarVector[4] = TMath::Abs(fDsVarVector[4]*fDsVarVector[4]*fDsVarVector[4]);
+  fCosPiKPhi.push_back(cospikphi*cospikphi*cospikphi);
+
+  //single-track variables
+  AliAODTrack* prongtracks[3];
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
+  bool setsingletrack = SetSingleTrackVars(prongtracks,cand);  
+  if(!setsingletrack) return false;
 
   //pid variables
   if(fPidOpt==kNoPID) return true;
 
-  AliAODTrack* prongtracks[3];
-  for(int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
   bool setpid = SetPidVars(prongtracks,pidHF,true,true,false,true,true);
   if(!setpid) return false;
 
   return true;
+}
+
+//________________________________________________________________
+void AliHFTreeHandlerDstoKKpi::FillTree() {
+  fTreeVar->Fill();
+  
+  //VERY IMPORTANT: CLEAR ALL VECTORS
+  ResetDmesonCommonVarVectors();
+  fSigmaVertex.clear();
+  fMassKK.clear();
+  fCosPiDs.clear();
+  fCosPiKPhi.clear();
+  ResetSingleTrackVarVectors();
+  if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  fCandTypeMap=0;
+  fNCandidates=0;
 }

@@ -18,10 +18,13 @@
 // L. Vermunt, luuk.vermunt@cern.ch
 /////////////////////////////////////////////////////////////
 
+#include "vector"
 #include <TTree.h>
 #include "AliAODTrack.h"
 #include "AliAODPidHF.h"
 #include "AliAODRecoDecayHF.h"
+
+using std::vector;
 
 class AliHFTreeHandler : public TObject
 {
@@ -61,31 +64,17 @@ class AliHFTreeHandler : public TObject
 
     //core methods --> implemented in each derived class
     virtual TTree* BuildTree(TString name, TString title) = 0;
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, int masshypo, AliAODPidHF* pidHF) = 0;
+    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfiled, int masshypo, AliAODPidHF* pidHF) = 0;
+    virtual void FillTree() = 0; //to be called for each event, not each candidate!
     
     //common methods
-    bool FillTree() {
-      if(!fTreeVar) return false;
-      if(!fFillOnlySignal) fTreeVar->Fill();
-      else {
-        if(fCandType & kSignal) 
-          fTreeVar->Fill();
-      }
-      fCandType=0; //reset candtype after filling tree 
-      return true;
-    }
-
     void SetOptPID(int PIDopt) {fPidOpt=PIDopt;}
-    void EnableCentralityBranch(bool enablecent=true) {fEnableCentrality=enablecent;}
-    void EnableMaxNormd0MeasMinusExpBranch(bool enablenormd0measminusexp=true) {fEnableNormd0MeasMinusExp=enablenormd0measminusexp;}
     void SetFillOnlySignal(bool fillopt=true) {fFillOnlySignal=fillopt;}
 
-    void SetCentrality(int centrality) {fCentrality=centrality;}
-    void SetMaxNormd0MeasMinusExp(float normd0measminuexp) {fNormd0MeasMinusExp=normd0measminuexp;}
     void SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected);
     void SetIsSelectedStd(bool isselected) {
-      if(isselected) fCandType |= kSelected;
-      else fCandType &= ~kSelected;
+      if(isselected) fCandTypeMap |= kSelected;
+      else fCandTypeMap &= ~kSelected;
     }
 
     static bool IsSelectedStd(int candtype) {
@@ -115,35 +104,57 @@ class AliHFTreeHandler : public TObject
 
   protected:  
     //constant variables
-    static const int knCommonDmesonVars  = 10;
-    static const int knMaxProngs   = 3;
-    static const int knMaxDet4Pid  = 2;
-    static const int knMaxHypo4Pid = 3;
-
-    const TString commonDvarnames[knCommonDmesonVars] = {"inv_mass","pt_cand","d_len","d_len_xy","norm_dl_xy","cos_p","cos_p_xy","imp_par_xy","pt_prong0","pt_prong1"};
+    static const unsigned int knMaxProngs   = 3;
+    static const unsigned int knMaxDet4Pid  = 2;
+    static const unsigned int knMaxHypo4Pid = 3;
 
     //helper methods for derived clases (to be used in BuildTree and SetVariables functions)
     void AddCommonDmesonVarBranches();
+    void AddSingleTrackBranches();
     void AddPidBranches(bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF);
+    bool SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODRecoDecayHF* cand);
     bool SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF, bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF);
+    void ResetDmesonCommonVarVectors();
+    void ResetSingleTrackVarVectors();
+    void ResetPidVarVectors();
 
     //utils methods
     double CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF);
     int RoundFloatToInt(double num);
+    float ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield);
 
     TTree* fTreeVar; /// tree with variables
-    int fPdgCode; /// absolute value of pdg code of the particle of interest
-    int fNProngs; /// number of prongs
-    int fPdgCodeProngs[knMaxProngs]; ///absolute values of pdg codes of the prongs
-    float fCommonVarVector[knCommonDmesonVars]; /// array with common variables 
-    float fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables
-    int fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; /// array with common PID variables (int)
+    unsigned int fNProngs; /// number of prongs
+    unsigned int fNCandidates; /// number of candidates in one fill (event)
+    int fCandTypeMap; ///flag for candidate type (bit map above)
+    vector<int> fCandType; ///vector of flag for candidate type (bit map above)
+    vector<float> fInvMass; ///vector of candidate invariant mass
+    vector<float> fPt; ///vector of candidate pt
+    vector<float> fY; ///vector of candidate rapidity
+    vector<float> fEta; ///vector of candidate pseudorapidity
+    vector<float> fPhi; ///vector of candidate azimuthal angle
+    vector<float> fDecayLength; ///vector of candidate decay length
+    vector<float> fDecayLengthXY; ///vector of candidate decay length in the transverse plane
+    vector<float> fNormDecayLengthXY; ///vector of candidate normalised decay length in the transverse plane
+    vector<float> fNormd0MeasMinusExp; ///vector of candidate topomatic variable
+    vector<float> fCosP; ///vector of candidate cosine of pointing angle
+    vector<float> fCosPXY; ///vector of candidate cosine of pointing angle in the transcverse plane
+    vector<float> fImpParXY; ///vector of candidate impact parameter in the transverse plane
+    vector<float> fPProng[knMaxProngs]; ///vectors of prong momentum 
+    vector<float> fTPCPProng[knMaxProngs]; ///vectors of prong TPC momentum
+    vector<float> fPtProng[knMaxProngs]; ///vectors of prong pt
+    vector<float> fEtaProng[knMaxProngs]; ///vectors of prong pseudorapidity
+    vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
+    vector<float> fPhiProng[knMaxProngs]; ///vectors of prong azimuthal angle
+    vector<int> fNTPCclsProng[knMaxProngs]; ///vectors of prong track number of clusters in TPC
+    vector<int> fNTPCclsPidProng[knMaxProngs]; ///vectors of prong track number of clusters in TPC used for PID
+    vector<float> fNTPCCrossedRowProng[knMaxProngs]; ///vectors of prong track crossed row in TPC
+    vector<float> fChi2perNDFProng[knMaxProngs]; ///vectors of prong track chi2/ndf
+    vector<int> fNITSclsProng[knMaxProngs]; ///vectors of prong track number of clusters in ITS
+    vector<int> fITSclsMapProng[knMaxProngs];///vectors of prong track ITS cluster map
+    vector<float> fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables
+    vector<int> fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables (integers)
     int fPidOpt; /// option for PID variables
-    int fCandType; ///flag for candidate type (bit map above)
-    bool fEnableCentrality; ///flag to enable centrality branch
-    int fCentrality; ///centrality in case of p-Pb or Pb-Pb
-    bool fEnableNormd0MeasMinusExp; ///flag to enable max normalised single-track imp-par residual
-    float fNormd0MeasMinusExp; /// topomatic variable
     bool fFillOnlySignal; ///flag to enable only signal filling
 
   /// \cond CLASSIMP

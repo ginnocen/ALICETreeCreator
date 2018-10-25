@@ -20,6 +20,8 @@
 
 #include "AliHFTreeHandler.h"
 
+using std::vector;
+
 class AliHFTreeHandlerDplustoKpipi : public AliHFTreeHandler
 {
   public:
@@ -31,13 +33,12 @@ class AliHFTreeHandlerDplustoKpipi : public AliHFTreeHandler
     virtual ~AliHFTreeHandlerDplustoKpipi();
 
     virtual TTree* BuildTree(TString name="tree", TString title="tree");
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, int masshypo=0, AliAODPidHF* pidHF=0x0);
+    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo=0, AliAODPidHF* pidHF=0x0);
+    virtual void FillTree();
 
   private:
 
-    static const int knDplustoKpipiVars = 2;
-
-    float fDplusVarVector[knDplustoKpipiVars]; /// array with variables 
+    vector<float> fSigmaVertex; /// array with variables 
 
     /// \cond CLASSIMP
     ClassDef(AliHFTreeHandlerDplustoKpipi,1); /// 

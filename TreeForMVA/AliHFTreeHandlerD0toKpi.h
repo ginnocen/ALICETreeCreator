@@ -20,24 +20,24 @@
 
 #include "AliHFTreeHandler.h"
 
+using std::vector;
+
 class AliHFTreeHandlerD0toKpi : public AliHFTreeHandler
 {
   public:
     AliHFTreeHandlerD0toKpi();
     AliHFTreeHandlerD0toKpi(int PIDopt);
-    AliHFTreeHandlerD0toKpi(const AliHFTreeHandlerD0toKpi& source);
-    AliHFTreeHandlerD0toKpi& operator=(const AliHFTreeHandlerD0toKpi& source);
 
     virtual ~AliHFTreeHandlerD0toKpi();
 
     virtual TTree* BuildTree(TString name="tree", TString title="tree");
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, int masshypo=0, AliAODPidHF* pidHF=0x0);
+    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfiled, int masshypo=0, AliAODPidHF* pidHF=0x0);
+    virtual void FillTree(); //to be called for each event, not each candidate!
 
   private:
 
-    static const int knD0toKpiVars = 4;
-
-    float fD0VarVector[knD0toKpiVars]; /// array with variables 
+    vector<float> fCosThetaStar; /// 
+    vector<float> fImpParProd; /// 
 
     /// \cond CLASSIMP
     ClassDef(AliHFTreeHandlerD0toKpi,1); /// 

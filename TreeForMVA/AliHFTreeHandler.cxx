@@ -30,122 +30,86 @@ ClassImp(AliHFTreeHandler);
 AliHFTreeHandler::AliHFTreeHandler():
   TObject(),
   fTreeVar(0x0),
-  fPdgCode(),
   fNProngs(),
+  fNCandidates(0),
+  fCandTypeMap(0),
+  fCandType(),
+  fInvMass(),
+  fPt(),
+  fY(),
+  fEta(),
+  fPhi(),
+  fDecayLength(),
+  fDecayLengthXY(),
+  fNormDecayLengthXY(),
+  fCosP(),
+  fCosPXY(),
+  fImpParXY(),
+  fNormd0MeasMinusExp(),
+  fPProng(),
+  fTPCPProng(),
+  fPtProng(),
+  fEtaProng(),
+  fImpParProng(),
+  fPhiProng(),
+  fNTPCclsProng(),
+  fNTPCclsPidProng(),
+  fNTPCCrossedRowProng(),
+  fChi2perNDFProng(),
+  fNITSclsProng(),
+  fITSclsMapProng(),
+  fPIDVarVector(),
+  fPIDVarIntVector(),
   fPidOpt(kNsigmaPID),
-  fCandType(0),
-  fEnableCentrality(false),
-  fCentrality(-1),
-  fEnableNormd0MeasMinusExp(false),
-  fNormd0MeasMinusExp(-999.),
   fFillOnlySignal(false)
 {
   //
   // Default constructor
   //
-
-  for(int iVar=0; iVar<knCommonDmesonVars; iVar++) fCommonVarVector[iVar] = -999.;
-  for(int iProng=0; iProng<fNProngs; iProng++) {
-    for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-        fPIDVarVector[iProng][iDet][iPartHypo]=-999;
-        fPIDVarIntVector[iProng][iDet][iPartHypo]=-127;
-      }
-    }
-  }
 }
 
 //________________________________________________________________
 AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   TObject(),
   fTreeVar(0x0),
-  fPdgCode(),
   fNProngs(),
+  fNCandidates(0),
+  fCandTypeMap(0),
+  fCandType(),
+  fInvMass(),
+  fPt(),
+  fY(),
+  fEta(),
+  fPhi(),
+  fDecayLength(),
+  fDecayLengthXY(),
+  fNormDecayLengthXY(),
+  fCosP(),
+  fCosPXY(),
+  fImpParXY(),
+  fNormd0MeasMinusExp(),
+  fPProng(),
+  fTPCPProng(),
+  fPtProng(),
+  fEtaProng(),
+  fImpParProng(),
+  fPhiProng(),
+  fNTPCclsProng(),
+  fNTPCclsPidProng(),
+  fNTPCCrossedRowProng(),
+  fChi2perNDFProng(),
+  fNITSclsProng(),
+  fITSclsMapProng(),
+  fPIDVarVector(),
+  fPIDVarIntVector(),
   fPidOpt(PIDopt),
-  fCandType(0),
-  fEnableCentrality(false),
-  fCentrality(-1),
-  fEnableNormd0MeasMinusExp(false),
-  fNormd0MeasMinusExp(-999.),
   fFillOnlySignal(false)
 {
   //
   // Standard constructor
   //
-
-  for(int iVar=0; iVar<knCommonDmesonVars; iVar++) fCommonVarVector[iVar] = -999.;
-  for(int iProng=0; iProng<fNProngs; iProng++) {
-    for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-        fPIDVarVector[iProng][iDet][iPartHypo]=-999;
-        fPIDVarIntVector[iProng][iDet][iPartHypo]=-127;
-      }
-    }
-  }
 }
 
-//________________________________________________________________
-AliHFTreeHandler::AliHFTreeHandler(const AliHFTreeHandler &source) :
-  TObject(),
-  fTreeVar(source.fTreeVar),
-  fPdgCode(source.fPdgCode),
-  fNProngs(source.fNProngs),
-  fPidOpt(source.fPidOpt),
-  fCandType(source.fCandType),
-  fEnableCentrality(source.fEnableCentrality),
-  fCentrality(source.fCentrality),
-  fEnableNormd0MeasMinusExp(source.fEnableNormd0MeasMinusExp),
-  fNormd0MeasMinusExp(source.fNormd0MeasMinusExp),
-  fFillOnlySignal(source.fFillOnlySignal)
-{
-  //
-  // Copy constructor
-  //
-
-  for(int iVar=0; iVar<knCommonDmesonVars; iVar++) fCommonVarVector[iVar] = source.fCommonVarVector[iVar];
-  for(int iProng=0; iProng<fNProngs; iProng++) {
-    for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-        fPIDVarVector[iProng][iDet][iPartHypo]=source.fPIDVarVector[iProng][iDet][iPartHypo];
-        fPIDVarIntVector[iProng][iDet][iPartHypo]=source.fPIDVarIntVector[iProng][iDet][iPartHypo];
-      }
-    }
-  }
-}
-
-//________________________________________________________________
-AliHFTreeHandler &AliHFTreeHandler::operator=(const AliHFTreeHandler &source)
-{
-  //
-  // assignment operator
-  //
-
-  if(&source == this) return *this;
- 
-  fTreeVar                  = source.fTreeVar;
-  fPdgCode                  = source.fPdgCode;
-  fNProngs                  = source.fNProngs;
-  fPidOpt                   = source.fPidOpt;
-  fCandType                 = source.fCandType;
-  fEnableCentrality         = source.fEnableCentrality;
-  fCentrality               = source.fCentrality;
-  fEnableNormd0MeasMinusExp = source.fEnableNormd0MeasMinusExp;
-  fNormd0MeasMinusExp       = source.fNormd0MeasMinusExp;
-  fFillOnlySignal           = source.fFillOnlySignal;
-
-  for(int iVar=0; iVar<knCommonDmesonVars; iVar++) fCommonVarVector[iVar] = source.fCommonVarVector[iVar];
-  for(int iProng=0; iProng<fNProngs; iProng++) {
-    for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-        fPIDVarVector[iProng][iDet][iPartHypo]=source.fPIDVarVector[iProng][iDet][iPartHypo];
-        fPIDVarIntVector[iProng][iDet][iPartHypo]=source.fPIDVarIntVector[iProng][iDet][iPartHypo];
-      }
-    }
-  }
-
-  return *this;
-}
-  
 //________________________________________________________________
 AliHFTreeHandler::~AliHFTreeHandler()
 {
@@ -159,26 +123,55 @@ AliHFTreeHandler::~AliHFTreeHandler()
 //________________________________________________________________
 void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected) 
 {  
-  if(issignal) fCandType |= kSignal;
-  else fCandType &= ~kSignal;
-  if(isbkg) fCandType |= kBkg;
-  else fCandType &= ~kBkg;
-  if(isprompt) fCandType |= kPrompt;
-  else fCandType &= ~kPrompt;
-  if(isFD) fCandType |= kFD;
-  else fCandType &= ~kFD;
-  if(isreflected) fCandType |= kRefl;
-  else fCandType &= ~kRefl;
+  if(issignal) fCandTypeMap |= kSignal;
+  else fCandTypeMap &= ~kSignal;
+  if(isbkg) fCandTypeMap |= kBkg;
+  else fCandTypeMap &= ~kBkg;
+  if(isprompt) fCandTypeMap |= kPrompt;
+  else fCandTypeMap &= ~kPrompt;
+  if(isFD) fCandTypeMap |= kFD;
+  else fCandTypeMap &= ~kFD;
+  if(isreflected) fCandTypeMap |= kRefl;
+  else fCandTypeMap &= ~kRefl;
 }
 
 //________________________________________________________________
 void AliHFTreeHandler::AddCommonDmesonVarBranches() {
 
-  fTreeVar->Branch("cand_type",&fCandType,"cand_type/I");
-  for(int iVar=0; iVar<knCommonDmesonVars; iVar++) {
-    fTreeVar->Branch(commonDvarnames[iVar].Data(),&fCommonVarVector[iVar],Form("%s/F",commonDvarnames[iVar].Data()));
-  }
+  fTreeVar->Branch("n_cand",&fNCandidates);
+  fTreeVar->Branch("cand_type",&fCandType);
+  fTreeVar->Branch("inv_mass",&fInvMass);
+  fTreeVar->Branch("pt_cand",&fPt);
+  fTreeVar->Branch("y_cand",&fY);
+  fTreeVar->Branch("eta_cand",&fEta);
+  fTreeVar->Branch("phi_cand",&fPhi);
+  fTreeVar->Branch("d_len",&fDecayLength);
+  fTreeVar->Branch("d_len_xy",&fDecayLengthXY);
+  fTreeVar->Branch("norm_dl_xy",&fNormDecayLengthXY);
+  fTreeVar->Branch("cos_p",&fCosP);
+  fTreeVar->Branch("cos_p_xy",&fCosPXY);
+  fTreeVar->Branch("imp_par_xy",&fImpParXY);
+  fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
 } 
+
+//________________________________________________________________
+void AliHFTreeHandler::AddSingleTrackBranches() {
+
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    fTreeVar->Branch(Form("p_prong%d",iProng),&fPProng[iProng]);
+    if(fPidOpt==kRawPID) fTreeVar->Branch(Form("pTPC_prong%d",iProng),&fTPCPProng[iProng]);
+    fTreeVar->Branch(Form("pt_prong%d",iProng),&fPtProng[iProng]);
+    fTreeVar->Branch(Form("eta_prong%d",iProng),&fEtaProng[iProng]);
+    fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
+    fTreeVar->Branch(Form("phi_prong%d",iProng),&fPhiProng[iProng]);
+    fTreeVar->Branch(Form("nTPCcls_prong%d",iProng),&fNTPCclsProng[iProng]);
+    fTreeVar->Branch(Form("nTPCclspid_prong%d",iProng),&fNTPCclsPidProng[iProng]);
+    fTreeVar->Branch(Form("nTPCcrossrow_prong%d",iProng),&fNTPCCrossedRowProng[iProng]);
+    fTreeVar->Branch(Form("chi2perndf_prong%d",iProng),&fChi2perNDFProng[iProng]);
+    fTreeVar->Branch(Form("nITScls_prong%d",iProng),&fNITSclsProng[iProng]);
+    fTreeVar->Branch(Form("ITSclsmap_prong%d",iProng),&fITSclsMapProng[iProng]);
+  }
+}
 
 //________________________________________________________________
 void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
@@ -196,46 +189,74 @@ void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool u
   TString detName[knMaxDet4Pid] = {"TPC","TOF"};
   TString rawPidName[knMaxDet4Pid] = {"dEdxTPC","ToF"};
 
-  for(int iProng=0; iProng<fNProngs; iProng++) {
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaPIDfloatandint) {
-      for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
+      for(unsigned int iDet=0; iDet<knMaxDet4Pid; iDet++) {
         if(!useDet[iDet]) continue;
-        for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+        for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
           if(!useHypo[iPartHypo]) continue;
-          if(fPidOpt==kNsigmaPID) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/F",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
-          else if(fPidOpt==kNsigmaPIDint) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/I",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
+          if(fPidOpt==kNsigmaPID) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo]);
+          else if(fPidOpt==kNsigmaPIDint) fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo]);
           else if(fPidOpt==kNsigmaPIDfloatandint) {
-            fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo],Form("nsig%s_%s_%d/F",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
-            fTreeVar->Branch(Form("int_nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo],Form("int_nsig%s_%s_%d/I",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng));
+            fTreeVar->Branch(Form("nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][iDet][iPartHypo]);
+            fTreeVar->Branch(Form("int_nsig%s_%s_%d",detName[iDet].Data(),partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][iDet][iPartHypo]);
           }
         }
       }
     }
     else if(fPidOpt>=kNsigmaCombPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+      for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         if(!useHypo[iPartHypo]) continue;
-        if(fPidOpt==kNsigmaCombPID) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/F",partHypoName[iPartHypo].Data(),iProng));
-        else if(fPidOpt==kNsigmaCombPIDint) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/I",partHypoName[iPartHypo].Data(),iProng));
+        if(fPidOpt==kNsigmaCombPID) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo]);
+        else if(fPidOpt==kNsigmaCombPIDint) fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo]);
         else if(fPidOpt==kNsigmaCombPIDfloatandint) {
-          fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo],Form("nsigComb_%s_%d/F",partHypoName[iPartHypo].Data(),iProng));
-          fTreeVar->Branch(Form("int_nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo],Form("int_nsigComb_%s_%d/I",partHypoName[iPartHypo].Data(),iProng));
+          fTreeVar->Branch(Form("nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarVector[iProng][0][iPartHypo]);
+          fTreeVar->Branch(Form("int_nsigComb_%s_%d",partHypoName[iPartHypo].Data(),iProng),&fPIDVarIntVector[iProng][0][iPartHypo]);
         }
       }
     }
     else if(fPidOpt==kRawPID) {
-      for(int iDet=0; iDet<knMaxDet4Pid; iDet++) {
+      for(unsigned int iDet=0; iDet<knMaxDet4Pid; iDet++) {
         if(!useDet[iDet]) continue;
-        fTreeVar->Branch(Form("%s_%d",rawPidName[iDet].Data(),iProng),&fPIDVarVector[iProng][iDet][0],Form("%s_%d/F",detName[iDet].Data(),iProng));
+        fTreeVar->Branch(Form("%s_%d",rawPidName[iDet].Data(),iProng),&fPIDVarVector[iProng][iDet][0]);
       }
     }
   }
 }
 
 //________________________________________________________________
+bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODRecoDecayHF* cand) {
+
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    if(!prongtracks[iProng]) {
+      AliWarning("Prong track not found!");
+      return false;
+    }
+  }
+
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    fPProng[iProng].push_back(cand->PProng(iProng));
+    if(fPidOpt==kRawPID) fTPCPProng[iProng].push_back(prongtracks[iProng]->GetTPCmomentum());
+    fPtProng[iProng].push_back(cand->PtProng(iProng));
+    fEtaProng[iProng].push_back(cand->EtaProng(iProng));
+    fImpParProng[iProng].push_back(cand->PhiProng(iProng));
+    fPhiProng[iProng].push_back(cand->PProng(iProng));
+    fNTPCclsProng[iProng].push_back(prongtracks[iProng]->GetTPCNcls());
+    fNTPCclsPidProng[iProng].push_back(prongtracks[iProng]->GetTPCsignalN());
+    fNTPCCrossedRowProng[iProng].push_back(prongtracks[iProng]->GetTPCNCrossedRows());
+    fChi2perNDFProng[iProng].push_back(prongtracks[iProng]->Chi2perNDF());
+    fNITSclsProng[iProng].push_back(prongtracks[iProng]->GetITSNcls());
+    fITSclsMapProng[iProng].push_back(static_cast<int>(prongtracks[iProng]->GetITSClusterMap()));
+  }
+
+  return true;
+}
+
+//________________________________________________________________
 bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF, bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
 {
   if(!pidHF) return false;
-  for(int iProng=0; iProng<fNProngs; iProng++) {
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     if(!prongtracks[iProng]) {
       AliWarning("Prong track not found!");
       return false;
@@ -250,9 +271,9 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
   AliPID::EParticleType parthypo[knMaxHypo4Pid] = {AliPID::kPion,AliPID::kKaon,AliPID::kProton};
 
   //compute PID variables for different options
-  for(int iProng=0; iProng<fNProngs; iProng++) {
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
-      for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+      for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
         if(useHypo[iPartHypo]) {
           if(useTPC) pidHF->GetnSigmaTPC(prongtracks[iProng],parthypo[iPartHypo],sig[iProng][kTPC][iPartHypo]);
           if(useTOF) pidHF->GetnSigmaTOF(prongtracks[iProng],parthypo[iPartHypo],sig[iProng][kTOF][iPartHypo]);
@@ -264,8 +285,8 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     }
     else if(fPidOpt==kRawPID) {
       AliPIDResponse* pidrespo = (AliPIDResponse*)pidHF->GetPidResponse();
-      rawPID[iProng][kTPC] = pidrespo->GetTPCsignalTunedOnData(prongtracks[iProng]);
-      rawPID[iProng][kTOF] = pidrespo->GetTOFsignalTunedOnData(prongtracks[iProng]);
+      rawPID[iProng][kTPC] = prongtracks[iProng]->GetTPCsignal();
+      rawPID[iProng][kTOF] = prongtracks[iProng]->GetTOFsignal();
       float time0 = pidrespo->GetTOFResponse().GetStartTime(prongtracks[iProng]->P());
       rawPID[iProng][kTOF] -= time0;
     }
@@ -274,59 +295,59 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
   //fill PID arrays for different options
   switch(fPidOpt) {
     case 1: //kNsigmaPID
-      for(int iProng=0; iProng<fNProngs; iProng++) {
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
-          for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-            fPIDVarVector[iProng][iDet][iPartHypo] = sig[iProng][iDet][iPartHypo];
+          for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            fPIDVarVector[iProng][iDet][iPartHypo].push_back(sig[iProng][iDet][iPartHypo]);
           }
         }
       }
     break;
     case 2: //kNsigmaPIDint
-      for(int iProng=0; iProng<fNProngs; iProng++) {
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
-          for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-            fPIDVarIntVector[iProng][iDet][iPartHypo] = RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100);
+          for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            fPIDVarIntVector[iProng][iDet][iPartHypo].push_back(RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100));
           }
         }
       }
     break;
     case 3: //kNsigmaPIDfloatandint
-      for(int iProng=0; iProng<fNProngs; iProng++) {
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
-          for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-            fPIDVarVector[iProng][iDet][iPartHypo] = sig[iProng][iDet][iPartHypo]*100;  
-            fPIDVarIntVector[iProng][iDet][iPartHypo] = RoundFloatToInt(fPIDVarVector[iProng][iDet][iPartHypo]*100);
+          for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            fPIDVarVector[iProng][iDet][iPartHypo].push_back(sig[iProng][iDet][iPartHypo]*100);  
+            fPIDVarIntVector[iProng][iDet][iPartHypo].push_back(RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100));
           }
         }
       }
     break;
     case 4: //kNsigmaCombPID
-      for(int iProng=0; iProng<fNProngs; iProng++) {
-        for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-          fPIDVarVector[iProng][0][iPartHypo] = sigComb[iProng][iPartHypo];        
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+        for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          fPIDVarVector[iProng][0][iPartHypo].push_back(sigComb[iProng][iPartHypo]);        
         }
       }
     break;
     case 5: //kNsigmaCombPIDint
-      for(int iProng=0; iProng<fNProngs; iProng++) {
-        for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-          fPIDVarIntVector[iProng][0][iPartHypo] = RoundFloatToInt(sigComb[iProng][iPartHypo]*100);
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+        for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          fPIDVarIntVector[iProng][0][iPartHypo].push_back(RoundFloatToInt(sigComb[iProng][iPartHypo]*100));
         }
       }
     break;
     case 6: //kNsigmaCombPIDfloatandint
-      for(int iProng=0; iProng<fNProngs; iProng++) {
-        for(int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
-          fPIDVarVector[iProng][0][iPartHypo] = sigComb[iProng][iPartHypo]*100;     
-          fPIDVarIntVector[iProng][0][iPartHypo] = RoundFloatToInt(fPIDVarVector[iProng][0][iPartHypo]*100);
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+        for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          fPIDVarVector[iProng][0][iPartHypo].push_back(sigComb[iProng][iPartHypo]*100);     
+          fPIDVarIntVector[iProng][0][iPartHypo].push_back(RoundFloatToInt(sigComb[iProng][iPartHypo]*100));
         }
       }
     break;
     case 7: //kRawPID
-      for(int iProng=0; iProng<fNProngs; iProng++) {
+      for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
-          fPIDVarVector[iProng][iDet][0] = rawPID[iProng][iDet];     
+          fPIDVarVector[iProng][iDet][0].push_back(rawPID[iProng][iDet]);     
         }
       }
     break;
@@ -337,6 +358,55 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
   }
 
   return true;
+}
+
+//________________________________________________________________
+void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
+
+  fCandType.clear();
+  fInvMass.clear();
+  fPt.clear();
+  fY.clear();
+  fEta.clear();
+  fPhi.clear();
+  fDecayLength.clear();
+  fDecayLengthXY.clear();
+  fNormDecayLengthXY.clear();
+  fCosP.clear();
+  fCosPXY.clear();
+  fImpParXY.clear();
+  fNormd0MeasMinusExp.clear();
+}
+
+//________________________________________________________________
+void AliHFTreeHandler::ResetSingleTrackVarVectors() {
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    fPProng[iProng].clear();
+    fTPCPProng[iProng].clear();
+    fPtProng[iProng].clear();
+    fEtaProng[iProng].clear();
+    fImpParProng[iProng].clear();
+    fPhiProng[iProng].clear();
+    fNTPCclsProng[iProng].clear();
+    fNTPCclsPidProng[iProng].clear();
+    fNTPCCrossedRowProng[iProng].clear();
+    fChi2perNDFProng[iProng].clear();
+    fNITSclsProng[iProng].clear();
+    fITSclsMapProng[iProng].clear();
+  }
+}
+
+//________________________________________________________________
+void AliHFTreeHandler::ResetPidVarVectors() {
+
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    for(unsigned int iDet=0; iDet<knMaxDet4Pid; iDet++) {
+      for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+        fPIDVarVector[iProng][iDet][iPartHypo].clear();
+        fPIDVarIntVector[iProng][iDet][iPartHypo].clear();
+      }
+    }
+  }
 }
 
 //________________________________________________________________
@@ -356,3 +426,18 @@ int AliHFTreeHandler::RoundFloatToInt(double num)
  
   return static_cast<int>(num);
 }
+
+//________________________________________________________________
+float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield) 
+{
+  float dd0max=0;
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    double d0diff, errd0diff;
+    cand->Getd0MeasMinusExpProng(iProng,bfield,d0diff,errd0diff);
+    float normdd0 = d0diff/errd0diff;
+    if(iProng==0) dd0max=normdd0;
+    else if(TMath::Abs(normdd0)>TMath::Abs(dd0max)) dd0max=normdd0;
+  }
+  return dd0max;
+}
+
