@@ -42,6 +42,8 @@ class AliAODEvent;
 class AliAnalysisTaskSEHFTreeCreator_v1 : public AliAnalysisTaskSE
 {
 public:
+
+
     
     AliAnalysisTaskSEHFTreeCreator_v1();
     AliAnalysisTaskSEHFTreeCreator_v1(const char *name,TList *cutsList);
@@ -66,15 +68,14 @@ public:
     void SetPIDoptD0Tree(Int_t opt){fPIDoptD0=opt;}
     void SetPIDoptDsTree(Int_t opt){fPIDoptDs=opt;}
     void SetPIDoptDplusTree(Int_t opt){fPIDoptDplus=opt;}
-    void SetEnableFillCent(Int_t opt){fEnableFillCent=opt;}
     void SetEnableFillNormd0MeasMinusExp(Int_t opt){fEnableFillNormd0MeasMinusExp=opt;}
         
     
     Int_t  GetSystem() const {return fSys;}
     Bool_t GetWriteOnlySignalTree() const {return fWriteOnlySignal;}
     
-    void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t centrality);
-    void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t centrality);
+    void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC);
+    void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC);
     
 private:
     
@@ -84,6 +85,7 @@ private:
     
     
     TH1F                    *fNentries;                  //!<!   histogram with number of events on output slot 1
+    TH2F                    *fHistoNormCounter;          //!<!   histogram with number of events on output slot 1
     TList                   *fListCuts;                  //      list of cuts sent to output slot 2
     AliRDHFCutsD0toKpi      *fFiltCutsD0toKpi;           //      D0toKpi filtering (or loose) cuts
     AliRDHFCutsDstoKKpi     *fFiltCutsDstoKKpi;          //      DstoKKpi filtering (or loose) cuts
@@ -98,19 +100,20 @@ private:
     Int_t                   fSys;                        // fSys=0 -> p-p; fSys=1 ->PbPb
     Int_t                   fAODProtection;              // flag to activate protection against AOD-dAOD mismatch.
                                                          // -1: no protection,  0: check AOD/dAOD nEvents only,  1: check AOD/dAOD nEvents + TProcessID names
-    Int_t                  fWriteVariableTreeD0;         // flag to decide whether to write the candidate variables on a tree variables
+    Int_t                   fWriteVariableTreeD0;         // flag to decide whether to write the candidate variables on a tree variables
                                                          // 0 don't fill
     													 // 1 fill standard tree
-    Int_t                  fWriteVariableTreeDs;         // flag to decide whether to write the candidate variables on a tree variables
+    Int_t                   fWriteVariableTreeDs;         // flag to decide whether to write the candidate variables on a tree variables
  														 // 0 don't fill
    														 // 1 fill standard tree
-    Int_t                  fWriteVariableTreeDplus;      // flag to decide whether to write the candidate variables on a tree variables
+    Int_t                   fWriteVariableTreeDplus;      // flag to decide whether to write the candidate variables on a tree variables
     													 // 0 don't fill
                                                          // 1 fill standard tree
     TList                   *fListTree;                  //!<!
     TTree                   *fVariablesTreeD0;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDs;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDplus;        //!<! tree of the candidate variables
+    TTree                   *fTreeEvChar;                //!<!
     bool                    fWriteOnlySignal;
     AliHFTreeHandlerD0toKpi        *fTreeHandlerD0;             //!<! handler object for the tree with topological variables
     AliHFTreeHandlerDstoKKpi       *fTreeHandlerDs;             //!<! handler object for the tree with topological variables
@@ -118,8 +121,15 @@ private:
     int                     fPIDoptD0;
     int                     fPIDoptDs;
     int                     fPIDoptDplus;
-    bool                    fEnableFillCent;
     bool                    fEnableFillNormd0MeasMinusExp;
+    Float_t                 fCentrality;
+    Float_t                 fzVtx;
+    Int_t                   fNcontributors;
+    Int_t                   fNtracks;
+    Int_t                   fIsTrigSel;
+    Int_t                   fIsPileup;
+    Int_t                   fRunNumber; 
+
     
     
     

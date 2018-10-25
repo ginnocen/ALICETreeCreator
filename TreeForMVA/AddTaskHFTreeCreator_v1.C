@@ -7,10 +7,9 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
                                                      Int_t fillTreeD0=1,
                                                      Int_t fillTreeDs=1,
                                                      Int_t fillTreeDplus=1,
-                                                     Int_t pidOptD0=AliHFTreeHandler::kNsigmaPIDint,
-                                                     Int_t pidOptDs=AliHFTreeHandler::kNsigmaPIDint,
-                                                     Int_t pidOptDplus=AliHFTreeHandler::kNsigmaPIDint,
-                                                     Bool_t enableFillCent=kTRUE,
+                                                     Int_t pidOptD0=AliHFTreeHandler::kRawPID,
+                                                     Int_t pidOptDs=AliHFTreeHandler::kRawPID,
+                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawPID,
                                                      Bool_t enableFillNormd0MeasMinusExp=kFALSE)
 {
     //
@@ -71,7 +70,6 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     task->SetPIDoptD0Tree(pidOptD0);
     task->SetPIDoptDsTree(pidOptDs);
     task->SetPIDoptDplusTree(pidOptDplus);
-    task->SetEnableFillCent(enableFillCent);
     task->SetEnableFillNormd0MeasMinusExp(enableFillNormd0MeasMinusExp);
 
     //task->SetDebugLevel(4);
@@ -82,12 +80,14 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
 
     TString inname = "cinput";
     TString histoname = "coutputEntries";
+    TString countername = "coutputNormCounterHisto";
     TString cutsname = "coutputCuts";
     TString normname = "coutputNorm";
     TString treename = "coutputTree";
 
     inname += finDirname.Data();
     histoname += finDirname.Data();
+    countername += finDirname.Data();
     cutsname += finDirname.Data();
     normname += finDirname.Data();
     treename += finDirname.Data();
@@ -99,6 +99,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     outputfile += ":PWGHF_TreeCreator";
 
     AliAnalysisDataContainer *coutputEntries = mgr->CreateContainer(histoname,TH1F::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+    AliAnalysisDataContainer *coutputCounter = mgr->CreateContainer(countername,TH2F::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputCuts    = mgr->CreateContainer(cutsname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputNorm    = mgr->CreateContainer(normname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputTree    = mgr->CreateContainer(treename,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
@@ -106,9 +107,10 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
 
     mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
     mgr->ConnectOutput(task,1,coutputEntries);
-    mgr->ConnectOutput(task,2,coutputCuts);
-    mgr->ConnectOutput(task,3,coutputNorm);
-    mgr->ConnectOutput(task,4,coutputTree);
+    mgr->ConnectOutput(task,2,coutputCounter);
+    mgr->ConnectOutput(task,3,coutputCuts);
+    mgr->ConnectOutput(task,4,coutputNorm);
+    mgr->ConnectOutput(task,5,coutputTree);
 
     return task;
 
