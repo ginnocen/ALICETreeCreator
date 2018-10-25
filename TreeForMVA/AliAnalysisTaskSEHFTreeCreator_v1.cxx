@@ -105,7 +105,7 @@ fTreeHandlerDplus(0x0),
 fPIDoptD0(AliHFTreeHandler::kRawPID),
 fPIDoptDs(AliHFTreeHandler::kRawPID),
 fPIDoptDplus(AliHFTreeHandler::kRawPID),
-fCentrality(0.),
+fCentrality(-999.),
 fzVtx(0.),
 fNcontributors(0),
 fNtracks(0),
@@ -151,7 +151,7 @@ fTreeEvChar(0x0),
 fPIDoptD0(AliHFTreeHandler::kRawPID),
 fPIDoptDs(AliHFTreeHandler::kRawPID),
 fPIDoptDplus(AliHFTreeHandler::kRawPID),
-fCentrality(0.),
+fCentrality(-999.),
 fzVtx(0.),
 fNcontributors(0),
 fNtracks(0),
@@ -321,7 +321,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     
     
     nameoutput=GetOutputSlot(2)->GetContainer()->GetName();
-    fHistoNormCounter=new TH2F(nameoutput, "Number of events for norm;;centrality", 23,-0.5,22.5,102,-0.5,101.5);
+    fHistoNormCounter=new TH2F(nameoutput, "Number of events for norm;;centrality", 5,-0.5,4.5,102,-1.,101.);
     fHistoNormCounter->GetXaxis()->SetBinLabel(1,"n. evt. w primary V");
     fHistoNormCounter->GetXaxis()->SetBinLabel(2,"n. evt. w/o primary V");
     fHistoNormCounter->GetXaxis()->SetBinLabel(3,"n. evt. w primary V z>10cm");
@@ -492,6 +492,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     fCounter->StoreEvent(aod,fFiltCutsD0toKpi,fReadMC);
     Bool_t isEvSel=fFiltCutsD0toKpi->IsEventSelected(aod);
     fCentrality = fFiltCutsD0toKpi->GetCentrality(aod);
+    if(fCentrality<0) fCentrality=-1.;
     //normalisation counter
     if(!fFiltCutsD0toKpi->IsEventRejectedDuePhysicsSelection()){
       if(isEvSel){
