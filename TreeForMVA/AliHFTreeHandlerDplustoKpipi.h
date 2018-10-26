@@ -27,8 +27,6 @@ class AliHFTreeHandlerDplustoKpipi : public AliHFTreeHandler
   public:
     AliHFTreeHandlerDplustoKpipi();
     AliHFTreeHandlerDplustoKpipi(int PIDopt);
-    AliHFTreeHandlerDplustoKpipi(const AliHFTreeHandlerDplustoKpipi& source);
-    AliHFTreeHandlerDplustoKpipi& operator=(const AliHFTreeHandlerDplustoKpipi& source);
 
     virtual ~AliHFTreeHandlerDplustoKpipi();
 

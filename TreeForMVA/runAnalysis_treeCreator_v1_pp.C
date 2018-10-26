@@ -18,23 +18,23 @@
 
 Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
 TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
-Bool_t runGridTest=kTRUE;                                // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE
-TString runMode="full";                                  // sets the run grid mode: "full", "terminate"
+Bool_t runGridTest=kFALSE;                               // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE
+TString runMode="full";                             // sets the run grid mode: "full", "terminate"
 
-TString aliPhysVersion="vAN-20181024-1";
+TString aliPhysVersion="vAN-20181021-1";
 
-Bool_t isRunOnMC=kTRUE;                                 // set to kTRUE to run on Mone Carlo and uncomment/comment accordingly the following lines about paths on Alien
+Bool_t isRunOnMC=kFALSE;                                 // set to kTRUE to run on Mone Carlo and uncomment/comment accordingly the following lines about paths on Alien
 //paths on Alien
 // Monte Carlo
-TString gridDataDir="/alice/sim/2018/LHC18a4a2_fast/";
-TString gridDataPattern="AOD";
+//TString gridDataDir="/alice/sim/2018/LHC18a4a2_fast/";
+//TString gridDataPattern="AOD";
 // Data
-//TString gridDataDir="/alice/data/2017/LHC17p/";
-//TString gridDataPattern="/pass1_FAST/AOD";
+TString gridDataDir="/alice/data/2017/LHC17p/";
+TString gridDataPattern="/pass1_FAST/AOD";
 
 
 // Alien output directory
-TString gridWorkingDir="testNtupleCreator";
+TString gridWorkingDir="testNtupleCreator_LHC17p_FAST_run282343";
 TString gridOutputDir="output";
 
 //run numbers
@@ -81,8 +81,8 @@ void runAnalysis()
 
     AliAnalysisTaskPIDResponse *pidResp = reinterpret_cast<AliAnalysisTaskPIDResponse *>(gInterpreter->ProcessLine(Form(".x %s (%d)", gSystem->ExpandPathName("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C"),isRunOnMC)));
 
-    AliMultSelectionTask *multSel = reinterpret_cast<AliMultSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"))));
-    //multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
+//    AliMultSelectionTask *multSel = reinterpret_cast<AliMultSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"))));
+//    //multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
 
     gInterpreter->LoadMacro("AliHFTreeHandler.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerD0toKpi.cxx++g");

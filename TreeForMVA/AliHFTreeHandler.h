@@ -57,8 +57,6 @@ class AliHFTreeHandler : public TObject
 
     AliHFTreeHandler();
     AliHFTreeHandler(int PIDopt);
-    AliHFTreeHandler(const AliHFTreeHandler& source);
-    AliHFTreeHandler& operator=(const AliHFTreeHandler& source);
 
     virtual ~AliHFTreeHandler();
 
@@ -140,7 +138,7 @@ class AliHFTreeHandler : public TObject
     vector<float> fCosP; ///vector of candidate cosine of pointing angle
     vector<float> fCosPXY; ///vector of candidate cosine of pointing angle in the transcverse plane
     vector<float> fImpParXY; ///vector of candidate impact parameter in the transverse plane
-    vector<float> fPProng[knMaxProngs]; ///vectors of prong momentum 
+    vector<float> fPProng[knMaxProngs]; ///vectors of prong momentum
     vector<float> fTPCPProng[knMaxProngs]; ///vectors of prong TPC momentum
     vector<float> fPtProng[knMaxProngs]; ///vectors of prong pt
     vector<float> fEtaProng[knMaxProngs]; ///vectors of prong pseudorapidity
