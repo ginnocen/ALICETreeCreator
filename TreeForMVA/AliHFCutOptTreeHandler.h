@@ -16,6 +16,7 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L.V.R. van Doremalen, lennart.van.doremalen@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include <TTree.h>
@@ -29,7 +30,8 @@ class AliHFCutOptTreeHandler : public TObject
     enum decaychannel {
       kD0toKpi,
       kDplustoKpipi,
-      kDstoKKpi
+      kDstoKKpi,
+      kBplustoD0pi
     };
 
     enum candtype {
@@ -70,6 +72,7 @@ class AliHFCutOptTreeHandler : public TObject
     void SetUseSelectedStdFlag(bool useselflag=true) {fUseSelFlag=useselflag;}
     void SetFillOnlySignal(bool fillopt=true) {fFillOnlySignal=fillopt;}
     void SetIsMC(bool isMC=true) {fIsMC=isMC;}
+    Int_t MatchBPlusCandidateToMonteCarlo(Int_t pdgabs, AliAODRecoDecayHF2Prong * candidate, TClonesArray *mcArray) const;
     void SetCandidateType(bool issignal, bool isprompt, bool isreflected) {
       if(issignal) fIsSignal=1;
       else fIsSignal=0;
@@ -86,7 +89,7 @@ class AliHFCutOptTreeHandler : public TObject
     void SetPidVars(AliAODRecoDecayHF* d, AliAODPidHF* pidHF);
     void SetPdgCodes();
 
-    enum {knMaxProngs=3,knPidVars=12,knTopolVars=15,knTopolVarsCommon=10,knTopolVarsDzero=4,knTopolVarsDs=5,knTopolVarsDplus=2};
+    enum {knMaxProngs=3,knPidVars=12,knTopolVars=28,knTopolVarsCommon=10,knTopolVarsDzero=4,knTopolVarsDs=5,knTopolVarsDplus=2,knTopolVarsBplus=18};
 
     TTree* fTreeTopolVar; /// tree for cut optimisation
     int fDecayChannel; /// decay channel

@@ -13,6 +13,7 @@
 /// Andrea Festanti andrea.festanti@cern.ch
 /// Fabrizio Grosa  fabrizio.grosa@cern.ch
 /// Gian Michele Innocenti gian.michele.innocenti@cern.ch 
+/// L.V.R. van Doremalen, lennart.van.doremalen@cern.ch
 ///*************************************************************************
 
 #include <TROOT.h>
@@ -27,6 +28,7 @@
 #include "AliRDHFCutsD0toKpi.h"
 #include "AliRDHFCutsDstoKKpi.h"
 #include "AliRDHFCutsDplustoKpipi.h"
+#include "AliRDHFCutsBPlustoD0Pi.h"
 #include "AliNormalizationCounter.h"
 #include "AliHFCutOptTreeHandler.h"
 
@@ -57,9 +59,11 @@ public:
     void SetFillD0Tree(Int_t opt){fWriteVariableTreeD0=opt;}
     void SetFillDsTree(Int_t opt){fWriteVariableTreeDs=opt;}
     void SetFillDplusTree(Int_t opt){fWriteVariableTreeDplus=opt;}
+    void SetFillBplusTree(Int_t opt){fWriteVariableTreeBplus=opt;}
     void SetPIDoptD0Tree(Int_t opt){fPIDoptD0=opt;}
     void SetPIDoptDsTree(Int_t opt){fPIDoptDs=opt;}
     void SetPIDoptDplusTree(Int_t opt){fPIDoptDplus=opt;}
+    void SetPIDoptBplusTree(Int_t opt){fPIDoptBplus=opt;}
         
     
     Int_t  GetSystem() const {return fSys;}
@@ -67,7 +71,9 @@ public:
     
     void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t centrality);
     void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t centrality);
-    
+    Int_t MatchBPlusCandidateToMonteCarlo(Int_t pdgabs, AliAODRecoDecayHF2Prong * candidate, TClonesArray *mcArray) const;
+    AliAODVertex* RecalculateVertex(const AliVVertex *primary, TObjArray *tracks, Double_t bField, Double_t dispersion);
+
 private:
     
     AliAnalysisTaskSEHFTreeCreator(const AliAnalysisTaskSEHFTreeCreator&);
@@ -80,9 +86,11 @@ private:
     AliRDHFCutsD0toKpi      *fFiltCutsD0toKpi;           //      D0toKpi filtering (or loose) cuts
     AliRDHFCutsDstoKKpi     *fFiltCutsDstoKKpi;          //      DstoKKpi filtering (or loose) cuts
     AliRDHFCutsDplustoKpipi *fFiltCutsDplustoKpipi;      //      DplustoKpipi filtering (or loose) cuts 
+    AliRDHFCutsBPlustoD0Pi  *fFiltCutsBplustoD0pi;       //      BplustoD0pi filtering (or loose) cuts 
     AliRDHFCutsD0toKpi      *fCutsD0toKpi;               //      D0toKpi analysis cuts
     AliRDHFCutsDstoKKpi     *fCutsDstoKKpi;              //      DstoKKpi analysis cuts
     AliRDHFCutsDplustoKpipi *fCutsDplustoKpipi;          //      DplustoKpipi analysis cuts
+    AliRDHFCutsBPlustoD0Pi  *fCutsBplustoD0pi;           //      BplustoD0pi analysis cuts 
     Bool_t                  fReadMC;                     //     flag for MC array: kTRUE = read it, kFALSE = do not read it
     TList                   *fListCounter;               //!<!   list for normalization counter on output slot 3
     AliNormalizationCounter *fCounter;                   //!<!   AliNormalizationCounter
@@ -99,17 +107,23 @@ private:
     Int_t                    fWriteVariableTreeDplus;    // flag to decide whether to write the candidate variables on a tree variables
     													 // 0 don't fill
                                                          // 1 fill standard tree
+    Int_t                    fWriteVariableTreeBplus;    // flag to decide whether to write the candidate variables on a tree variables
+                                                         // 0 don't fill
+                                                         // 1 fill standard tree
     TList                   *fListTree;                  //!<!
     TTree                   *fVariablesTreeD0;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDs;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDplus;        //!<! tree of the candidate variables
+    TTree                   *fVariablesTreeBplus;        //!<! tree of the candidate variables
     Bool_t                  fWriteOnlySignal;
     AliHFCutOptTreeHandler  *fTreeHandlerD0;             //!<! helper object for the tree with topological variables
     AliHFCutOptTreeHandler  *fTreeHandlerDs;             //!<! helper object for the tree with topological variables
     AliHFCutOptTreeHandler  *fTreeHandlerDplus;          //!<! helper object for the tree with topological variables
+    AliHFCutOptTreeHandler  *fTreeHandlerBplus;          //!<! helper object for the tree with topological variables
     Int_t                   fPIDoptD0;
     Int_t                   fPIDoptDs;
     Int_t                   fPIDoptDplus;
+    Int_t                   fPIDoptBplus;
     
     
     

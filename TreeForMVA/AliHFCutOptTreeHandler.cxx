@@ -13,6 +13,7 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L.V.R. van Doremalen, lennart.van.doremalen@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include "AliHFCutOptTreeHandler.h"
@@ -107,20 +108,22 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
         int labDau0=-1;
         int pdgdau0=-1;
         bool isrefl=false;
-        if(fDecayChannel!=kD0toKpi) labD = d->MatchToMC(fPdgCode,arrayMC,3,fPdgCodeProngs);
-        else labD = d->MatchToMC(fPdgCode,arrayMC,2,fPdgCodeProngs);
+        if(fDecayChannel==kDplustoKpipi || fDecayChannel==kDstoKKpi) labD = d->MatchToMC(fPdgCode,arrayMC,3,fPdgCodeProngs);
+        else if (fDecayChannel==kD0toKpi) labD = d->MatchToMC(fPdgCode,arrayMC,2,fPdgCodeProngs);
+        else if (fDecayChannel==kBplustoD0pi) labD = MatchBPlusCandidateToMonteCarlo(521,d,arrayMC);
         if(labD<0) fIsSignal=0;
         else {
           fIsSignal=1;
 
           AliAODMCParticle *partD = (AliAODMCParticle*)arrayMC->At(labD);
-          if(partD) orig = AliVertexingHFUtils::CheckOrigin(arrayMC,partD,kTRUE); //4 --> prompt, 5 --> FD
+          if(partD || fDecayChannel!=kBplustoD0pi) orig = AliVertexingHFUtils::CheckOrigin(arrayMC,partD,kTRUE); //4 --> prompt, 5 --> FD
 
-          if(orig==4) fIsPrompt=1;
+          if(fDecayChannel==kBplustoD0pi) fIsPrompt=1; //the use of promt/feeddown is not needed for B decays
+          else if(orig==4) fIsPrompt=1;
           else if(orig==5) fIsPrompt=0;
           else fIsSignal=0;
 
-          if(fDecayChannel==kDplustoKpipi) fIsRefl=0; // no reflected signal for D+ -> Kpipi
+          if(fDecayChannel==kDplustoKpipi || fDecayChannel==kBplustoD0pi) fIsRefl=0; // no reflected signal for D+ -> Kpipi and Bplus -> D0pi
           else { 
             labDau0=((AliAODTrack*)d->GetDaughter(0))->GetLabel();
             AliAODMCParticle* dau0=(AliAODMCParticle*)arrayMC->UncheckedAt(TMath::Abs(labDau0));
@@ -202,6 +205,48 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
       }
       fTopolVarVector[14] = TMath::Abs(fTopolVarVector[14]*fTopolVarVector[14]*fTopolVarVector[14]);
     break;
+    case 3: //Bplus -> D0pi
+    UInt_t prongs[2];
+    prongs[0] = 211; prongs[1] = 421;
+    fTopolVarVector[0]=d->InvMass(2,prongs);
+    fTopolVarVector[10]=d->CosThetaStar(0,521,211,421);
+    fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+    fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+    fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
+
+    AliAODRecoDecayHF2Prong* candidateD0 = (AliAODRecoDecayHF2Prong*)d->GetDaughter(1);  
+      if(d->charge()==-1) {
+        fTopolVarVector[14]=candidateD0->InvMassD0();
+        fTopolVarVector[15]=d->Pt();
+        fTopolVarVector[16]=d->DecayLength();
+        fTopolVarVector[17]=d->DecayLengthXY();
+        fTopolVarVector[18]=d->NormalizedDecayLengthXY();
+        fTopolVarVector[19]=d->CosPointingAngle();
+        fTopolVarVector[20]=d->CosPointingAngleXY();
+        fTopolVarVector[21]=d->ImpParXY();
+        fTopolVarVector[22]=d->PtProng(0);
+        fTopolVarVector[23]=d->PtProng(1);
+        fTopolVarVector[24]=candidateD0->CosThetaStarD0();
+        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+        fTopolVarVector[27]=fTopolVarVector[25]*fTopolVarVector[26];      }
+      else {
+        fTopolVarVector[14]=candidateD0->InvMassD0bar();
+        fTopolVarVector[15]=d->Pt();
+        fTopolVarVector[16]=d->DecayLength();
+        fTopolVarVector[17]=d->DecayLengthXY();
+        fTopolVarVector[18]=d->NormalizedDecayLengthXY();
+        fTopolVarVector[19]=d->CosPointingAngle();
+        fTopolVarVector[20]=d->CosPointingAngleXY();
+        fTopolVarVector[21]=d->ImpParXY();
+        fTopolVarVector[22]=d->PtProng(0);
+        fTopolVarVector[23]=d->PtProng(1);
+        fTopolVarVector[24]=candidateD0->CosThetaStarD0bar();
+        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+        fTopolVarVector[27]=fTopolVarVector[25]*fTopolVarVector[26];  
+      }
+    break;
   }
 
   if(fPidOpt==kNoPID || !pidHF) return true; //if no PID, return before
@@ -221,6 +266,7 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
   TString topolvarNamesDzero[knTopolVarsDzero] = {"cos_t_star", "imp_par_prong0", "imp_par_prong1","imp_par_prod"};
   TString topolvarNamesDs[knTopolVarsDs] = {"pt_prong2","sig_vert","delta_mass_KK","cos_PiDs","cos_PiKPhi_3"};
   TString topolvarNamesDplus[knTopolVarsDplus] = {"pt_prong2","sig_vert"};
+  TString topolvarNamesBplus[knTopolVarsBplus] = {"cos_t_star", "imp_par_prong0", "imp_par_prong1","imp_par_prod","inv_mass_D0","pt_cand_D0","d_len_D0","d_len_xy_D0","norm_dl_xy_D0","cos_p_D0","cos_p_xy_D0","imp_par_xy_D0","pt_prong0_D0","pt_prong1_D0","cos_t_star_D0", "imp_par_prong0_D0", "imp_par_prong1_D0","imp_par_prod_D0"};
   TString PIDvarnamesNsigma[knPidVars] = {"nsigTPC_Pi_0","nsigTPC_K_0","nsigTOF_Pi_0","nsigTOF_K_0","nsigTPC_Pi_1","nsigTPC_K_1","nsigTOF_Pi_1","nsigTOF_K_1","nsigTPC_Pi_2","nsigTPC_K_2","nsigTOF_Pi_2","nsigTOF_K_2"};
   TString PIDvarnamesNsigmaComb[knPidVars] = {"nsigComb_Pi_0","nsigComb_K_0","nsigComb_Pi_1","nsigComb_K_1","nsigComb_Pi_2","nsigComb_K_2","","","","","",""};
 
@@ -241,6 +287,11 @@ TTree* AliHFCutOptTreeHandler::BuildTree(TString name, TString title)
     case 2: //Ds -> KKpi
       for(int iVar=0; iVar<knTopolVarsDs; iVar++){
         fTreeTopolVar->Branch(topolvarNamesDs[iVar].Data(),&fTopolVarVector[knTopolVarsCommon+iVar],Form("%s/F",topolvarNamesDs[iVar].Data()));
+      }
+    break;
+    case 3: //Bplus -> D0pi
+      for(int iVar=0; iVar<knTopolVarsBplus; iVar++){
+        fTreeTopolVar->Branch(topolvarNamesBplus[iVar].Data(),&fTopolVarVector[knTopolVarsCommon+iVar],Form("%s/F",topolvarNamesBplus[iVar].Data()));
       }
     break;
   }
@@ -313,7 +364,7 @@ void AliHFCutOptTreeHandler::SetPidVars(AliAODRecoDecayHF* d, AliAODPidHF* pidHF
   AliAODTrack *track[knMaxProngs] = {0x0,0x0,0x0};
 
   for(int iProng=0; iProng<knMaxProngs; iProng++) {
-    track[iProng]=(AliAODTrack*)d->GetDaughter(0);
+    track[iProng]=(AliAODTrack*)d->GetDaughter(0); // Remark Lennart: Is GetDaughter(0) correct? shouldn't this be iProng? // code for Bplus should take the daughters from the D0 and the pion of the Bplus for PID
 
     pidHF->GetnSigmaTPC(track[iProng],3,sigTPC_K[iProng]);
     pidHF->GetnSigmaTPC(track[iProng],2,sigTPC_Pi[iProng]);
@@ -322,6 +373,7 @@ void AliHFCutOptTreeHandler::SetPidVars(AliAODRecoDecayHF* d, AliAODPidHF* pidHF
     pidHF->GetnSigmaTOF(track[iProng],2,sigTPC_Pi[iProng]);
 
     if(fDecayChannel==kD0toKpi && iProng>1) continue; //D0 -> Kpi only 2 prongs
+    // if(fDecayChannel==kBplustoD0pi && iProng != 1) continue; //Bplus -> D0pi only 2 prongs of which only the pion is a final track
 
     if(fPidOpt>kNoPID && fPidOpt<=kNsigmaPIDfloatandchar) {
       fPIDnSigmaVector[4*iProng]=sigTPC_Pi[iProng]*10;
@@ -411,6 +463,12 @@ void AliHFCutOptTreeHandler::SetPdgCodes() {
       fPdgCodeProngs[1]=321;
       fPdgCodeProngs[2]=211;
     break;
+    case 3:
+      fPdgCode=521;
+      fPdgCodeProngs[0]=211;
+      fPdgCodeProngs[1]=421;
+      fPdgCodeProngs[2]=-1;
+    break;
     default:
       fPdgCode=-1;
       fPdgCodeProngs[0]=-1;
@@ -418,4 +476,143 @@ void AliHFCutOptTreeHandler::SetPdgCodes() {
       fPdgCodeProngs[2]=-1;
     break;
   }
+}
+//-------------------------------------------------------------------------------------
+Int_t AliHFCutOptTreeHandler::MatchBPlusCandidateToMonteCarlo(Int_t pdgabs, AliAODRecoDecayHF2Prong * candidate, TClonesArray *mcArray) const
+{
+  //
+  // Check if this candidate is matched to a MC signal
+  // If no, return -1
+  // If yes, return label (>=0) of the AliAODMCParticle
+
+
+  // Check number of daughters
+  Int_t ndg = candidate->GetNDaughters();
+  if (!ndg) { AliError("No daughters available"); return -1;}
+  if (ndg != 2) return -1;
+
+  // loop on daughters and write the labels
+  Int_t dgLabels[2] = { -1};
+  Int_t pdgDg[2] = {0};
+  if (pdgabs == 421)
+  {
+    AliAODTrack *trk0 = (AliAODTrack*)candidate->GetDaughter(0);
+    dgLabels[0] = trk0->GetLabel();
+    AliAODTrack *trk1 = (AliAODTrack*)candidate->GetDaughter(1);
+    dgLabels[1] = trk1->GetLabel();
+    pdgDg[0] = 211; pdgDg[1] = 321;
+  }
+  else if (pdgabs == 521)
+  {
+    AliAODTrack *trk0 = (AliAODTrack*)candidate->GetDaughter(0);
+    dgLabels[0] = trk0->GetLabel();
+    dgLabels[1] = MatchBPlusCandidateToMonteCarlo(421, (AliAODRecoDecayHF2Prong*)candidate->GetDaughter(1), mcArray);
+    pdgDg[0] = 211; pdgDg[1] = 421;
+  }
+  else
+  {
+    std::cout << "Wrong pdg supplied for function to match candidate to monte carlo signal." << std::endl;
+    return -1;
+  }
+  if (dgLabels[0] == -1) return -1;
+  if (dgLabels[1] == -1) return -1;
+
+
+  Int_t labMom[2] = {0, 0};
+  Int_t i, j, lab, labMother, pdgMother, pdgPart;
+  AliAODMCParticle *part = 0;
+  AliAODMCParticle *mother = 0;
+  Double_t pxSumDgs = 0., pySumDgs = 0., pzSumDgs = 0.;
+  Bool_t pdgUsed[2] = {kFALSE, kFALSE};
+
+  // loop on daughter labels
+  for (i = 0; i < ndg; i++)
+  {
+    labMom[i] = -1;
+    lab = TMath::Abs(dgLabels[i]);
+    if (lab < 0)
+    {
+      printf("daughter with negative label %d\n", lab);
+      return -1;
+    }
+    part = (AliAODMCParticle*)mcArray->At(lab);
+    if (!part)
+    {
+      printf("no MC particle\n");
+      return -1;
+    }
+
+    // check the PDG of the daughter
+    pdgPart = TMath::Abs(part->GetPdgCode());
+    for (j = 0; j < ndg; j++)
+    {
+      if (!pdgUsed[j] && pdgPart == pdgDg[j])
+      {
+        pdgUsed[j] = kTRUE;
+        break;
+      }
+    }
+
+
+    mother = part;
+    while (mother->GetMother() >= 0)
+    {
+      labMother = mother->GetMother();
+      mother = (AliAODMCParticle*)mcArray->At(labMother);
+      if (!mother)
+      {
+        printf("no MC mother particle\n");
+        break;
+      }
+      pdgMother = TMath::Abs(mother->GetPdgCode());
+      if (pdgMother == pdgabs)
+      {
+        labMom[i] = labMother;
+        // keep sum of daughters' momenta, to check for mom conservation
+        pxSumDgs += part->Px();
+        pySumDgs += part->Py();
+        pzSumDgs += part->Pz();
+        break;
+      }
+      else break;
+    }
+    if (labMom[i] == -1) return -1; // mother PDG not ok for this daughter
+  } // end loop on daughters
+
+  // check if the candidate is signal
+  labMother = labMom[0];
+  // all labels have to be the same and !=-1
+  for (i = 0; i < ndg; i++)
+  {
+    if (labMom[i] == -1)        return -1;
+    if (labMom[i] != labMother) return -1;
+  }
+
+  // check that all daughter PDGs are matched
+  for (i = 0; i < ndg; i++)
+  {
+    if (pdgUsed[i] == kFALSE) return -1;
+  }
+
+  // Check for mom conservation
+  mother = (AliAODMCParticle*)mcArray->At(labMother);
+  Double_t pxMother = mother->Px();
+  Double_t pyMother = mother->Py();
+  Double_t pzMother = mother->Pz();
+
+
+  // check the number of daughters (we are not looking at resonant decay)
+  if(mother->GetNDaughters() != 2) return -1;
+
+  // if momentum conservation is not within 0.5%, show warning. This can be due to large propagation distance through magnetic field.
+  if ((TMath::Abs(pxMother - pxSumDgs) / (TMath::Abs(pxMother) + 1.e-13)) > 0.005 ||
+      (TMath::Abs(pyMother - pySumDgs) / (TMath::Abs(pyMother) + 1.e-13)) > 0.005 ||
+      (TMath::Abs(pzMother - pzSumDgs) / (TMath::Abs(pzMother) + 1.e-13)) > 0.005)
+  {
+    std::cout << std::endl << " Momentum difference for decay pdgabs = " << pdgabs << "daughters = " << mother->GetNDaughters() << std::endl;
+    std::cout << "pxMother = " << pxMother << "pyMother = " << pyMother << "pzMother = " << pzMother << std::endl;
+    std::cout << "pxSumDgs = " << pxSumDgs << "pySumDgs = " << pySumDgs << "pzSumDgs = " << pzSumDgs << std::endl;
+  }
+
+  return labMother;
 }
