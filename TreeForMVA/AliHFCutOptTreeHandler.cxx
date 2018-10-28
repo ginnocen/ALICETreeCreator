@@ -110,7 +110,7 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
         bool isrefl=false;
         if(fDecayChannel==kDplustoKpipi || fDecayChannel==kDstoKKpi) labD = d->MatchToMC(fPdgCode,arrayMC,3,fPdgCodeProngs);
         else if (fDecayChannel==kD0toKpi) labD = d->MatchToMC(fPdgCode,arrayMC,2,fPdgCodeProngs);
-        else if (fDecayChannel==kBplustoD0pi) labD = MatchBPlusCandidateToMonteCarlo(521,d,arrayMC);
+        else if (fDecayChannel==kBplustoD0pi) labD = MatchBPlusCandidateToMonteCarlo(521,(AliAODRecoDecayHF2Prong*)d,arrayMC);
         if(labD<0) fIsSignal=0;
         else {
           fIsSignal=1;
@@ -170,9 +170,10 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
 
   switch(fDecayChannel) {
     case 0: //D0 -> Kpi
-    fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
-    fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
-    fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
+    {
+      fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+      fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+      fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
       if(masshypo==0) {
         fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0();
         fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0();
@@ -181,13 +182,15 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
         fTopolVarVector[0]=((AliAODRecoDecayHF2Prong*)d)->InvMassD0bar();
         fTopolVarVector[10]=((AliAODRecoDecayHF2Prong*)d)->CosThetaStarD0bar();
       }
-    break;
+    } break;
     case 1: //D+ -> Kpipi
+    {
       fTopolVarVector[0]=((AliAODRecoDecayHF3Prong*)d)->InvMassDplus();
       fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
       fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();  
-    break;
+    } break;
     case 2: //Ds+ -> KKpi
+    {
       fTopolVarVector[10]=((AliAODRecoDecayHF3Prong*)d)->PtProng(2);
       fTopolVarVector[11]=((AliAODRecoDecayHF3Prong*)d)->GetSigmaVert();
       float massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
@@ -204,18 +207,19 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
         fTopolVarVector[14]=((AliAODRecoDecayHF3Prong*)d)->CosPiKPhiRFramepiKK();
       }
       fTopolVarVector[14] = TMath::Abs(fTopolVarVector[14]*fTopolVarVector[14]*fTopolVarVector[14]);
-    break;
+    } break;
     case 3: //Bplus -> D0pi
-    UInt_t prongs[2];
-    prongs[0] = 211; prongs[1] = 421;
-    fTopolVarVector[0]=d->InvMass(2,prongs);
-    fTopolVarVector[10]=d->CosThetaStar(0,521,211,421);
-    fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
-    fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
-    fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
+    {
+      UInt_t prongs[2];
+      prongs[0] = 211; prongs[1] = 421;
+      fTopolVarVector[0]=d->InvMass(2,prongs);
+      fTopolVarVector[10]=d->CosThetaStar(0,521,211,421);
+      fTopolVarVector[11]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
+      fTopolVarVector[12]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+      fTopolVarVector[13]=fTopolVarVector[11]*fTopolVarVector[12];
 
-    AliAODRecoDecayHF2Prong* candidateD0 = (AliAODRecoDecayHF2Prong*)d->GetDaughter(1);  
-      if(d->charge()==-1) {
+      AliAODRecoDecayHF2Prong* candidateD0 = (AliAODRecoDecayHF2Prong*)d->GetDaughter(1);  
+      if(d->Charge()==-1) {
         fTopolVarVector[14]=candidateD0->InvMassD0();
         fTopolVarVector[15]=d->Pt();
         fTopolVarVector[16]=d->DecayLength();
@@ -246,7 +250,7 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
         fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
         fTopolVarVector[27]=fTopolVarVector[25]*fTopolVarVector[26];  
       }
-    break;
+    } break;
   }
 
   if(fPidOpt==kNoPID || !pidHF) return true; //if no PID, return before

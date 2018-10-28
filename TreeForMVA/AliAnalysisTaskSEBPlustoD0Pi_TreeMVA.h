@@ -38,7 +38,7 @@
 #include "AliAnalysisTaskSE.h"
 #include "AliHFCutOptTreeHandler.h"
 
-class AliRDHFCutsBPlustoD0Pi_TreeMVA;
+class AliRDHFCutsBPlustoD0Pi;
 
 class AliAnalysisTaskSEBPlustoD0Pi_TreeMVA : public AliAnalysisTaskSE 
 {
@@ -46,7 +46,7 @@ class AliAnalysisTaskSEBPlustoD0Pi_TreeMVA : public AliAnalysisTaskSE
  public:
   
   AliAnalysisTaskSEBPlustoD0Pi_TreeMVA();
-  AliAnalysisTaskSEBPlustoD0Pi_TreeMVA(const Char_t* name,AliRDHFCutsBPlustoD0Pi_TreeMVA* cuts);
+  AliAnalysisTaskSEBPlustoD0Pi_TreeMVA(const Char_t* name,AliRDHFCutsBPlustoD0Pi* cuts);
   virtual ~AliAnalysisTaskSEBPlustoD0Pi_TreeMVA();
 
   /// Implementation of interface methods
@@ -71,6 +71,7 @@ class AliAnalysisTaskSEBPlustoD0Pi_TreeMVA : public AliAnalysisTaskSE
   Bool_t   IsCandidateInjected(AliAODRecoDecayHF2Prong *part, AliAODMCHeader *header,TClonesArray *arrayMC);
   void     CutOptimizationLoop(Int_t variable, Int_t nVariables, Int_t nCuts, Int_t ptBin, Int_t fillNumber, Bool_t isDesiredCandidate);
   void     CutOptimizationVariableValues(AliAODRecoDecayHF2Prong * candidateBPlus, AliAODEvent*  aod);
+  void     FillTreeVariableValues(AliAODRecoDecayHF2Prong * candidateBPlus, AliAODEvent*  aod);
 
   AliAODVertex* RecalculateVertex(const AliVVertex *primary,TObjArray *tracks,Double_t bField, Double_t dispersion);
   void     FillFinalTrackHistograms(AliAODRecoDecayHF2Prong * selectedBPlus, AliAODVertex *primaryVertex, Double_t bz, Bool_t isDesiredCandidate,TClonesArray * mcTrackArray);
@@ -126,7 +127,7 @@ class AliAnalysisTaskSEBPlustoD0Pi_TreeMVA : public AliAnalysisTaskSE
 
   void     SetSystem(Int_t sys){fSys=sys;}
   Int_t    GetSystem() const {return fSys;}
-  
+
  private:
   
   AliAnalysisTaskSEBPlustoD0Pi_TreeMVA(const AliAnalysisTaskSEBPlustoD0Pi_TreeMVA &source);
@@ -156,7 +157,7 @@ class AliAnalysisTaskSEBPlustoD0Pi_TreeMVA : public AliAnalysisTaskSE
   TList *fOutputBPlus;                           //!<!  User output
   TList *fOutputD0_D0Pt;                         //!<!  User output
 
-  AliRDHFCutsBPlustoD0Pi_TreeMVA *fCuts;                 // Cuts - sent to output
+  AliRDHFCutsBPlustoD0Pi *fCuts;                 // Cuts - sent to output
   
   TH1F *fCEvents;                                //!<!
 

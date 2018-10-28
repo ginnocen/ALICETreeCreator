@@ -20,7 +20,7 @@
 //   Base class for (BPlus -> D0 pi-> K pi pi) Analysis
 //
 //
-//             Cuts are centralized in AliRDHFCutsBPlustoD0Pi_TreeMVA
+//             Cuts are centralized in AliRDHFCutsBPlustoD0Pi
 //             Like sign + track rotation backgrounds are imlemented in the macro
 //
 //-----------------------------------------------------------------------
@@ -38,7 +38,7 @@
 #include <TDatabasePDG.h>
 #include <AliAnalysisDataSlot.h>
 #include <AliAnalysisDataContainer.h>
-#include "AliRDHFCutsBPlustoD0Pi_TreeMVA.h"
+#include "AliRDHFCutsBPlustoD0Pi.h"
 #include "AliStack.h"
 #include "AliMCEvent.h"
 #include "AliAnalysisManager.h"
@@ -129,7 +129,7 @@ AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::AliAnalysisTaskSEBPlustoD0Pi_TreeMVA():
 
 }
 //___________________________________________________________________________
-AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::AliAnalysisTaskSEBPlustoD0Pi_TreeMVA(const Char_t* name, AliRDHFCutsBPlustoD0Pi_TreeMVA* cuts) :
+AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::AliAnalysisTaskSEBPlustoD0Pi_TreeMVA(const Char_t* name, AliRDHFCutsBPlustoD0Pi* cuts) :
   AliAnalysisTaskSE(name),
   fEvents(0),
   fUseMCInfo(kFALSE),
@@ -489,11 +489,11 @@ void AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::Terminate(Option_t*) {
     printf("ERROR: fOutputBPlusMC not available\n");
     return;
   }
-  fOutputBPlusTree = dynamic_cast<TTree*> (GetOutputData(10));
-  if (!fOutputBPlusTree) {
-    printf("ERROR: fOutputBPlusTree not available\n");
-    return;
-  }
+  // fOutputBPlusTree = dynamic_cast<TTree*> (GetOutputData(10));
+  // if (!fOutputBPlusTree) {
+  //   printf("ERROR: fOutputBPlusTree not available\n");
+  //   return;
+  // }
   return;
 }
 
@@ -567,7 +567,7 @@ void AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::UserCreateOutputObjects() {
   fListCuts = new TList();
   fListCuts->SetOwner();
   fListCuts->SetName("Cuts");
-  AliRDHFCutsBPlustoD0Pi_TreeMVA* copyfCuts = new AliRDHFCutsBPlustoD0Pi_TreeMVA(*fCuts);
+  AliRDHFCutsBPlustoD0Pi* copyfCuts = new AliRDHFCutsBPlustoD0Pi(*fCuts);
   // Post the data
   fListCuts->Add(copyfCuts);
 
@@ -578,7 +578,7 @@ void AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::UserCreateOutputObjects() {
   // Output slot 10 : tree of the candidate variables after track selection
   //
   if (fWriteVariableTree == 1) {
-    nameoutput = GetOutputSlot(10)->GetContainer()->GetName();
+    const char*  nameoutput = GetOutputSlot(10)->GetContainer()->GetName();
     fVariablesTree = new TTree(nameoutput, "Candidates variables tree");
     Int_t nVar = 69;
     fCandidateVariables = new Double_t [nVar];
@@ -3243,10 +3243,10 @@ void AliAnalysisTaskSEBPlustoD0Pi_TreeMVA::BPlusSelection(AliAODEvent* aodEvent,
 
           //fill the tree
           if (fWriteVariableTree == 1) {
-            FillTreeVariableValues();
+            FillTreeVariableValues(&trackBPlus, aodEvent);
             fVariablesTree->Fill();
           }
-          AliAODPidHF* pidHF = cuts->GetPidHF();
+          AliAODPidHF* pidHF = fCuts->GetPidHF();
           if (fWriteVariableTree == 2) {
             if (fSys > 0) {
               Float_t evCentr = fCuts->GetCentrality((AliAODEvent*)aodEvent);

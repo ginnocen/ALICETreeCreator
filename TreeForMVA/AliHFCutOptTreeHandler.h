@@ -22,6 +22,7 @@
 #include <TTree.h>
 #include <TClonesArray.h>
 #include "AliAODRecoDecayHF.h"
+#include "AliAODRecoDecayHF2Prong.h"
 #include "AliAODPidHF.h"
 
 class AliHFCutOptTreeHandler : public TObject
