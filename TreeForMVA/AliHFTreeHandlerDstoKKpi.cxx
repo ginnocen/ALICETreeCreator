@@ -67,6 +67,8 @@ AliHFTreeHandlerDstoKKpi::~AliHFTreeHandlerDstoKKpi()
 //________________________________________________________________
 TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title) 
 {
+  fIsMCGenTree=false;
+
   if(fTreeVar) {
     delete fTreeVar;
     fTreeVar=0x0;
@@ -158,12 +160,14 @@ void AliHFTreeHandlerDstoKKpi::FillTree() {
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
   ResetDmesonCommonVarVectors();
-  fSigmaVertex.clear();
-  fMassKK.clear();
-  fCosPiDs.clear();
-  fCosPiKPhi.clear();
-  ResetSingleTrackVarVectors();
-  if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  if(!fIsMCGenTree) {
+    fSigmaVertex.clear();
+    fMassKK.clear();
+    fCosPiDs.clear();
+    fCosPiKPhi.clear();
+    ResetSingleTrackVarVectors();
+    if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  }
   fCandTypeMap=0;
   fNCandidates=0;
 }

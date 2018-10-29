@@ -23,6 +23,7 @@
 #include "AliAODTrack.h"
 #include "AliAODPidHF.h"
 #include "AliAODRecoDecayHF.h"
+#include "AliAODMCParticle.h"
 
 using std::vector;
 
@@ -62,7 +63,11 @@ class AliHFTreeHandler : public TObject
 
     //core methods --> implemented in each derived class
     virtual TTree* BuildTree(TString name, TString title) = 0;
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfiled, int masshypo, AliAODPidHF* pidHF) = 0;
+    virtual bool SetMCGenVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) = 0;
+    //for MC gen --> common implementation
+    TTree* BuildTreeMCGen(TString name, TString title);
+    bool SetMCGenVariables(AliAODMCParticle* mcpart);
+
     virtual void FillTree() = 0; //to be called for each event, not each candidate!
     
     //common methods
@@ -154,6 +159,7 @@ class AliHFTreeHandler : public TObject
     vector<int> fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables (integers)
     int fPidOpt; /// option for PID variables
     bool fFillOnlySignal; ///flag to enable only signal filling
+    bool fIsMCGenTree; ///flag to know if is a tree for MC generated particles
 
   /// \cond CLASSIMP
   ClassDef(AliHFTreeHandler,1); /// 

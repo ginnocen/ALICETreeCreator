@@ -103,7 +103,8 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fPIDVarVector(),
   fPIDVarIntVector(),
   fPidOpt(PIDopt),
-  fFillOnlySignal(false)
+  fFillOnlySignal(false),
+  fIsMCGenTree(false)
 {
   //
   // Standard constructor
@@ -121,17 +122,55 @@ AliHFTreeHandler::~AliHFTreeHandler()
 }
 
 //________________________________________________________________
+TTree* AliHFTreeHandler::BuildTreeMCGen(TString name, TString title) {
+
+  fIsMCGenTree = true;
+
+  if(fTreeVar) {
+    delete fTreeVar;
+    fTreeVar=0x0;
+  }
+  fTreeVar = new TTree(name.Data(),title.Data());
+
+  fTreeVar->Branch("n_cand",&fNCandidates);
+  fTreeVar->Branch("cand_type",&fCandType);
+  fTreeVar->Branch("pt_cand",&fPt);
+  fTreeVar->Branch("y_cand",&fY);
+  fTreeVar->Branch("eta_cand",&fEta);
+  fTreeVar->Branch("phi_cand",&fPhi);
+
+  return fTreeVar;
+}
+
+//________________________________________________________________
+bool AliHFTreeHandler::SetMCGenVariables(AliAODMCParticle* mcpart) {
+
+  if(!mcpart) return false;
+  if(!(fCandTypeMap&kSignal)) return true; // fill only signal in the generated
+
+  fNCandidates++;
+
+  fCandType.push_back(fCandTypeMap);
+  fPt.push_back(mcpart->Pt());
+  fY.push_back(mcpart->Y());
+  fEta.push_back(mcpart->Eta());
+  fPhi.push_back(mcpart->Phi());
+
+  return true;
+}
+
+//________________________________________________________________
 void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected) 
 {  
   if(issignal) fCandTypeMap |= kSignal;
   else fCandTypeMap &= ~kSignal;
-  if(isbkg) fCandTypeMap |= kBkg;
+  if(isbkg && !fIsMCGenTree) fCandTypeMap |= kBkg;
   else fCandTypeMap &= ~kBkg;
   if(isprompt) fCandTypeMap |= kPrompt;
   else fCandTypeMap &= ~kPrompt;
   if(isFD) fCandTypeMap |= kFD;
   else fCandTypeMap &= ~kFD;
-  if(isreflected) fCandTypeMap |= kRefl;
+  if(isreflected && !fIsMCGenTree) fCandTypeMap |= kRefl;
   else fCandTypeMap &= ~kRefl;
 }
 
@@ -369,13 +408,15 @@ void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
   fY.clear();
   fEta.clear();
   fPhi.clear();
-  fDecayLength.clear();
-  fDecayLengthXY.clear();
-  fNormDecayLengthXY.clear();
-  fCosP.clear();
-  fCosPXY.clear();
-  fImpParXY.clear();
-  fNormd0MeasMinusExp.clear();
+  if(!fIsMCGenTree) {
+    fDecayLength.clear();
+    fDecayLengthXY.clear();
+    fNormDecayLengthXY.clear();
+    fCosP.clear();
+    fCosPXY.clear();
+    fImpParXY.clear();
+    fNormd0MeasMinusExp.clear();
+  }
 }
 
 //________________________________________________________________
