@@ -48,6 +48,7 @@ AliHFTreeHandler::AliHFTreeHandler():
   fNormd0MeasMinusExp(),
   fPProng(),
   fTPCPProng(),
+  fTOFPProng(),
   fPtProng(),
   fEtaProng(),
   fImpParProng(),
@@ -58,6 +59,8 @@ AliHFTreeHandler::AliHFTreeHandler():
   fChi2perNDFProng(),
   fNITSclsProng(),
   fITSclsMapProng(),
+  fTrackIntegratedLengthProng(),
+  fStartTimeResProng(),
   fPIDVarVector(),
   fPIDVarIntVector(),
   fPidOpt(kNsigmaPID),
@@ -90,6 +93,7 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fNormd0MeasMinusExp(),
   fPProng(),
   fTPCPProng(),
+  fTOFPProng(),
   fPtProng(),
   fEtaProng(),
   fImpParProng(),
@@ -100,6 +104,8 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fChi2perNDFProng(),
   fNITSclsProng(),
   fITSclsMapProng(),
+  fTrackIntegratedLengthProng(),
+  fStartTimeResProng(),
   fPIDVarVector(),
   fPIDVarIntVector(),
   fPidOpt(PIDopt),
@@ -198,7 +204,6 @@ void AliHFTreeHandler::AddSingleTrackBranches() {
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fTreeVar->Branch(Form("p_prong%d",iProng),&fPProng[iProng]);
-    if(fPidOpt==kRawPID) fTreeVar->Branch(Form("pTPC_prong%d",iProng),&fTPCPProng[iProng]);
     fTreeVar->Branch(Form("pt_prong%d",iProng),&fPtProng[iProng]);
     fTreeVar->Branch(Form("eta_prong%d",iProng),&fEtaProng[iProng]);
     fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
@@ -259,6 +264,12 @@ void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool u
         if(!useDet[iDet]) continue;
         fTreeVar->Branch(Form("%s_%d",rawPidName[iDet].Data(),iProng),&fPIDVarVector[iProng][iDet][0]);
       }
+      if(useTPC) fTreeVar->Branch(Form("pTPC_prong%d",iProng),&fTPCPProng[iProng]);
+      if(useTOF) {
+        fTreeVar->Branch(Form("pTOF_prong%d",iProng),&fTOFPProng[iProng]);
+        fTreeVar->Branch(Form("trlen_prong%d",iProng),&fTrackIntegratedLengthProng[iProng]);
+        fTreeVar->Branch(Form("start_time_res_prong%d",iProng),&fStartTimeResProng[iProng]);
+      }
     }
   }
 }
@@ -275,11 +286,10 @@ bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODReco
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fPProng[iProng].push_back(cand->PProng(iProng));
-    if(fPidOpt==kRawPID) fTPCPProng[iProng].push_back(prongtracks[iProng]->GetTPCmomentum());
     fPtProng[iProng].push_back(cand->PtProng(iProng));
     fEtaProng[iProng].push_back(cand->EtaProng(iProng));
-    fImpParProng[iProng].push_back(cand->PhiProng(iProng));
-    fPhiProng[iProng].push_back(cand->PProng(iProng));
+    fImpParProng[iProng].push_back(cand->Getd0Prong(iProng));
+    fPhiProng[iProng].push_back(cand->PhiProng(iProng));
     fNTPCclsProng[iProng].push_back(prongtracks[iProng]->GetTPCNcls());
     fNTPCclsPidProng[iProng].push_back(prongtracks[iProng]->GetTPCsignalN());
     fNTPCCrossedRowProng[iProng].push_back(prongtracks[iProng]->GetTPCNCrossedRows());
@@ -307,8 +317,10 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
   double sigComb[knMaxProngs][knMaxHypo4Pid];
   double rawPID[knMaxProngs][knMaxDet4Pid];
   bool useHypo[knMaxHypo4Pid] = {usePionHypo,useKaonHypo,useProtonHypo};
+  bool useDet[knMaxDet4Pid] = {useTPC,useTOF};
   AliPID::EParticleType parthypo[knMaxHypo4Pid] = {AliPID::kPion,AliPID::kKaon,AliPID::kProton};
-
+  AliPIDResponse* pidrespo=0x0;
+  
   //compute PID variables for different options
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     if(fPidOpt>=kNsigmaPID && fPidOpt<=kNsigmaCombPIDfloatandint) {
@@ -323,11 +335,13 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
       }
     }
     else if(fPidOpt==kRawPID) {
-      AliPIDResponse* pidrespo = (AliPIDResponse*)pidHF->GetPidResponse();
-      rawPID[iProng][kTPC] = prongtracks[iProng]->GetTPCsignal();
-      rawPID[iProng][kTOF] = prongtracks[iProng]->GetTOFsignal();
-      float time0 = pidrespo->GetTOFResponse().GetStartTime(prongtracks[iProng]->P());
-      rawPID[iProng][kTOF] -= time0;
+      pidrespo = (AliPIDResponse*)pidHF->GetPidResponse();
+      if(useTPC) rawPID[iProng][kTPC] = prongtracks[iProng]->GetTPCsignal();
+      if(useTOF) { 
+        rawPID[iProng][kTOF] = prongtracks[iProng]->GetTOFsignal();
+        float time0 = pidrespo->GetTOFResponse().GetStartTime(prongtracks[iProng]->P());
+        rawPID[iProng][kTOF] -= time0;
+      }
     }
   }
 
@@ -336,7 +350,9 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 1: //kNsigmaPID
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
+          if(!useDet[iDet]) continue;
           for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            if(!useHypo[iPartHypo]) continue;
             fPIDVarVector[iProng][iDet][iPartHypo].push_back(sig[iProng][iDet][iPartHypo]);
           }
         }
@@ -345,7 +361,9 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 2: //kNsigmaPIDint
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
+          if(!useDet[iDet]) continue;
           for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            if(!useHypo[iPartHypo]) continue;
             fPIDVarIntVector[iProng][iDet][iPartHypo].push_back(RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100));
           }
         }
@@ -354,7 +372,9 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 3: //kNsigmaPIDfloatandint
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
+          if(!useDet[iDet]) continue;
           for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+            if(!useHypo[iPartHypo]) continue;
             fPIDVarVector[iProng][iDet][iPartHypo].push_back(sig[iProng][iDet][iPartHypo]*100);  
             fPIDVarIntVector[iProng][iDet][iPartHypo].push_back(RoundFloatToInt(sig[iProng][iDet][iPartHypo]*100));
           }
@@ -364,6 +384,7 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 4: //kNsigmaCombPID
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          if(!useHypo[iPartHypo]) continue;
           fPIDVarVector[iProng][0][iPartHypo].push_back(sigComb[iProng][iPartHypo]);        
         }
       }
@@ -371,6 +392,7 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 5: //kNsigmaCombPIDint
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          if(!useHypo[iPartHypo]) continue;
           fPIDVarIntVector[iProng][0][iPartHypo].push_back(RoundFloatToInt(sigComb[iProng][iPartHypo]*100));
         }
       }
@@ -378,6 +400,7 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 6: //kNsigmaCombPIDfloatandint
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(unsigned int iPartHypo=0; iPartHypo<knMaxHypo4Pid; iPartHypo++) {
+          if(!useHypo[iPartHypo]) continue;
           fPIDVarVector[iProng][0][iPartHypo].push_back(sigComb[iProng][iPartHypo]*100);     
           fPIDVarIntVector[iProng][0][iPartHypo].push_back(RoundFloatToInt(sigComb[iProng][iPartHypo]*100));
         }
@@ -386,7 +409,14 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
     case 7: //kRawPID
       for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
         for(int iDet=kTPC; iDet<=kTOF; iDet++) {
+          if(!useDet[iDet]) continue;
           fPIDVarVector[iProng][iDet][0].push_back(rawPID[iProng][iDet]);     
+        }
+        if(useTPC) fTPCPProng[iProng].push_back(prongtracks[iProng]->GetTPCmomentum());
+        if(useTOF) {
+          fTOFPProng[iProng].push_back(GetTOFmomentum(prongtracks[iProng],pidrespo));
+          fTrackIntegratedLengthProng[iProng].push_back(prongtracks[iProng]->GetIntegratedLength());
+          fStartTimeResProng[iProng].push_back(pidrespo->GetTOFResponse().GetStartTimeRes(prongtracks[iProng]->P()));
         }
       }
     break;
@@ -423,7 +453,6 @@ void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
 void AliHFTreeHandler::ResetSingleTrackVarVectors() {
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fPProng[iProng].clear();
-    fTPCPProng[iProng].clear();
     fPtProng[iProng].clear();
     fEtaProng[iProng].clear();
     fImpParProng[iProng].clear();
@@ -447,6 +476,10 @@ void AliHFTreeHandler::ResetPidVarVectors() {
         fPIDVarIntVector[iProng][iDet][iPartHypo].clear();
       }
     }
+    fTPCPProng[iProng].clear();
+    fTOFPProng[iProng].clear();
+    fTrackIntegratedLengthProng[iProng].clear();
+    fStartTimeResProng[iProng].clear();
   }
 }
 
@@ -482,3 +515,14 @@ float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float 
   return dd0max;
 }
 
+//________________________________________________________________
+float AliHFTreeHandler::GetTOFmomentum(AliAODTrack* track, AliPIDResponse* pidrespo)
+{
+  float t_d = pidrespo->GetTOFResponse().GetExpectedSignal(track, AliPID::kTriton); //largest mass possible with Z=1
+  float len = track->GetIntegratedLength();
+  float beta_d = len / (t_d * kCSPEED);
+  float mass = AliPID::ParticleMassZ(AliPID::kTriton); //largest mass possible with Z=1
+
+  if(TMath::Abs(beta_d-1.) < 1.e-12) return track->GetTPCmomentum();
+  else return mass*beta_d/sqrt(1.-(beta_d*beta_d));
+}
