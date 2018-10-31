@@ -58,6 +58,8 @@ AliHFTreeHandlerDplustoKpipi::~AliHFTreeHandlerDplustoKpipi()
 //________________________________________________________________
 TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title) 
 {
+  fIsMCGenTree=false;
+
   if(fTreeVar) {
     delete fTreeVar;
     fTreeVar=0x0;
@@ -130,9 +132,11 @@ void AliHFTreeHandlerDplustoKpipi::FillTree() {
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
   ResetDmesonCommonVarVectors();
-  fSigmaVertex.clear();
-  ResetSingleTrackVarVectors();
-  if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  if(!fIsMCGenTree) {
+    fSigmaVertex.clear();
+    ResetSingleTrackVarVectors();
+    if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  }
   fCandTypeMap=0;
   fNCandidates=0;
 }

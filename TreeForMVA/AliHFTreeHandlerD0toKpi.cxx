@@ -60,6 +60,8 @@ AliHFTreeHandlerD0toKpi::~AliHFTreeHandlerD0toKpi()
 //________________________________________________________________
 TTree* AliHFTreeHandlerD0toKpi::BuildTree(TString name, TString title) 
 {
+  fIsMCGenTree=false;
+  
   if(fTreeVar) {
     delete fTreeVar;
     fTreeVar=0x0;
@@ -85,9 +87,11 @@ TTree* AliHFTreeHandlerD0toKpi::BuildTree(TString name, TString title)
 //________________________________________________________________
 bool AliHFTreeHandlerD0toKpi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) 
 {
+  fIsMCGenTree=false;
+
   if(!cand) return false;
   if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
-    if(!(fCandTypeMap&kSignal)) return true;
+    if(!(fCandTypeMap&kSignal || fCandTypeMap&kRefl)) return true;
   }
   fNCandidates++;
 
@@ -138,10 +142,12 @@ void AliHFTreeHandlerD0toKpi::FillTree() {
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
   ResetDmesonCommonVarVectors();
-  fCosThetaStar.clear();
-  fImpParProd.clear();
-  ResetSingleTrackVarVectors();
-  if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  if(!fIsMCGenTree) {
+    fCosThetaStar.clear();
+    fImpParProd.clear();
+    ResetSingleTrackVarVectors();
+    if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  }
   fCandTypeMap=0;
   fNCandidates=0;
 }

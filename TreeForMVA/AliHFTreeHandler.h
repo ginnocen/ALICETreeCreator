@@ -23,6 +23,7 @@
 #include "AliAODTrack.h"
 #include "AliAODPidHF.h"
 #include "AliAODRecoDecayHF.h"
+#include "AliAODMCParticle.h"
 
 using std::vector;
 
@@ -62,7 +63,11 @@ class AliHFTreeHandler : public TObject
 
     //core methods --> implemented in each derived class
     virtual TTree* BuildTree(TString name, TString title) = 0;
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfiled, int masshypo, AliAODPidHF* pidHF) = 0;
+    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) = 0;
+    //for MC gen --> common implementation
+    TTree* BuildTreeMCGen(TString name, TString title);
+    bool SetMCGenVariables(AliAODMCParticle* mcpart);
+
     virtual void FillTree() = 0; //to be called for each event, not each candidate!
     
     //common methods
@@ -106,6 +111,8 @@ class AliHFTreeHandler : public TObject
     static const unsigned int knMaxDet4Pid  = 2;
     static const unsigned int knMaxHypo4Pid = 3;
 
+    const float kCSPEED = 2.99792457999999984e-02; // cm / ps
+
     //helper methods for derived clases (to be used in BuildTree and SetVariables functions)
     void AddCommonDmesonVarBranches();
     void AddSingleTrackBranches();
@@ -120,7 +127,8 @@ class AliHFTreeHandler : public TObject
     double CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF);
     int RoundFloatToInt(double num);
     float ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield);
-
+    float GetTOFmomentum(AliAODTrack* track, AliPIDResponse* pidrespo);
+  
     TTree* fTreeVar; /// tree with variables
     unsigned int fNProngs; /// number of prongs
     unsigned int fNCandidates; /// number of candidates in one fill (event)
@@ -140,6 +148,7 @@ class AliHFTreeHandler : public TObject
     vector<float> fImpParXY; ///vector of candidate impact parameter in the transverse plane
     vector<float> fPProng[knMaxProngs]; ///vectors of prong momentum
     vector<float> fTPCPProng[knMaxProngs]; ///vectors of prong TPC momentum
+    vector<float> fTOFPProng[knMaxProngs]; ///vectors of prong TOF momentum
     vector<float> fPtProng[knMaxProngs]; ///vectors of prong pt
     vector<float> fEtaProng[knMaxProngs]; ///vectors of prong pseudorapidity
     vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
@@ -150,10 +159,13 @@ class AliHFTreeHandler : public TObject
     vector<float> fChi2perNDFProng[knMaxProngs]; ///vectors of prong track chi2/ndf
     vector<int> fNITSclsProng[knMaxProngs]; ///vectors of prong track number of clusters in ITS
     vector<int> fITSclsMapProng[knMaxProngs];///vectors of prong track ITS cluster map
+    vector<float> fTrackIntegratedLengthProng[knMaxProngs]; /// vectors of prong track integrated lengths
+    vector<float> fStartTimeResProng[knMaxProngs]; /// vectors of prong track start time resolutions (for TOF)
     vector<float> fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables
     vector<int> fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables (integers)
     int fPidOpt; /// option for PID variables
     bool fFillOnlySignal; ///flag to enable only signal filling
+    bool fIsMCGenTree; ///flag to know if is a tree for MC generated particles
 
   /// \cond CLASSIMP
   ClassDef(AliHFTreeHandler,1); /// 
