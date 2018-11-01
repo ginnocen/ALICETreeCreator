@@ -45,6 +45,7 @@ class AliHFTreeHandlerDstoKKpi : public AliHFTreeHandler
   
   private:
 
+    vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
     vector<float> fSigmaVertex; /// 
     vector<float> fMassKK; /// 
     vector<float> fCosPiDs; /// 

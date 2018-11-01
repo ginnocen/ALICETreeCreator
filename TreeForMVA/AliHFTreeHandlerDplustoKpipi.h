@@ -36,6 +36,7 @@ class AliHFTreeHandlerDplustoKpipi : public AliHFTreeHandler
 
   private:
 
+    vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
     vector<float> fSigmaVertex; /// array with variables 
 
     /// \cond CLASSIMP

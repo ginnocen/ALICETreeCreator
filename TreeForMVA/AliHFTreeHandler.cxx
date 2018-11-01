@@ -51,7 +51,6 @@ AliHFTreeHandler::AliHFTreeHandler():
   fTOFPProng(),
   fPtProng(),
   fEtaProng(),
-  fImpParProng(),
   fPhiProng(),
   fNTPCclsProng(),
   fNTPCclsPidProng(),
@@ -96,7 +95,6 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fTOFPProng(),
   fPtProng(),
   fEtaProng(),
-  fImpParProng(),
   fPhiProng(),
   fNTPCclsProng(),
   fNTPCclsPidProng(),
@@ -206,7 +204,6 @@ void AliHFTreeHandler::AddSingleTrackBranches() {
     fTreeVar->Branch(Form("p_prong%d",iProng),&fPProng[iProng]);
     fTreeVar->Branch(Form("pt_prong%d",iProng),&fPtProng[iProng]);
     fTreeVar->Branch(Form("eta_prong%d",iProng),&fEtaProng[iProng]);
-    fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
     fTreeVar->Branch(Form("phi_prong%d",iProng),&fPhiProng[iProng]);
     fTreeVar->Branch(Form("nTPCcls_prong%d",iProng),&fNTPCclsProng[iProng]);
     fTreeVar->Branch(Form("nTPCclspid_prong%d",iProng),&fNTPCclsPidProng[iProng]);
@@ -275,7 +272,11 @@ void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool u
 }
 
 //________________________________________________________________
-bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODRecoDecayHF* cand) {
+bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[]) {
+
+  //Impact parameters of the prongs are defined as a species dependent variable because the prongs 
+  //cannot be obtained in similar way for the different AliAODRecoDecay objects (AliAODTrack cannot
+  //be used because of recomputation PV)
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     if(!prongtracks[iProng]) {
@@ -285,11 +286,10 @@ bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODReco
   }
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
-    fPProng[iProng].push_back(cand->PProng(iProng));
-    fPtProng[iProng].push_back(cand->PtProng(iProng));
-    fEtaProng[iProng].push_back(cand->EtaProng(iProng));
-    fImpParProng[iProng].push_back(cand->Getd0Prong(iProng));
-    fPhiProng[iProng].push_back(cand->PhiProng(iProng));
+    fPProng[iProng].push_back(prongtracks[iProng]->P());
+    fPtProng[iProng].push_back(prongtracks[iProng]->Pt());
+    fEtaProng[iProng].push_back(prongtracks[iProng]->Eta());
+    fPhiProng[iProng].push_back(prongtracks[iProng]->Phi());
     fNTPCclsProng[iProng].push_back(prongtracks[iProng]->GetTPCNcls());
     fNTPCclsPidProng[iProng].push_back(prongtracks[iProng]->GetTPCsignalN());
     fNTPCCrossedRowProng[iProng].push_back(prongtracks[iProng]->GetTPCNCrossedRows());
@@ -455,7 +455,6 @@ void AliHFTreeHandler::ResetSingleTrackVarVectors() {
     fPProng[iProng].clear();
     fPtProng[iProng].clear();
     fEtaProng[iProng].clear();
-    fImpParProng[iProng].clear();
     fPhiProng[iProng].clear();
     fNTPCclsProng[iProng].clear();
     fNTPCclsPidProng[iProng].clear();

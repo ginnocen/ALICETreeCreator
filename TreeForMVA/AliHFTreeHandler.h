@@ -117,7 +117,7 @@ class AliHFTreeHandler : public TObject
     void AddCommonDmesonVarBranches();
     void AddSingleTrackBranches();
     void AddPidBranches(bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF);
-    bool SetSingleTrackVars(AliAODTrack* prongtracks[], AliAODRecoDecayHF* cand);
+    bool SetSingleTrackVars(AliAODTrack* prongtracks[]);
     bool SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF, bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF);
     void ResetDmesonCommonVarVectors();
     void ResetSingleTrackVarVectors();
@@ -151,7 +151,6 @@ class AliHFTreeHandler : public TObject
     vector<float> fTOFPProng[knMaxProngs]; ///vectors of prong TOF momentum
     vector<float> fPtProng[knMaxProngs]; ///vectors of prong pt
     vector<float> fEtaProng[knMaxProngs]; ///vectors of prong pseudorapidity
-    vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
     vector<float> fPhiProng[knMaxProngs]; ///vectors of prong azimuthal angle
     vector<int> fNTPCclsProng[knMaxProngs]; ///vectors of prong track number of clusters in TPC
     vector<int> fNTPCclsPidProng[knMaxProngs]; ///vectors of prong track number of clusters in TPC used for PID
