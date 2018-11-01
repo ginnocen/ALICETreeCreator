@@ -26,6 +26,7 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L.V.R. van Doremalen, lennart.van.doremalen@cern.ch
 ////////////////////////////////////////////////////////////
 
 #include <Riostream.h>
@@ -63,7 +64,9 @@
 #include "AliHFTreeHandlerD0toKpi.h"
 #include "AliHFTreeHandlerDplustoKpipi.h"
 #include "AliHFTreeHandlerDstoKKpi.h"
+#include "AliHFTreeHandlerBplustoD0pi.h"
 #include "AliAnalysisTaskSEHFTreeCreator_v1.h"
+#include "AliExternalTrackParam.h"
 
 using std::cout;
 using std::endl;
@@ -81,9 +84,11 @@ fListCuts(0x0),
 fFiltCutsD0toKpi(0x0),
 fFiltCutsDstoKKpi(0x0),
 fFiltCutsDplustoKpipi(0x0),
+fFiltCutsBplustoD0pi(0x0),
 fCutsD0toKpi(0x0),
 fCutsDstoKKpi(0x0),
 fCutsDplustoKpipi(0x0),
+fCutsBplustoD0pi(0x0),
 fReadMC(0),
 fListCounter(0x0),
 fCounter(0x0),
@@ -94,17 +99,22 @@ fListTree(0),
 fWriteVariableTreeD0(0),
 fWriteVariableTreeDs(0),
 fWriteVariableTreeDplus(0),
+fWriteVariableTreeBplus(0),
 fVariablesTreeD0(0x0),
 fVariablesTreeDs(0x0),
 fVariablesTreeDplus(0x0),
+fVariablesTreeBplus(0x0),
 fTreeEvChar(0x0),
 fWriteOnlySignal(kFALSE),
 fTreeHandlerD0(0x0),
 fTreeHandlerDs(0x0),
 fTreeHandlerDplus(0x0),
+fTreeHandlerBplus(0x0),
 fPIDoptD0(AliHFTreeHandler::kRawPID),
 fPIDoptDs(AliHFTreeHandler::kRawPID),
 fPIDoptDplus(AliHFTreeHandler::kRawPID),
+fPIDoptBplus(AliHFTreeHandler::kRawPID),
+fEnableFillNormd0MeasMinusExp(kFALSE),
 fCentrality(-999.),
 fzVtx(0.),
 fNcontributors(0),
@@ -127,9 +137,11 @@ fListCuts(0x0),
 fFiltCutsD0toKpi(0x0),
 fFiltCutsDstoKKpi(0x0),
 fFiltCutsDplustoKpipi(0x0),
+fFiltCutsBplustoD0pi(0x0),
 fCutsD0toKpi(0x0),
 fCutsDstoKKpi(0x0),
 fCutsDplustoKpipi(0x0),
+fCutsBplustoD0pi(0x0),
 fReadMC(0),
 fListCounter(0x0),
 fCounter(0x0),
@@ -139,18 +151,23 @@ fAODProtection(1),
 fWriteVariableTreeD0(0),
 fWriteVariableTreeDs(0),
 fWriteVariableTreeDplus(0),
+fWriteVariableTreeBplus(0),
 fListTree(0x0),
 fVariablesTreeD0(0x0),
 fVariablesTreeDs(0x0),
 fVariablesTreeDplus(0x0),
+fVariablesTreeBplus(0x0),
 fWriteOnlySignal(kFALSE),
 fTreeHandlerD0(0x0),
 fTreeHandlerDs(0x0),
 fTreeHandlerDplus(0x0),
+fTreeHandlerBplus(0x0),
 fTreeEvChar(0x0),
 fPIDoptD0(AliHFTreeHandler::kRawPID),
 fPIDoptDs(AliHFTreeHandler::kRawPID),
 fPIDoptDplus(AliHFTreeHandler::kRawPID),
+fPIDoptBplus(AliHFTreeHandler::kRawPID),
+fEnableFillNormd0MeasMinusExp(kFALSE),
 fCentrality(-999.),
 fzVtx(0.),
 fNcontributors(0),
@@ -171,6 +188,9 @@ fRunNumber(0)
     if(fFiltCutsDplustoKpipi){
     delete fFiltCutsDplustoKpipi;fFiltCutsDplustoKpipi=NULL;
     }
+    if(fFiltCutsBplustoD0pi){
+        delete fFiltCutsBplustoD0pi; fFiltCutsBplustoD0pi = NULL;
+    }
     if(fCutsD0toKpi){
     delete fCutsD0toKpi;fCutsD0toKpi=NULL;
     }
@@ -180,15 +200,20 @@ fRunNumber(0)
     if(fCutsDplustoKpipi){
     delete fCutsDplustoKpipi;fCutsDplustoKpipi=NULL;
     }
+    if(fCutsBplustoD0pi){
+        delete fCutsBplustoD0pi; fCutsBplustoD0pi = NULL;
+    }
     
     fListCuts=cutsList;
     
     fFiltCutsD0toKpi     =(AliRDHFCutsD0toKpi*)fListCuts->FindObject("D0toKpiFilteringCuts");
     fFiltCutsDstoKKpi    =(AliRDHFCutsDstoKKpi*)fListCuts->FindObject("DstoKKpiFilteringCuts");
     fFiltCutsDplustoKpipi=(AliRDHFCutsDplustoKpipi*)fListCuts->FindObject("DplustoKpipiFilteringCuts");
+    fFiltCutsBplustoD0pi =(AliRDHFCutsBPlustoD0Pi*)fListCuts->FindObject("BplustoD0piFilteringCuts");
     fCutsD0toKpi         =(AliRDHFCutsD0toKpi*)fListCuts->FindObject("D0toKpiAnalysisCuts");
     fCutsDstoKKpi        =(AliRDHFCutsDstoKKpi*)fListCuts->FindObject("DstoKKpiAnalysisCuts");
     fCutsDplustoKpipi    =(AliRDHFCutsDplustoKpipi*)fListCuts->FindObject("DplustoKpipiAnalysisCuts");
+    fCutsBplustoD0pi     =(AliRDHFCutsBPlustoD0Pi*)fListCuts->FindObject("BplustoD0piAnalysisCuts");
 
     
     DefineInput(0, TChain::Class());
@@ -223,6 +248,10 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
         delete fFiltCutsDplustoKpipi;
         fFiltCutsDplustoKpipi = 0x0;
     }
+    if(fFiltCutsBplustoD0pi){
+        delete fFiltCutsBplustoD0pi;
+        fFiltCutsBplustoD0pi = 0x0;
+    }
     if (fCutsD0toKpi) {
         delete fCutsD0toKpi;
         fCutsD0toKpi = 0x0;
@@ -234,6 +263,10 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
     if (fCutsDplustoKpipi) {
         delete fCutsDplustoKpipi;
         fCutsDplustoKpipi = 0x0;
+    }
+    if(fCutsBplustoD0pi){
+        delete fCutsBplustoD0pi;
+        fCutsBplustoD0pi = 0x0;
     }
     if (fNentries){
         delete fNentries;
@@ -267,6 +300,10 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
         delete fTreeHandlerDplus;
         fTreeHandlerDplus = 0x0;
     }
+    if(fTreeHandlerBplus){
+        delete fTreeHandlerBplus;
+        fTreeHandlerBplus = 0x0;
+    }
     if(fTreeEvChar) {
         delete fTreeEvChar;
         fTreeEvChar = 0x0;
@@ -295,7 +332,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects() \n");
     
     const char* nameoutput=GetOutputSlot(1)->GetContainer()->GetName();
-    fNentries=new TH1F(nameoutput, "Number of events", 23,-0.5,22.5);
+    fNentries=new TH1F(nameoutput, "Number of events", 27,-0.5,26.5);
     fNentries->GetXaxis()->SetBinLabel(1,"n. evt. read");
     fNentries->GetXaxis()->SetBinLabel(2,"n. evt. matched dAOD");
     fNentries->GetXaxis()->SetBinLabel(3,"n. evt. mismatched dAOD");
@@ -318,7 +355,10 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     fNentries->GetXaxis()->SetBinLabel(20,"n. Dplus after filtering");
     fNentries->GetXaxis()->SetBinLabel(21,"n. Dplus after selection");
     fNentries->GetXaxis()->SetBinLabel(22,"n. of not on-the-fly rec Dplus");
-    
+    fNentries->GetXaxis()->SetBinLabel(23, "n. of 2 prong candidates for Bplus");
+    fNentries->GetXaxis()->SetBinLabel(24, "n. Bplus after filtering");
+    fNentries->GetXaxis()->SetBinLabel(25, "n. Bplus after selection");
+    fNentries->GetXaxis()->SetBinLabel(26, "n. of not on-the-fly rec Bplus");
     
     nameoutput=GetOutputSlot(2)->GetContainer()->GetName();
     fHistoNormCounter=new TH2F(nameoutput, "Number of events for norm;;centrality", 5,-0.5,4.5,102,-1.,101.);
@@ -383,6 +423,16 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
         fListTree->Add(fVariablesTreeDplus);
         fTreeEvChar->AddFriend(fVariablesTreeDplus);
     }
+    if (fWriteVariableTreeBplus) {
+        TString nameoutput = "tree_Bplus";
+        fTreeHandlerBplus = new AliHFTreeHandlerBplustoD0pi(fPIDoptBplus);
+        if (fReadMC && fWriteOnlySignal) fTreeHandlerBplus->SetFillOnlySignal(fWriteOnlySignal);
+        fVariablesTreeBplus = (TTree*)fTreeHandlerBplus->BuildTree(nameoutput, nameoutput);
+        fVariablesTreeBplus->SetDirectory(0);
+        fListTree->Add(fVariablesTreeBplus);
+        fTreeEvChar->AddFriend(fVariablesTreeBplus);
+    }
+
     fListTree->Add(fTreeEvChar);
     // Post the data
     PostData(1,fNentries);
@@ -398,6 +448,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
 void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
 
 {
+    // cout << "event, read MC = " << fReadMC << endl;
     /// Execute analysis for current event:
     
     AliAODEvent *aod = dynamic_cast<AliAODEvent*> (InputEvent());
@@ -479,13 +530,14 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     Bool_t isSameEvSelD0=!((fFiltCutsD0toKpi->IsEventSelected(aod) && !fCutsD0toKpi->IsEventSelected(aod))||(!fFiltCutsD0toKpi->IsEventSelected(aod) && fCutsD0toKpi->IsEventSelected(aod)));
     Bool_t isSameEvSelDs=!((fFiltCutsDstoKKpi->IsEventSelected(aod) && !fCutsDstoKKpi->IsEventSelected(aod))||(!fFiltCutsDstoKKpi->IsEventSelected(aod) && fCutsDstoKKpi->IsEventSelected(aod)));
     Bool_t isSameEvSelDplus=!((fFiltCutsDplustoKpipi->IsEventSelected(aod) && !fCutsDplustoKpipi->IsEventSelected(aod))||(!fFiltCutsDplustoKpipi->IsEventSelected(aod) && fCutsDplustoKpipi->IsEventSelected(aod)));
-    Bool_t isSameEvSel=isSameEvSelD0 && isSameEvSelDs && isSameEvSelDplus;
+    Bool_t isSameEvSelBplus = !((fFiltCutsBplustoD0pi->IsEventSelected(aod) && !fCutsBplustoD0pi->IsEventSelected(aod)) || (!fFiltCutsBplustoD0pi->IsEventSelected(aod) && fCutsBplustoD0pi->IsEventSelected(aod)));
+    Bool_t isSameEvSel = isSameEvSelD0 && isSameEvSelDs && isSameEvSelDplus && isSameEvSelBplus;
     if(!isSameEvSel) {
       Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts same meson");
       return;
     }
-    if((fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDstoKKpi->IsEventSelected(aod)) || (fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDplustoKpipi->IsEventSelected(aod))){
-      Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts different meson");
+    if((fFiltCutsD0toKpi->IsEventSelected(aod) != fFiltCutsDstoKKpi->IsEventSelected(aod)) || (fFiltCutsD0toKpi->IsEventSelected(aod) != fFiltCutsDplustoKpipi->IsEventSelected(aod)) || (fFiltCutsD0toKpi->IsEventSelected(aod) != fFiltCutsBplustoD0pi->IsEventSelected(aod))) {
+        Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts different meson");
       return;
     }
     
@@ -539,7 +591,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     fRunNumber=aod->GetRunNumber();             
     fTreeEvChar->Fill();
     
-    if(fWriteVariableTreeD0) Process2Prong(array2prong,aod,mcArray,aod->GetMagneticField());
+    if(fWriteVariableTreeD0 || fWriteVariableTreeBplus) Process2Prong(array2prong,aod,mcArray,aod->GetMagneticField());
     if(fWriteVariableTreeDs || fWriteVariableTreeDplus) Process3Prong(array3Prong,aod,mcArray,aod->GetMagneticField());
   
     // Post the data
@@ -595,138 +647,501 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
     
     Int_t nSelectedD0=0;
     Int_t nFilteredD0=0;
-    
+
+    Int_t nSelectedBplus = 0;
+    Int_t nFilteredBplus = 0;
+
     AliAODPidHF* pidHF = fCutsD0toKpi->GetPidHF();
     if(!pidHF) pidHF=0x0;
-            
+    AliAODPidHF* pidHFBplus = fCutsBplustoD0pi->GetPidHF();
+    if (!pidHFBplus) pidHFBplus = 0x0;
+  
     
     // vHF object is needed to call the method that refills the missing info of the candidates
     // if they have been deleted in dAOD reconstruction phase
     // in order to reduce the size of the file
     AliAnalysisVertexingHF *vHF = new AliAnalysisVertexingHF();
     
-    for (Int_t i2prong = 0; i2prong < n2prong; i2prong++) {
-        AliAODRecoDecayHF2Prong *d = (AliAODRecoDecayHF2Prong*)array2prong->UncheckedAt(i2prong);
-        fNentries->Fill(11);
-        
-        if(fUseSelectionBit && d->GetSelectionMap()) if(!d->HasSelectionBit(AliRDHFCuts::kD0toKpiCuts)){
-            continue;
-        }
-        fNentries->Fill(12);
-        nFilteredD0++;
-        if(!(vHF->FillRecoCand(aod,d))) {//Fill the data members of the candidate only if they are empty.
-            fNentries->Fill(14); //monitor how often this fails
-            continue;
-        }
-        
-        //fiducial acceptance
-        Bool_t isFidAcc=fFiltCutsD0toKpi->IsInFiducialAcceptance(d->Pt(),d->Y(421));
-        
-        if(isFidAcc){
-            Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
-            Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
-            Bool_t isSelAnCutsD0=kFALSE;
-            Bool_t isSelAnCutsD0bar=kFALSE;
-            if(isSelectedAnalysis==1 || isSelectedAnalysis==3) isSelAnCutsD0=kTRUE;
-            if(isSelectedAnalysis==2 || isSelectedAnalysis==3) isSelAnCutsD0bar=kTRUE;
-            if(isSelectedFilt){
-                fNentries->Fill(13);
-                nSelectedD0++;
-            }
-            else continue;
+    if(fWriteVariableTreeD0){
+        for (Int_t i2prong = 0; i2prong < n2prong; i2prong++) {
+            AliAODRecoDecayHF2Prong *d = (AliAODRecoDecayHF2Prong*)array2prong->UncheckedAt(i2prong);
+            fNentries->Fill(11);
             
-            Bool_t unsetvtx=kFALSE;
-            if(!d->GetOwnPrimaryVtx()){
-            d->SetOwnPrimaryVtx(vtx1);
-            unsetvtx=kTRUE;
-            // NOTE: the own primary vertex should be unset, otherwise there is a memory leak
-            // Pay attention if you use continue inside this loop!!!
+            if(fUseSelectionBit && d->GetSelectionMap()) if(!d->HasSelectionBit(AliRDHFCuts::kD0toKpiCuts)){
+                continue;
             }
-            Bool_t recVtx=kFALSE;
-            AliAODVertex *origownvtx=0x0;
-            if(fFiltCutsD0toKpi->GetIsPrimaryWithoutDaughters()){
-              if(d->GetOwnPrimaryVtx()) origownvtx=new AliAODVertex(*d->GetOwnPrimaryVtx());
-                if(fFiltCutsD0toKpi->RecalcOwnPrimaryVtx(d,aod))recVtx=kTRUE;
-                  else fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
+            fNentries->Fill(12);
+            nFilteredD0++;
+            if(!(vHF->FillRecoCand(aod,d))) {//Fill the data members of the candidate only if they are empty.
+                fNentries->Fill(14); //monitor how often this fails
+                continue;
             }
             
-            Int_t pdgDgD0toKpi[2]={321,211};
-            Int_t labD0 = -1;
-            Int_t pdgD0 = -99;
-            Int_t origin= -1;
-            AliAODMCParticle *partD0=0x0;
+            //fiducial acceptance
+            Bool_t isFidAcc=fFiltCutsD0toKpi->IsInFiducialAcceptance(d->Pt(),d->Y(421));
+            
+            if(isFidAcc){
+                Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
+                Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
+                Bool_t isSelAnCutsD0=kFALSE;
+                Bool_t isSelAnCutsD0bar=kFALSE;
+                if(isSelectedAnalysis==1 || isSelectedAnalysis==3) isSelAnCutsD0=kTRUE;
+                if(isSelectedAnalysis==2 || isSelectedAnalysis==3) isSelAnCutsD0bar=kTRUE;
+                if(isSelectedFilt){
+                    fNentries->Fill(13);
+                    nSelectedD0++;
+                }
+                else continue;
+                
+                Bool_t unsetvtx=kFALSE;
+                if(!d->GetOwnPrimaryVtx()){
+                d->SetOwnPrimaryVtx(vtx1);
+                unsetvtx=kTRUE;
+                // NOTE: the own primary vertex should be unset, otherwise there is a memory leak
+                // Pay attention if you use continue inside this loop!!!
+                }
+                Bool_t recVtx=kFALSE;
+                AliAODVertex *origownvtx=0x0;
+                if(fFiltCutsD0toKpi->GetIsPrimaryWithoutDaughters()){
+                  if(d->GetOwnPrimaryVtx()) origownvtx=new AliAODVertex(*d->GetOwnPrimaryVtx());
+                    if(fFiltCutsD0toKpi->RecalcOwnPrimaryVtx(d,aod))recVtx=kTRUE;
+                      else fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
+                }
+                
+                Int_t pdgDgD0toKpi[2]={321,211};
+                Int_t labD0 = -1;
+                Int_t pdgD0 = -99;
+                Int_t origin= -1;
+                AliAODMCParticle *partD0=0x0;
 
-            if(fReadMC) {
-              labD0 = d->MatchToMC(421,arrMC,2,pdgDgD0toKpi); //return MC particle label if the array corresponds to a D0, -1 if not (cf. AliAODRecoDecay.cxx)
-              if(labD0>=0){
-               partD0 = (AliAODMCParticle*)arrMC->At(labD0);
-               pdgD0 = partD0->GetPdgCode();
-               origin = AliVertexingHFUtils::CheckOrigin(arrMC,partD0,kTRUE);
-              }
-             }
-            
-            bool issignal = kFALSE;
-            bool isbkg =    kFALSE;
-            bool isFD =     kFALSE;
-            bool isprompt = kFALSE;
-            bool isrefl =   kFALSE;
-            Int_t masshypo = 0;
-            
-            
-            if (isSelectedFilt==1 || isSelectedFilt==3) { //D0
-                masshypo=0;
-                if(fReadMC){
-                    if(labD0>=0){
-                        if(origin==4) isprompt=kTRUE;
-                        else if(origin==5) isFD=kTRUE;
-                        if(pdgD0==421){
-                            issignal=kTRUE;
+                if(fReadMC) {
+                  labD0 = d->MatchToMC(421,arrMC,2,pdgDgD0toKpi); //return MC particle label if the array corresponds to a D0, -1 if not (cf. AliAODRecoDecay.cxx)
+                  if(labD0>=0){
+                   partD0 = (AliAODMCParticle*)arrMC->At(labD0);
+                   pdgD0 = partD0->GetPdgCode();
+                   origin = AliVertexingHFUtils::CheckOrigin(arrMC,partD0,kTRUE);
+                  }
+                 }
+                
+                bool issignal = kFALSE;
+                bool isbkg =    kFALSE;
+                bool isFD =     kFALSE;
+                bool isprompt = kFALSE;
+                bool isrefl =   kFALSE;
+                Int_t masshypo = 0;
+                
+                
+                if (isSelectedFilt==1 || isSelectedFilt==3) { //D0
+                    masshypo=0;
+                    if(fReadMC){
+                        if(labD0>=0){
+                            if(origin==4) isprompt=kTRUE;
+                            else if(origin==5) isFD=kTRUE;
+                            if(pdgD0==421){
+                                issignal=kTRUE;
+                            }
+                            else {
+                                isrefl=kTRUE;
+                            }
+                        }//end labD0check
+                        else{//background
+                            isbkg=kTRUE;
                         }
-                        else {
-                            isrefl=kTRUE;
+                        fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
+                    }//end read MC
+                    fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
+                    fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
+                }//end D0
+                if (isSelectedFilt>1){//D0bar
+                    issignal = kFALSE;
+                    isbkg =    kFALSE;
+                    isFD =     kFALSE;
+                    isprompt = kFALSE;
+                    isrefl =   kFALSE;
+                    masshypo = 1;
+                    if(fReadMC){
+                        if(labD0>=0){
+                            if(origin==4) isprompt=kTRUE;
+                            else if(origin==5) isFD=kTRUE;
+                            if(pdgD0==-421){
+                                issignal=kTRUE;
+                            }
+                            else {
+                                isrefl=kTRUE;
+                            }
+                        } //end label check
+                        else{ //background MC
+                            isbkg=kTRUE;
                         }
-                    }//end labD0check
-                    else{//background
-                        isbkg=kTRUE;
-                    }
                     fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
-                }//end read MC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
-                fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
-            }//end D0
-            if (isSelectedFilt>1){//D0bar
-                issignal = kFALSE;
-                isbkg =    kFALSE;
-                isFD =     kFALSE;
-                isprompt = kFALSE;
-                isrefl =   kFALSE;
-                masshypo = 1;
-                if(fReadMC){
-                    if(labD0>=0){
-                        if(origin==4) isprompt=kTRUE;
-                        else if(origin==5) isFD=kTRUE;
-                        if(pdgD0==-421){
-                            issignal=kTRUE;
-                        }
-                        else {
-                            isrefl=kTRUE;
-                        }
-                    } //end label check
-                    else{ //background MC
-                        isbkg=kTRUE;
+                    }//end readMC
+                    fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
+                    fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
+                }//end D0bar
+                if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
+                if(unsetvtx) d->UnsetOwnPrimaryVtx();
+            }//end is fid acc
+            
+        }//end loop on candidates
+    }
+
+    if(fWriteVariableTreeBplus){
+        for (Int_t i2prong = 0; i2prong < n2prong; i2prong++) {
+            AliAODRecoDecayHF2Prong *d = (AliAODRecoDecayHF2Prong*)array2prong->UncheckedAt(i2prong);
+            fNentries->Fill(22);
+
+            // if (fUseSelectionBit && d->GetSelectionMap()) if (!d->HasSelectionBit(AliRDHFCuts::kBplustoD0piCuts)) {
+            //         continue;
+            //     }
+
+            fNentries->Fill(23);
+            nFilteredBplus++;
+            if (!(vHF->FillRecoCand(aod, d))) { //Fill the data members of the candidate only if they are empty.
+                fNentries->Fill(25); //monitor how often this fails
+                continue;
+            }
+
+
+            // here D0 selection on first daughter
+            AliAODTrack * trackFirstDaughter = (AliAODTrack*)(d->GetDaughter(0));
+
+            AliExternalTrackParam particleTrackfirst;
+            particleTrackfirst.CopyFromVTrack(trackFirstDaughter);
+            Double_t d0first[2], covd0first[3];
+            particleTrackfirst.PropagateToDCA(vtx1, bfield, 100., d0first, covd0first);
+
+
+            if (trackFirstDaughter->GetITSNcls() < 1) continue;
+            if (trackFirstDaughter->GetTPCNcls() < 1) continue;
+            if (trackFirstDaughter->GetStatus()&AliESDtrack::kITSpureSA) continue;
+            if (!(trackFirstDaughter->GetStatus()&AliESDtrack::kITSin)) continue;
+            if (trackFirstDaughter->GetID() < 0) continue;
+            Double_t covtest1[21];
+            if (!trackFirstDaughter->GetCovarianceXYZPxPyPz(covtest1)) continue;
+
+            if (trackFirstDaughter->GetITSNcls() < fCutsBplustoD0pi->GetMinITSNclsD0FirstDaughter()) continue;
+            if (trackFirstDaughter->GetTPCNcls() < fCutsBplustoD0pi->GetMinTPCNclsD0FirstDaughter()) continue;
+            if (fCutsBplustoD0pi->UseITSRefitD0FirstDaughter() == kTRUE) {if (!(trackFirstDaughter->GetStatus()&AliESDtrack::kITSrefit)) {continue;}}
+            if (fCutsBplustoD0pi->UseTPCRefitD0FirstDaughter() == kTRUE) {if ((!(trackFirstDaughter->GetStatus()&AliESDtrack::kTPCrefit))) {continue;}}
+            if (fCutsBplustoD0pi->UseFilterBitD0FirstDaughter() == kTRUE) {if (!(trackFirstDaughter->TestFilterMask(BIT(fCutsBplustoD0pi->GetFilterBitD0FirstDaughter())))) {continue;}}
+            if (trackFirstDaughter->Pt() < fCutsBplustoD0pi->GetMinPtD0FirstDaughter()) continue;
+            if (TMath::Abs(d0first[0]) < fCutsBplustoD0pi->GetMind0D0FirstDaughter()) continue;
+            if (TMath::Abs(trackFirstDaughter->Eta()) > fCutsBplustoD0pi->GetMaxAbsEtaD0FirstDaughter()) continue;
+
+            Bool_t bHardSelectionArrayITSFirstDaughter[7] = {kFALSE};
+            fCutsBplustoD0pi->GetHardSelectionArrayITSD0FirstDaughter(bHardSelectionArrayITSFirstDaughter);
+            Bool_t bSoftSelectionArrayITSFirstDaughter[7] = {kFALSE};
+            fCutsBplustoD0pi->GetSoftSelectionArrayITSD0FirstDaughter(bSoftSelectionArrayITSFirstDaughter);
+
+            Int_t nCounterSoftSelectionFirstDaughter = 0;
+            Bool_t bSoftITSPassFirstDaughter = kTRUE;
+            Bool_t bHardITSPassFirstDaughter = kTRUE;
+            for (Int_t j = 0; j < 7; ++j)
+            {
+                if (bHardSelectionArrayITSFirstDaughter[j])
+                {
+                    if (!trackFirstDaughter->HasPointOnITSLayer(j)) bHardITSPassFirstDaughter = kFALSE;
+                }
+                if (bSoftSelectionArrayITSFirstDaughter[j])
+                {
+                    if (trackFirstDaughter->HasPointOnITSLayer(j)) nCounterSoftSelectionFirstDaughter++;
+                }
+            }
+            if (nCounterSoftSelectionFirstDaughter < fCutsBplustoD0pi->GetNSoftITSCutD0FirstDaughter()) bSoftITSPassFirstDaughter = kFALSE;
+            if (!bHardITSPassFirstDaughter) continue;
+            if (!bSoftITSPassFirstDaughter) continue;
+
+            // here D0 selection on second daughter
+            AliAODTrack * trackSecondDaughter = (AliAODTrack*)(d->GetDaughter(1));
+
+            AliExternalTrackParam particleTracksecond;
+            particleTracksecond.CopyFromVTrack(trackSecondDaughter);
+            Double_t d0second[2], covd0second[3];
+            particleTracksecond.PropagateToDCA(vtx1, bfield, 100., d0second, covd0second);
+
+            if (trackSecondDaughter->GetITSNcls() < 1) continue;
+            if (trackSecondDaughter->GetTPCNcls() < 1) continue;
+            if (trackSecondDaughter->GetStatus()&AliESDtrack::kITSpureSA) continue;
+            if (!(trackSecondDaughter->GetStatus()&AliESDtrack::kITSin)) continue;
+            if (trackSecondDaughter->GetID() < 0) continue;
+            Double_t covtest2[21];
+            if (!trackSecondDaughter->GetCovarianceXYZPxPyPz(covtest2)) continue;
+
+            if (trackSecondDaughter->GetITSNcls() < fCutsBplustoD0pi->GetMinITSNclsD0SecondDaughter()) continue;
+            if (trackSecondDaughter->GetTPCNcls() < fCutsBplustoD0pi->GetMinTPCNclsD0SecondDaughter()) continue;
+            if (fCutsBplustoD0pi->UseITSRefitD0SecondDaughter() == kTRUE) {if (!(trackSecondDaughter->GetStatus()&AliESDtrack::kITSrefit)) {continue;}}
+            if (fCutsBplustoD0pi->UseTPCRefitD0SecondDaughter() == kTRUE) {if ((!(trackSecondDaughter->GetStatus()&AliESDtrack::kTPCrefit))) {continue;}}
+            if (fCutsBplustoD0pi->UseFilterBitD0SecondDaughter() == kTRUE) {if (!(trackSecondDaughter->TestFilterMask(BIT(fCutsBplustoD0pi->GetFilterBitD0SecondDaughter())))) {continue;}}
+            if (trackSecondDaughter->Pt() < fCutsBplustoD0pi->GetMinPtD0SecondDaughter()) continue;
+            if (TMath::Abs(d0second[0]) < fCutsBplustoD0pi->GetMind0D0SecondDaughter()) continue;
+            if (TMath::Abs(trackSecondDaughter->Eta()) > fCutsBplustoD0pi->GetMaxAbsEtaD0SecondDaughter()) continue;
+
+            Bool_t bHardSelectionArrayITSSecondDaughter[7] = {kFALSE};
+            fCutsBplustoD0pi->GetHardSelectionArrayITSD0SecondDaughter(bHardSelectionArrayITSSecondDaughter);
+            Bool_t bSoftSelectionArrayITSSecondDaughter[7] = {kFALSE};
+            fCutsBplustoD0pi->GetSoftSelectionArrayITSD0SecondDaughter(bSoftSelectionArrayITSSecondDaughter);
+
+            Int_t nCounterSoftSelectionSecondDaughter = 0;
+            Bool_t bSoftITSPassSecondDaughter = kTRUE;
+            Bool_t bHardITSPassSecondDaughter = kTRUE;
+            for (Int_t j = 0; j < 7; ++j)
+            {
+                if (bHardSelectionArrayITSSecondDaughter[j])
+                {
+                    if (!trackSecondDaughter->HasPointOnITSLayer(j)) bHardITSPassSecondDaughter = kFALSE;
+                }
+                if (bSoftSelectionArrayITSSecondDaughter[j])
+                {
+                    if (trackSecondDaughter->HasPointOnITSLayer(j)) nCounterSoftSelectionSecondDaughter++;
+                }
+            }
+            if (nCounterSoftSelectionSecondDaughter < fCutsBplustoD0pi->GetNSoftITSCutD0SecondDaughter()) bSoftITSPassSecondDaughter = kFALSE;
+            if (!bHardITSPassSecondDaughter) continue;
+            if (!bSoftITSPassSecondDaughter) continue;
+
+            // here selection on D0 track 
+            Bool_t bCutArrayD0[29] = {0};
+            Int_t cutReturnValueD0 = fFiltCutsBplustoD0pi->IsD0forD0ptbinSelected(d, 0, aod, bCutArrayD0); //filt cuts
+            if (cutReturnValueD0 == -1) continue;
+            if (cutReturnValueD0 == 0) continue;
+
+            Bool_t isSelectedAnalysisD0 = kTRUE;
+            Int_t cutSelectReturnValueD0 = fCutsBplustoD0pi->IsD0forD0ptbinSelected(d, 0, aod, bCutArrayD0); //std cuts
+            if (cutSelectReturnValueD0 == -1) isSelectedAnalysisD0 = kFALSE;
+            if (cutSelectReturnValueD0 == 0) isSelectedAnalysisD0 = kFALSE;
+
+            //loop over pion track
+            for (Int_t iTrack = 0; iTrack < aod->GetNumberOfTracks(); ++iTrack)
+            {   
+                // Get pion track and apply track cuts 
+                AliAODTrack* pionTrack = dynamic_cast<AliAODTrack*>(aod->GetTrack(iTrack));
+                if (!pionTrack) AliFatal("Not a standard AOD");
+
+                AliAODVertex *primaryVertex = (AliAODVertex*)aod->GetPrimaryVertex();
+                if (!primaryVertex) continue;
+
+                if (pionTrack->GetITSNcls() < 1) continue;
+                if (pionTrack->GetTPCNcls() < 1) continue;
+                if (pionTrack->GetStatus()&AliESDtrack::kITSpureSA) continue;
+                if (!(pionTrack->GetStatus()&AliESDtrack::kITSin)) continue;
+                if (pionTrack->GetID() < 0) continue;
+                Double_t covtest[21];
+                if (!pionTrack->GetCovarianceXYZPxPyPz(covtest)) continue;
+
+                Double_t pos[3], cov[6];
+                primaryVertex->GetXYZ(pos);
+                primaryVertex->GetCovarianceMatrix(cov);
+                const AliESDVertex vESD(pos, cov, 100., 100);
+                if (!fCutsBplustoD0pi->IsDaughterSelected(pionTrack, &vESD, fCutsBplustoD0pi->GetTrackCuts(), aod)) continue;
+
+                AliExternalTrackParam particleTrackpion;
+                particleTrackpion.CopyFromVTrack(pionTrack);
+                Double_t d0pion[2], covd0pion[3];
+                particleTrackpion.PropagateToDCA(primaryVertex, bfield, 100., d0pion, covd0pion);
+
+                if (pionTrack->GetITSNcls() < fCutsBplustoD0pi->GetMinITSNclsBPlusPion()) continue;
+                if (pionTrack->GetTPCNcls() < fCutsBplustoD0pi->GetMinTPCNclsBPlusPion()) continue;
+                if (fCutsBplustoD0pi->UseITSRefitBPlusPion() == kTRUE) {if (!(pionTrack->GetStatus()&AliESDtrack::kITSrefit)) {continue;}}
+                if (fCutsBplustoD0pi->UseTPCRefitBPlusPion() == kTRUE) {if ((!(pionTrack->GetStatus()&AliESDtrack::kTPCrefit))) {continue;}}
+                if (fCutsBplustoD0pi->UseFilterBitBPlusPion() == kTRUE) {if (!(pionTrack->TestFilterMask(BIT(fCutsBplustoD0pi->GetFilterBitBPlusPion())))) {continue;}}
+                if (pionTrack->Pt() < fCutsBplustoD0pi->GetMinPtBPlusPion()) continue;
+                if (TMath::Abs(d0pion[0]) < fCutsBplustoD0pi->GetMind0BPlusPion()) continue;
+                if (TMath::Abs(pionTrack->Eta()) > fCutsBplustoD0pi->GetMaxAbsEtaBPlusPion()) continue;
+
+                Bool_t bHardSelectionArrayITSpionTrack[7] = {kFALSE};
+                fCutsBplustoD0pi->GetHardSelectionArrayITSBPlusPion(bHardSelectionArrayITSpionTrack);
+                Bool_t bSoftSelectionArrayITSpionTrack[7] = {kFALSE};
+                fCutsBplustoD0pi->GetSoftSelectionArrayITSBPlusPion(bSoftSelectionArrayITSpionTrack);
+
+                Int_t nCounterSoftSelectionpionTrack = 0;
+                Bool_t bSoftITSPasspionTrack = kTRUE;
+                Bool_t bHardITSPasspionTrack = kTRUE;
+                for (Int_t j = 0; j < 7; ++j)
+                {
+                    if (bHardSelectionArrayITSpionTrack[j])
+                    {
+                        if (!pionTrack->HasPointOnITSLayer(j)) bHardITSPasspionTrack = kFALSE;
                     }
-                fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
-                }//end readMC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
-                fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
-            }//end D0bar
-            if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
-            if(unsetvtx) d->UnsetOwnPrimaryVtx();
-        }//end is fid acc
-        
-    }//end loop on candidates
+                    if (bSoftSelectionArrayITSpionTrack[j])
+                    {
+                        if (pionTrack->HasPointOnITSLayer(j)) nCounterSoftSelectionpionTrack++;
+                    }
+                }
+                if (nCounterSoftSelectionpionTrack < fCutsBplustoD0pi->GetNSoftITSCutBPlusPion()) bSoftITSPasspionTrack = kFALSE;
+                if (!bHardITSPasspionTrack) continue;
+                if (!bSoftITSPasspionTrack) continue;
+
+                //we check if the IDs of the tracks are different
+                AliAODTrack* twoProngdaughter0 = (AliAODTrack*)d->GetDaughter(0);
+                AliAODTrack* twoProngdaughter1 = (AliAODTrack*)d->GetDaughter(1);
+                UShort_t idProng0 = twoProngdaughter0->GetID();
+                UShort_t idProng1 = twoProngdaughter1->GetID();
+                if (pionTrack->GetID() == idProng0 || pionTrack->GetID() == idProng1) continue;
+
+                // cuts on D0 inv mass using Bplus info
+                UInt_t prongsD0[2];
+                prongsD0[0] = 211;
+                prongsD0[1] = 321;
+
+
+                UInt_t prongsD02[2];
+                prongsD02[1] = 211;
+                prongsD02[0] = 321;
+
+                // D0 window - invariant mass cut
+                Double_t invariantMassD0 = d->InvMass(2, prongsD0);
+                Double_t invariantMassD02 = d->InvMass(2, prongsD02);
+
+                Double_t pdgMassD0 = TDatabasePDG::Instance()->GetParticle(421)->Mass();
+                Double_t massWindowD0 = 0.06; //GeV/c^2  //hardset cut - has to be changed at some point 
+                Int_t pdgD0 = 421;
+
+                if (pionTrack->Charge() == -1)
+                {
+                if (TMath::Abs(invariantMassD0 - pdgMassD0) > massWindowD0) continue;
+
+                } else if (pionTrack->Charge() == 1) {
+                if (TMath::Abs(invariantMassD02 - pdgMassD0) > massWindowD0) continue;
+                }
+
+
+                //apply cut on inv mass B+ before doing the reconstruction of the vertex
+
+
+                //we use the BPlus pion and D0 tracks to reconstruct the vertex for the BPlus
+                AliExternalTrackParam firstTrack;
+                firstTrack.CopyFromVTrack(pionTrack);
+                AliExternalTrackParam secondTrack;
+                secondTrack.CopyFromVTrack(d);
+
+                UInt_t prongs[2];
+                prongs[1] = 421;
+                prongs[0] = 211;
+
+                // we calculate the vertex of the mother candidate
+                TObjArray daughterTracks;
+
+                daughterTracks.Add(&firstTrack);
+                daughterTracks.Add(&secondTrack);
+                Double_t dispersion = 0;
+                AliAODVertex *vertexMother = RecalculateVertex(primaryVertex, &daughterTracks, bfield, dispersion);
+                if (!vertexMother)
+                {
+                  delete vertexMother; vertexMother = nullptr;
+                  continue;
+                }
+
+                //use the new vertex to create the BPlus candidate
+                Double_t xdummy = 0., ydummy = 0., dca;
+                Double_t d0z0[2], covd0z0[3], d0[2], d0err[2];
+
+
+                firstTrack.PropagateToDCA(vertexMother, bfield, 100., d0z0, covd0z0);
+                secondTrack.PropagateToDCA(vertexMother, bfield, 100., d0z0, covd0z0);
+
+                //we reconstruct the mother decay prong
+                Double_t px[2], py[2], pz[2];
+                px[0] = firstTrack.Px();
+                py[0] = firstTrack.Py();
+                pz[0] = firstTrack.Pz();
+                px[1] = secondTrack.Px();
+                py[1] = secondTrack.Py();
+                pz[1] = secondTrack.Pz();
+
+                UShort_t id[2];
+                id[0] = firstTrack.GetID();
+                id[1] = secondTrack.GetID();
+
+                firstTrack.PropagateToDCA(primaryVertex, bfield, 100., d0z0, covd0z0);
+                d0[0] = d0z0[0];
+                d0err[0] = TMath::Sqrt(covd0z0[0]);
+                secondTrack.PropagateToDCA(primaryVertex, bfield, 100., d0z0, covd0z0);
+                d0[1] = d0z0[0];
+                d0err[1] = TMath::Sqrt(covd0z0[0]);
+
+                dca = secondTrack.GetDCA(&firstTrack, bfield, xdummy, ydummy);
+
+                Short_t chargeMother = d->Charge() + pionTrack->Charge();
+
+                AliAODRecoDecayHF2Prong trackBPlus(vertexMother, px, py, pz, d0, d0err, dca);
+
+                trackBPlus.SetCharge(chargeMother);
+                trackBPlus.GetSecondaryVtx()->AddDaughter(pionTrack);
+                trackBPlus.GetSecondaryVtx()->AddDaughter(d);
+                trackBPlus.SetPrimaryVtxRef((AliAODVertex*)aod->GetPrimaryVertex());
+                trackBPlus.SetProngIDs(2, id);
+
+                // Fiducial cut
+                if (TMath::Abs(trackBPlus.Y(521)) > 0.8) { //will be moved to cutfile at a later point
+                  delete vertexMother; vertexMother = nullptr;
+                  continue;
+                }
+
+                //apply cuts on BPlus and D0 
+                Bool_t bCutArrayBPlus[68] = {0};
+                Int_t cutReturnValueBPlusFilt = fFiltCutsBplustoD0pi->IsSelected(&trackBPlus, 0, aod, bCutArrayBPlus); // filt cuts
+                if (cutReturnValueBPlusFilt == -1 || cutReturnValueBPlusFilt == 0) {               
+                    delete vertexMother; vertexMother = nullptr;
+                    continue;
+                }
+
+                Bool_t isSelectedAnalysis = isSelectedAnalysisD0;
+                Int_t cutReturnValueBPlus = fCutsBplustoD0pi->IsSelected(&trackBPlus, 0, aod, bCutArrayBPlus); // also do filt cuts
+                if (cutReturnValueBPlus == -1 || cutReturnValueBPlus == 0) {               
+                    isSelectedAnalysis = kFALSE;
+                }
+
+                fNentries->Fill(24);
+                nSelectedBplus++;
+
+                // cout << " at signal check" << endl;
+
+                Int_t labBplus = -1;
+                if (fReadMC) labBplus = MatchBPlusCandidateToMonteCarlo(521, &trackBPlus, arrMC); //return MC particle label if the array corresponds to a BPlus, -1 if not
+
+                // add Bplus match to mc
+
+                bool issignal = kFALSE;
+                bool isbkg =    kFALSE;
+                bool isFD =     kFALSE;
+                bool isprompt = kTRUE;
+                bool isrefl =   kFALSE;
+
+                // Bool_t issignal = kFALSE;
+                Int_t masshypo = 0;
+                if(labBplus >= 0) {issignal = kTRUE; cout << " found signal " << endl;}
+                else isbkg = kTRUE;
+
+                if (fReadMC) {
+                    if (fWriteVariableTreeBplus) {
+                        //Printf("Before filling tree Bplus SIG");
+                        fTreeHandlerBplus->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
+                        fTreeHandlerBplus->SetIsSelectedStd(isSelectedAnalysis);
+                        // Printf("after caniddate type tree Bplus BKG");
+                        fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, pidHFBplus);
+                        // Printf("after setting variables tree Bplus BKG");
+
+                        // Printf("after filling tree D0 SIG");
+                    }
+                }//end read MC
+                else {
+                    if (fWriteVariableTreeBplus) {
+                        //Printf("Before filling tree Bplus BKG");
+                        fTreeHandlerBplus->SetIsSelectedStd(isSelectedAnalysis);
+                        fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, pidHFBplus);
+                        // Printf("after setting variables tree Bplus BKG");
+                        // Printf("After filling tree Bplus BKG");
+                    }
+                }
+                delete vertexMother; vertexMother = nullptr;
+            } // end loop over pion track
+        }//end loop on candidates
+    }
+   
   
-    fTreeHandlerD0->FillTree();
+
+    if(fWriteVariableTreeD0) fTreeHandlerD0->FillTree();
+    if(fWriteVariableTreeBplus) fTreeHandlerBplus->FillTree();
 
     delete vHF;
     return;
@@ -1001,3 +1416,197 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
     return;
 }
 //________________________________________________________________
+Int_t AliAnalysisTaskSEHFTreeCreator_v1::MatchBPlusCandidateToMonteCarlo(Int_t pdgabs, AliAODRecoDecayHF2Prong * candidate, TClonesArray *mcArray) const
+{
+  //
+  // Check if this candidate is matched to a MC signal
+  // If no, return -1
+  // If yes, return label (>=0) of the AliAODMCParticle
+
+
+  // Check number of daughters
+  Int_t ndg = candidate->GetNDaughters();
+  if (!ndg) { AliError("No daughters available"); return -1;}
+  if (ndg != 2) return -1;
+
+  // loop on daughters and write the labels
+  Int_t dgLabels[2] = { -1};
+  Int_t pdgDg[2] = {0};
+  if (pdgabs == 421)
+  {
+    AliAODTrack *trk0 = (AliAODTrack*)candidate->GetDaughter(0);
+    dgLabels[0] = trk0->GetLabel();
+    AliAODTrack *trk1 = (AliAODTrack*)candidate->GetDaughter(1);
+    dgLabels[1] = trk1->GetLabel();
+    pdgDg[0] = 211; pdgDg[1] = 321;
+  }
+  else if (pdgabs == 521)
+  {
+    AliAODTrack *trk0 = (AliAODTrack*)candidate->GetDaughter(0);
+    dgLabels[0] = trk0->GetLabel();
+    dgLabels[1] = MatchBPlusCandidateToMonteCarlo(421, (AliAODRecoDecayHF2Prong*)candidate->GetDaughter(1), mcArray);
+    pdgDg[0] = 211; pdgDg[1] = 421;
+  }
+  else
+  {
+    std::cout << "Wrong pdg supplied for function to match candidate to monte carlo signal." << std::endl;
+    return -1;
+  }
+  if (dgLabels[0] == -1) return -1;
+  if (dgLabels[1] == -1) return -1;
+
+  if(pdgabs==521) cout  << "passed checkpoint 1" << endl;
+
+  Int_t labMom[2] = {0, 0};
+  Int_t i, j, lab, labMother, pdgMother, pdgPart;
+  AliAODMCParticle *part = 0;
+  AliAODMCParticle *mother = 0;
+  Double_t pxSumDgs = 0., pySumDgs = 0., pzSumDgs = 0.;
+  Bool_t pdgUsed[2] = {kFALSE, kFALSE};
+
+  // loop on daughter labels
+  for (i = 0; i < ndg; i++)
+  {
+    labMom[i] = -1;
+    lab = TMath::Abs(dgLabels[i]);
+    if (lab < 0)
+    {
+      printf("daughter with negative label %d\n", lab);
+      return -1;
+    }
+    part = (AliAODMCParticle*)mcArray->At(lab);
+    if (!part)
+    {
+      printf("no MC particle\n");
+      return -1;
+    }
+
+    // check the PDG of the daughter
+    pdgPart = TMath::Abs(part->GetPdgCode());
+    for (j = 0; j < ndg; j++)
+    {
+      if (!pdgUsed[j] && pdgPart == pdgDg[j])
+      {
+        pdgUsed[j] = kTRUE;
+        break;
+      }
+    }
+
+    if(pdgabs==521) cout  << "passed checkpoint 2" << endl;
+
+    mother = part;
+    while (mother->GetMother() >= 0)
+    {
+      labMother = mother->GetMother();
+      mother = (AliAODMCParticle*)mcArray->At(labMother);
+      if (!mother)
+      {
+        printf("no MC mother particle\n");
+        break;
+      }
+      pdgMother = TMath::Abs(mother->GetPdgCode());
+      if (pdgMother == pdgabs)
+      {
+        labMom[i] = labMother;
+        // keep sum of daughters' momenta, to check for mom conservation
+        pxSumDgs += part->Px();
+        pySumDgs += part->Py();
+        pzSumDgs += part->Pz();
+        break;
+      }
+      else break;
+    }
+    if (labMom[i] == -1) return -1; // mother PDG not ok for this daughter
+  } // end loop on daughters
+
+  // check if the candidate is signal
+  labMother = labMom[0];
+  // all labels have to be the same and !=-1
+  for (i = 0; i < ndg; i++)
+  {
+    if (labMom[i] == -1)        return -1;
+    if (labMom[i] != labMother) return -1;
+  }
+
+  // check that all daughter PDGs are matched
+  for (i = 0; i < ndg; i++)
+  {
+    if (pdgUsed[i] == kFALSE) return -1;
+  }
+
+  // Check for mom conservation
+  mother = (AliAODMCParticle*)mcArray->At(labMother);
+  Double_t pxMother = mother->Px();
+  Double_t pyMother = mother->Py();
+  Double_t pzMother = mother->Pz();
+
+  if(pdgabs==521) cout  << "passed checkpoint 3" << endl;
+
+  // check the number of daughters (we are not looking at resonant decay)
+  if(mother->GetNDaughters() != 2) return -1;
+
+  if(pdgabs==521) cout  << "passed checkpoint 4" << endl;
+
+  // if momentum conservation is not within 0.5%, show warning. This can be due to large propagation distance through magnetic field.
+  if ((TMath::Abs(pxMother - pxSumDgs) / (TMath::Abs(pxMother) + 1.e-13)) > 0.005 ||
+      (TMath::Abs(pyMother - pySumDgs) / (TMath::Abs(pyMother) + 1.e-13)) > 0.005 ||
+      (TMath::Abs(pzMother - pzSumDgs) / (TMath::Abs(pzMother) + 1.e-13)) > 0.005)
+  {
+    std::cout << std::endl << " Momentum difference for decay pdgabs = " << pdgabs << "daughters = " << mother->GetNDaughters() << std::endl;
+    std::cout << "pxMother = " << pxMother << "pyMother = " << pyMother << "pzMother = " << pzMother << std::endl;
+    std::cout << "pxSumDgs = " << pxSumDgs << "pySumDgs = " << pySumDgs << "pzSumDgs = " << pzSumDgs << std::endl;
+  }
+
+  return labMother;
+}
+//-------------------------------------------------------------------------------------
+AliAODVertex* AliAnalysisTaskSEHFTreeCreator_v1::RecalculateVertex(const AliVVertex *primary, TObjArray *tracks, Double_t bField, Double_t dispersion) {
+  //
+  // Helper function to recalculate a vertex.
+  //
+
+  AliESDVertex *vertexESD = 0;
+  AliAODVertex *vertexAOD = 0;
+
+  AliVertexerTracks vertexer;
+  vertexer.SetFieldkG(bField);
+
+  vertexer.SetVtxStart((AliESDVertex*)primary); //primary vertex
+  vertexESD = (AliESDVertex*)vertexer.VertexForSelectedESDTracks(tracks);
+
+  // delete vertexer; vertexer=NULL;
+
+  if (!vertexESD) return vertexAOD;
+
+
+  if (vertexESD->GetNContributors() != tracks->GetEntriesFast())
+  {
+    delete vertexESD; vertexESD = nullptr;
+    return vertexAOD;
+  }
+
+  // convert to AliAODVertex
+  Double_t pos[3], cov[6], chi2perNDF;
+  for (Int_t a = 0; a < 3; a++)pos[a] = 0.;
+  for (Int_t b = 0; b < 6; b++)cov[b] = 0.;
+  chi2perNDF = 0;
+
+  vertexESD->GetXYZ(pos); // position
+  vertexESD->GetCovMatrix(cov); //covariance matrix
+
+
+  Double_t vertRadius2 = pos[0] * pos[0] + pos[1] * pos[1];
+  if (vertRadius2 > 8.) //(2.82)^2 radius beam pipe
+  {
+    delete vertexESD; vertexESD = nullptr;
+    return vertexAOD;
+  }
+
+  chi2perNDF = vertexESD->GetChi2toNDF();
+  dispersion = vertexESD->GetDispersion();
+  delete vertexESD; vertexESD = nullptr;
+  Int_t nprongs = 2; //tracks->GetEntriesFast();
+  vertexAOD = new AliAODVertex(pos, cov, chi2perNDF, 0x0, -1, AliAODVertex::kUndef, nprongs);
+
+  return vertexAOD;
+}

@@ -1,0 +1,17 @@
+181101 23:20:35 5929 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:05 5945 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:05 5942 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:06 5914 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5964 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5910 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5925 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5931 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5916 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5956 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5948 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5927 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:21:35 5951 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:22:05 5933 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:22:05 5923 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:22:05 5903 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).
+181101 23:22:05 5953 Xrd: XrdClientMessage::ReadRaw: Failed to read header (8 bytes).

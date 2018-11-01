@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<alien>
+  <collection name="collection">
+    <event name="1">
+      <file name="AliAOD.root" aclId="" broken="0" ctime="2018-02-18 14:25:14" dir="194443278" entryId="194443853" expiretime="" gowner="z2" guid="4AE31D62-14AE-11E8-B8D0-4F47C85C559A" guidtime="11E814AE" jobid="1101369538" lfn="/alice/sim/2018/LHC18a4a2_fast/282021/AOD/032/AliAOD.root" md5="62dd43035a4250ff3ddb81739d2abde0" owner="aliprod" perm="755" replicated="0" size="8888446" turl="alien:///alice/sim/2018/LHC18a4a2_fast/282021/AOD/032/AliAOD.root" type="f" />
+    </event>
+    <event name="2">
+      <file name="AliAOD.root" aclId="" broken="0" ctime="2018-02-18 13:04:27" dir="194434038" entryId="194435197" expiretime="" gowner="z2" guid="1E659266-14A3-11E8-AC63-5B5EBD291058" guidtime="11E814A3" jobid="1101369545" lfn="/alice/sim/2018/LHC18a4a2_fast/282021/AOD/039/AliAOD.root" md5="a9ea5b0facb76258be3aa1ca5f4a547a" owner="aliprod" perm="755" replicated="0" size="10397643" turl="alien:///alice/sim/2018/LHC18a4a2_fast/282021/AOD/039/AliAOD.root" type="f" />
+    </event>
+    <info command="[/alice/cern.ch/user/l/lvandore/]: find -z -x collection -l 15000 -o 0 /alice/sim/2018/LHC18a4a2_fast//282021 AOD/*AliAOD.root" creator="admin" date="Thu Nov  1 20:19:52 CET 2018" timestamp="1541099992" />
+  </collection>
+</alien>
+
+

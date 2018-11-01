@@ -221,33 +221,33 @@ bool AliHFCutOptTreeHandler::SetVariables(AliAODRecoDecayHF* d, int masshypo, Al
       AliAODRecoDecayHF2Prong* candidateD0 = (AliAODRecoDecayHF2Prong*)d->GetDaughter(1);  
       if(d->Charge()==-1) {
         fTopolVarVector[14]=candidateD0->InvMassD0();
-        fTopolVarVector[15]=d->Pt();
-        fTopolVarVector[16]=d->DecayLength();
-        fTopolVarVector[17]=d->DecayLengthXY();
-        fTopolVarVector[18]=d->NormalizedDecayLengthXY();
-        fTopolVarVector[19]=d->CosPointingAngle();
-        fTopolVarVector[20]=d->CosPointingAngleXY();
-        fTopolVarVector[21]=d->ImpParXY();
-        fTopolVarVector[22]=d->PtProng(0);
-        fTopolVarVector[23]=d->PtProng(1);
+        fTopolVarVector[15]=candidateD0->Pt();
+        fTopolVarVector[16]=candidateD0->DecayLength();
+        fTopolVarVector[17]=candidateD0->DecayLengthXY();
+        fTopolVarVector[18]=candidateD0->NormalizedDecayLengthXY();
+        fTopolVarVector[19]=candidateD0->CosPointingAngle();
+        fTopolVarVector[20]=candidateD0->CosPointingAngleXY();
+        fTopolVarVector[21]=candidateD0->ImpParXY();
+        fTopolVarVector[22]=candidateD0->PtProng(0);
+        fTopolVarVector[23]=candidateD0->PtProng(1);
         fTopolVarVector[24]=candidateD0->CosThetaStarD0();
-        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
-        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)candidateD0)->Getd0Prong(0);
+        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)candidateD0)->Getd0Prong(1);
         fTopolVarVector[27]=fTopolVarVector[25]*fTopolVarVector[26];      }
       else {
         fTopolVarVector[14]=candidateD0->InvMassD0bar();
-        fTopolVarVector[15]=d->Pt();
-        fTopolVarVector[16]=d->DecayLength();
-        fTopolVarVector[17]=d->DecayLengthXY();
-        fTopolVarVector[18]=d->NormalizedDecayLengthXY();
-        fTopolVarVector[19]=d->CosPointingAngle();
-        fTopolVarVector[20]=d->CosPointingAngleXY();
-        fTopolVarVector[21]=d->ImpParXY();
-        fTopolVarVector[22]=d->PtProng(0);
-        fTopolVarVector[23]=d->PtProng(1);
+        fTopolVarVector[15]=candidateD0->Pt();
+        fTopolVarVector[16]=candidateD0->DecayLength();
+        fTopolVarVector[17]=candidateD0->DecayLengthXY();
+        fTopolVarVector[18]=candidateD0->NormalizedDecayLengthXY();
+        fTopolVarVector[19]=candidateD0->CosPointingAngle();
+        fTopolVarVector[20]=candidateD0->CosPointingAngleXY();
+        fTopolVarVector[21]=candidateD0->ImpParXY();
+        fTopolVarVector[22]=candidateD0->PtProng(0);
+        fTopolVarVector[23]=candidateD0->PtProng(1);
         fTopolVarVector[24]=candidateD0->CosThetaStarD0bar();
-        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(0);
-        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)d)->Getd0Prong(1);
+        fTopolVarVector[25]=((AliAODRecoDecayHF2Prong*)candidateD0)->Getd0Prong(0);
+        fTopolVarVector[26]=((AliAODRecoDecayHF2Prong*)candidateD0)->Getd0Prong(1);
         fTopolVarVector[27]=fTopolVarVector[25]*fTopolVarVector[26];  
       }
     } break;

@@ -16,7 +16,7 @@
 Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
 TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
 Bool_t runGridTest=kTRUE;                                // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE 
-TString runMode="full";                                  // sets the run grid mode: "full", "terminate"
+TString runMode="terminate";                                  // sets the run grid mode: "full", "terminate"
 
 TString aliPhysVersion="vAN-20180930-1";
 
@@ -191,7 +191,7 @@ void runAnalysis()
         // after re-running the jobs in SetRunMode("terminate") 
         // (see below) mode, set SetMergeViaJDL(kFALSE) 
         // to collect final results
-        alienHandler->SetMaxMergeStages(3); //2, 3
+        alienHandler->SetMaxMergeStages(2); //2, 3
         alienHandler->SetMergeViaJDL(kTRUE);
 
         // define the output folders

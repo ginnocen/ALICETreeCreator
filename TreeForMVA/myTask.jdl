@@ -1,0 +1,61 @@
+Jobtag = {
+   "comment:Automatically generated analysis JDL"
+};
+# Input xml collections
+InputDataCollection = {
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/$1,nodownload"
+};
+# Output directory
+OutputDir = "/alice/cern.ch/user/l/lvandore//BPlusNtupleCreator002_MC/output/$2/#alien_counter_03i#";
+# List of requested packages
+Packages = {
+   "VO_ALICE@AliPhysics::vAN-20181021-1",
+   "VO_ALICE@APISCONFIG::V1.1x"
+};
+# List of input files to be uploaded to workers
+InputFile = {
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/myAnalysis.C",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/myTask.root",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandler.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandler.h",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerD0toKpi.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerD0toKpi.h",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerDplustoKpipi.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerDplustoKpipi.h",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerDstoKKpi.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerBplustoD0pi.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerBplustoD0pi.h",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliHFTreeHandlerDstoKKpi.h",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliAnalysisTaskSEHFTreeCreator_v1.cxx",
+   "LF:/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/AliAnalysisTaskSEHFTreeCreator_v1.h"
+};
+# This is the startup script
+Executable = "/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/myTask.sh";
+# We split per SE or file
+Split = "se";
+# Time after which the job is killed (166 min.)
+TTL = "10000";
+# Maximum number of input files to be processed per subjob
+SplitMaxInputFileNumber = "1";
+# Format of input data
+InputDataListFormat = "xml-single";
+# Collection name to be processed on each worker node
+InputDataList = "wn.xml";
+# List of output files and archives
+Output = {
+   "log_archive.zip:std*@disk=1",
+   "root_archive.zip:EventStat_temp.root,AnalysisResults.root,*.stat@disk=2"
+};
+# AliEn price for this job
+Price = "1";
+# Validation script to be run for each subjob
+Validationcommand = "/alice/cern.ch/user/l/lvandore/BPlusNtupleCreator002_MC/myTask_validation.sh";
+User = "lvandore";
+
+# JDL variables
+JDLVariables = 
+{
+   "Packages",
+   "OutputDir"
+};
+Workdirectorysize = {"5000MB"};
