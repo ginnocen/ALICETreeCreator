@@ -26,7 +26,8 @@ ClassImp(AliHFTreeHandlerDplustoKpipi);
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
   AliHFTreeHandler(),
-  fSigmaVertex()
+  fSigmaVertex(),
+  fImpParProng()
 {
   //
   // Default constructor
@@ -38,7 +39,8 @@ AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(int PIDopt):
   AliHFTreeHandler(PIDopt),
-  fSigmaVertex()
+  fSigmaVertex(),
+  fImpParProng()
 {
   //
   // Standard constructor
@@ -71,6 +73,9 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
 
   //set D+ variables
   fTreeVar->Branch("sig_vert",&fSigmaVertex);
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++){
+    fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
+  }
 
   //set single-track variables
   AddSingleTrackBranches();
@@ -110,11 +115,14 @@ bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, float b
   //D+ -> Kpipi variables
   fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDplus());
   fSigmaVertex.push_back(((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert());
-
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    fImpParProng[iProng].push_back(cand->Getd0Prong(iProng));
+  }
+    
   //single track variables
   AliAODTrack* prongtracks[3];
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
-  bool setsingletrack = SetSingleTrackVars(prongtracks,cand);  
+  bool setsingletrack = SetSingleTrackVars(prongtracks);  
   if(!setsingletrack) return false;
 
   //pid variables
@@ -134,6 +142,7 @@ void AliHFTreeHandlerDplustoKpipi::FillTree() {
   ResetDmesonCommonVarVectors();
   if(!fIsMCGenTree) {
     fSigmaVertex.clear();
+    for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();
   }

@@ -31,7 +31,8 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   fMassKK(),
   fCosPiDs(),
   fCosPiKPhi(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kDeltaMassKKPhi),
+  fImpParProng()
 {
   //
   // Default constructor
@@ -47,7 +48,8 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   fMassKK(),
   fCosPiDs(),
   fCosPiKPhi(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kDeltaMassKKPhi),
+  fImpParProng()
 {
   //
   // Standard constructor
@@ -86,7 +88,10 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
   fTreeVar->Branch(massKKname.Data(),&fMassKK);
   fTreeVar->Branch("cos_PiDs",&fCosPiDs);
   fTreeVar->Branch("cos_PiKPhi_3",&fCosPiKPhi);
-
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++){
+    fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
+  }
+    
   //set single-track variables
   AddSingleTrackBranches();
   
@@ -138,11 +143,14 @@ bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
     cospikphi = ((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFramepiKK();
   }
   fCosPiKPhi.push_back(cospikphi*cospikphi*cospikphi);
-
+  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+    fImpParProng[iProng].push_back(cand->Getd0Prong(iProng));
+  }
+    
   //single-track variables
   AliAODTrack* prongtracks[3];
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
-  bool setsingletrack = SetSingleTrackVars(prongtracks,cand);  
+  bool setsingletrack = SetSingleTrackVars(prongtracks);  
   if(!setsingletrack) return false;
 
   //pid variables
@@ -165,6 +173,7 @@ void AliHFTreeHandlerDstoKKpi::FillTree() {
     fMassKK.clear();
     fCosPiDs.clear();
     fCosPiKPhi.clear();
+    for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();
   }

@@ -36,6 +36,7 @@ class AliHFTreeHandlerD0toKpi : public AliHFTreeHandler
 
   private:
 
+    vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
     vector<float> fCosThetaStar; /// 
     vector<float> fImpParProd; /// 
 
