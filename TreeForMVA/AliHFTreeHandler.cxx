@@ -504,7 +504,8 @@ int AliHFTreeHandler::RoundFloatToInt(double num)
 float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield) 
 {
   float dd0max=0;
-  for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
+  unsigned int fNProngs_cand = (unsigned int)cand->GetNProngs();
+  for(unsigned int iProng=0; iProng<fNProngs_cand; iProng++) {
     double d0diff, errd0diff;
     cand->Getd0MeasMinusExpProng(iProng,bfield,d0diff,errd0diff);
     float normdd0 = d0diff/errd0diff;
