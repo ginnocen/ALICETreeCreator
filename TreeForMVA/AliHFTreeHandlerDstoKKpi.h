@@ -46,10 +46,11 @@ class AliHFTreeHandlerDstoKKpi : public AliHFTreeHandler
   private:
 
     vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
-    vector<float> fSigmaVertex; /// 
-    vector<float> fMassKK; /// 
-    vector<float> fCosPiDs; /// 
-    vector<float> fCosPiKPhi; /// 
+    vector<float> fSigmaVertex; /// vector of candidate sigma vertex
+    vector<float> fMassKK; /// vector of candidate massKK
+    vector<float> fCosPiDs; /// vector of candidate cos3piDs
+    vector<float> fCosPiKPhi; /// vector of candidate cospiKphi
+    vector<float> fNormd0MeasMinusExp; ///vector of candidate topomatic variable
     int fMassKKOpt; /// option for massKK variable (mass or delta mass wrt phi)
 
     /// \cond CLASSIMP

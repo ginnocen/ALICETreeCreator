@@ -45,7 +45,6 @@ AliHFTreeHandler::AliHFTreeHandler():
   fCosP(),
   fCosPXY(),
   fImpParXY(),
-  fNormd0MeasMinusExp(),
   fPProng(),
   fTPCPProng(),
   fTOFPProng(),
@@ -89,7 +88,6 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fCosP(),
   fCosPXY(),
   fImpParXY(),
-  fNormd0MeasMinusExp(),
   fPProng(),
   fTPCPProng(),
   fTOFPProng(),
@@ -194,7 +192,6 @@ void AliHFTreeHandler::AddCommonDmesonVarBranches() {
   fTreeVar->Branch("cos_p",&fCosP);
   fTreeVar->Branch("cos_p_xy",&fCosPXY);
   fTreeVar->Branch("imp_par_xy",&fImpParXY);
-  fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
 } 
 
 //________________________________________________________________
@@ -445,7 +442,6 @@ void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
     fCosP.clear();
     fCosPXY.clear();
     fImpParXY.clear();
-    fNormd0MeasMinusExp.clear();
   }
 }
 
@@ -501,7 +497,7 @@ int AliHFTreeHandler::RoundFloatToInt(double num)
 }
 
 //________________________________________________________________
-float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield) 
+float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield)
 {
   float dd0max=0;
   unsigned int fNProngs_cand = (unsigned int)cand->GetNProngs();
