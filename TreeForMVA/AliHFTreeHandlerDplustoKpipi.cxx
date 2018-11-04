@@ -26,8 +26,9 @@ ClassImp(AliHFTreeHandlerDplustoKpipi);
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
   AliHFTreeHandler(),
+  fImpParProng(),
   fSigmaVertex(),
-  fImpParProng()
+  fNormd0MeasMinusExp()
 {
   //
   // Default constructor
@@ -39,8 +40,9 @@ AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
 //________________________________________________________________
 AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(int PIDopt):
   AliHFTreeHandler(PIDopt),
+  fImpParProng(),
   fSigmaVertex(),
-  fImpParProng()
+  fNormd0MeasMinusExp()
 {
   //
   // Standard constructor
@@ -73,6 +75,7 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
 
   //set D+ variables
   fTreeVar->Branch("sig_vert",&fSigmaVertex);
+  fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
   for(unsigned int iProng=0; iProng<fNProngs; iProng++){
     fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
   }
@@ -142,6 +145,7 @@ void AliHFTreeHandlerDplustoKpipi::FillTree() {
   ResetDmesonCommonVarVectors();
   if(!fIsMCGenTree) {
     fSigmaVertex.clear();
+    fNormd0MeasMinusExp.clear();
     for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();

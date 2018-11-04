@@ -142,7 +142,6 @@ class AliHFTreeHandler : public TObject
     vector<float> fDecayLength; ///vector of candidate decay length
     vector<float> fDecayLengthXY; ///vector of candidate decay length in the transverse plane
     vector<float> fNormDecayLengthXY; ///vector of candidate normalised decay length in the transverse plane
-    vector<float> fNormd0MeasMinusExp; ///vector of candidate topomatic variable
     vector<float> fCosP; ///vector of candidate cosine of pointing angle
     vector<float> fCosPXY; ///vector of candidate cosine of pointing angle in the transcverse plane
     vector<float> fImpParXY; ///vector of candidate impact parameter in the transverse plane

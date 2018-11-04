@@ -27,12 +27,13 @@ ClassImp(AliHFTreeHandlerDstoKKpi);
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   AliHFTreeHandler(),
+  fImpParProng(),
   fSigmaVertex(),
   fMassKK(),
   fCosPiDs(),
   fCosPiKPhi(),
-  fMassKKOpt(kDeltaMassKKPhi),
-  fImpParProng()
+  fNormd0MeasMinusExp(),
+  fMassKKOpt(kDeltaMassKKPhi)
 {
   //
   // Default constructor
@@ -44,12 +45,13 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
 //________________________________________________________________
 AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   AliHFTreeHandler(PIDopt),
+  fImpParProng(),
   fSigmaVertex(),
   fMassKK(),
   fCosPiDs(),
   fCosPiKPhi(),
-  fMassKKOpt(kDeltaMassKKPhi),
-  fImpParProng()
+  fNormd0MeasMinusExp(),
+  fMassKKOpt(kDeltaMassKKPhi)
 {
   //
   // Standard constructor
@@ -88,6 +90,7 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
   fTreeVar->Branch(massKKname.Data(),&fMassKK);
   fTreeVar->Branch("cos_PiDs",&fCosPiDs);
   fTreeVar->Branch("cos_PiKPhi_3",&fCosPiKPhi);
+  fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
   for(unsigned int iProng=0; iProng<fNProngs; iProng++){
     fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
   }
@@ -173,6 +176,7 @@ void AliHFTreeHandlerDstoKKpi::FillTree() {
     fMassKK.clear();
     fCosPiDs.clear();
     fCosPiKPhi.clear();
+    fNormd0MeasMinusExp.clear();
     for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();
