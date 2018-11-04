@@ -108,7 +108,6 @@ private:
     Int_t                   fWriteVariableTreeDplus;      // flag to decide whether to write the candidate variables on a tree variables
     													 // 0 don't fill
                                                          // 1 fill standard tree
-    TList                   *fListTree;                  //!<!
     TTree                   *fVariablesTreeD0;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDs;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDplus;        //!<! tree of the candidate variables
