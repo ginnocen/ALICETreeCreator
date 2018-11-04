@@ -37,8 +37,9 @@ class AliHFTreeHandlerD0toKpi : public AliHFTreeHandler
   private:
 
     vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
-    vector<float> fCosThetaStar; /// 
-    vector<float> fImpParProd; /// 
+    vector<float> fCosThetaStar; /// vector of candidate costhetastar
+    vector<float> fImpParProd; /// vector of daughter impact-parameter product
+    vector<float> fNormd0MeasMinusExp; ///vector of candidate topomatic variable
 
     /// \cond CLASSIMP
     ClassDef(AliHFTreeHandlerD0toKpi,1); /// 

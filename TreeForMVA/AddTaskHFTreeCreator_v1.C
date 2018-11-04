@@ -81,16 +81,20 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     TString countername = "coutputNormCounterHisto";
     TString cutsname = "coutputCuts";
     TString normname = "coutputNorm";
-    TString treename = "coutputTree";
+    TString treeevcharname = "coutputTreeEvChar";
+    TString treeD0name = "coutputTreeD0";
+    TString treeDplusname = "coutputTreeDplus";
+    TString treeDsname = "coutputTreeDs";
 
     inname += finDirname.Data();
     histoname += finDirname.Data();
     countername += finDirname.Data();
     cutsname += finDirname.Data();
     normname += finDirname.Data();
-    treename += finDirname.Data();
-
-
+    treeevcharname += finDirname.Data();
+    treeD0name += finDirname.Data();
+    treeDplusname += finDirname.Data();
+    treeDsname += finDirname.Data();
 
     AliAnalysisDataContainer *cinput = mgr->CreateContainer(inname,TChain::Class(),AliAnalysisManager::kInputContainer);
     TString outputfile = AliAnalysisManager::GetCommonFileName();
@@ -100,7 +104,10 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     AliAnalysisDataContainer *coutputCounter = mgr->CreateContainer(countername,TH2F::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputCuts    = mgr->CreateContainer(cutsname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputNorm    = mgr->CreateContainer(normname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
-    AliAnalysisDataContainer *coutputTree    = mgr->CreateContainer(treename,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+    AliAnalysisDataContainer *coutputTreeEvChar    = mgr->CreateContainer(treeevcharname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+    AliAnalysisDataContainer *coutputTreeD0    = mgr->CreateContainer(treeD0name,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+    AliAnalysisDataContainer *coutputTreeDplus    = mgr->CreateContainer(treeDplusname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+    AliAnalysisDataContainer *coutputTreeDs    = mgr->CreateContainer(treeDsname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
 
 
     mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
@@ -108,7 +115,10 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     mgr->ConnectOutput(task,2,coutputCounter);
     mgr->ConnectOutput(task,3,coutputCuts);
     mgr->ConnectOutput(task,4,coutputNorm);
-    mgr->ConnectOutput(task,5,coutputTree);
+    mgr->ConnectOutput(task,5,coutputTreeEvChar);
+    mgr->ConnectOutput(task,6,coutputTreeD0);
+    mgr->ConnectOutput(task,7,coutputTreeDplus);
+    mgr->ConnectOutput(task,8,coutputTreeDs);
 
     return task;
 

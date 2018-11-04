@@ -90,7 +90,6 @@ fCounter(0x0),
 fUseSelectionBit(kTRUE),
 fSys(0),
 fAODProtection(1),
-fListTree(0),
 fWriteVariableTreeD0(0),
 fWriteVariableTreeDs(0),
 fWriteVariableTreeDplus(0),
@@ -139,7 +138,6 @@ fAODProtection(1),
 fWriteVariableTreeD0(0),
 fWriteVariableTreeDs(0),
 fWriteVariableTreeDplus(0),
-fListTree(0x0),
 fVariablesTreeD0(0x0),
 fVariablesTreeDs(0x0),
 fVariablesTreeDplus(0x0),
@@ -200,9 +198,14 @@ fRunNumber(0)
     DefineOutput(3,TList::Class());
     // Output slot #4 writes Normalization Counter
     DefineOutput(4,TList::Class());
-    // Output slot #5 stores the tree of the candidate variables after track selection
-    DefineOutput(5,TList::Class());
-    
+    // Output slot #5 stores the tree of the event-characterisation variables
+    DefineOutput(5,TTree::Class());
+    // Output slot #6 stores the tree of the D0 candidate variables after track selection
+    DefineOutput(6,TTree::Class());
+    // Output slot #7 stores the tree of the D+ candidate variables after track selection
+    DefineOutput(7,TTree::Class());
+    // Output slot #8 stores the tree of the Ds+ candidate variables after track selection
+    DefineOutput(8,TTree::Class());
 }
 //________________________________________________________________________
 AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
@@ -250,10 +253,6 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
     if(fCounter){
         delete fCounter;
         fCounter=0x0;
-    }
-    if (fListTree) {
-        delete fListTree;
-        fListTree = 0x0;
     }
     if(fTreeHandlerD0) {
         delete fTreeHandlerD0;
@@ -328,7 +327,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     fHistoNormCounter->GetXaxis()->SetBinLabel(4,"n. evt. for norm.");
     fHistoNormCounter->GetXaxis()->SetBinLabel(5,"n. evt. pileup");
 
-    
+
     fListCounter=new TList();
     fListCounter->SetOwner(kTRUE);
     fListCounter->SetName("NormCounter");
@@ -338,13 +337,9 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     
     
     //
-    // Output slot 4 : list of trees of the candidate variables after track selection
+    // Output slot 4-8 : trees of the candidate and event-characterization variables
     //
-    
-    fListTree=new TList();
-    fListTree->SetOwner(kTRUE);
-    fListTree->SetName("Trees");
-    
+  
     fTreeEvChar = new TTree("tree_event_char","tree_event_char");
     //set variables
     TString varnames[7] = {"centrality", "z_vtx", "n_vtx_contributors", "n_tracks", "is_sel_trigger", "is_pileup", "run_number"};
@@ -361,8 +356,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
         fTreeHandlerD0 = new AliHFTreeHandlerD0toKpi(fPIDoptD0);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerD0->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeD0 = (TTree*)fTreeHandlerD0->BuildTree(nameoutput,nameoutput);
-        fVariablesTreeD0->SetDirectory(0);
-        fListTree->Add(fVariablesTreeD0);
+//        fVariablesTreeD0->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeD0);
     }
     if(fWriteVariableTreeDs){
@@ -370,8 +364,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
         fTreeHandlerDs = new AliHFTreeHandlerDstoKKpi(fPIDoptDs);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDs->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDs = (TTree*)fTreeHandlerDs->BuildTree(nameoutput,nameoutput);
-        fVariablesTreeDs->SetDirectory(0);
-        fListTree->Add(fVariablesTreeDs);
+//        fVariablesTreeDs->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeDs);
     }
     if(fWriteVariableTreeDplus){
@@ -379,17 +372,18 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
         fTreeHandlerDplus = new AliHFTreeHandlerDplustoKpipi(fPIDoptDplus);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDplus->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDplus = (TTree*)fTreeHandlerDplus->BuildTree(nameoutput,nameoutput);
-        fVariablesTreeDplus->SetDirectory(0);
-        fListTree->Add(fVariablesTreeDplus);
+//        fVariablesTreeDplus->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeDplus);
     }
-    fListTree->Add(fTreeEvChar);
-    // Post the data
+
+  // Post the data
     PostData(1,fNentries);
     PostData(2,fHistoNormCounter);
     PostData(4,fListCounter);
-    PostData(5,fListTree);
-    
+    PostData(5,fTreeEvChar);
+    PostData(6,fVariablesTreeD0);
+    PostData(7,fVariablesTreeDplus);
+    PostData(8,fVariablesTreeDs);
    
     return;
 }
@@ -546,8 +540,11 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     PostData(1,fNentries);
     PostData(2,fHistoNormCounter);
     PostData(4,fListCounter);
-    PostData(5,fListTree);
-    
+    PostData(5,fTreeEvChar);
+    PostData(6,fVariablesTreeD0);
+    PostData(7,fVariablesTreeDplus);
+    PostData(8,fVariablesTreeDs);
+
     return;
 }
 //________________________________________________________________________
@@ -576,11 +573,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Terminate(Option_t */*option*/)
     fListCounter = dynamic_cast<TList*>(GetOutputData(4));
     if(!fListCounter){
         printf("ERROR: fListCounter not available\n");
-        return;
-    }
-    fListTree = dynamic_cast<TList*>(GetOutputData(5));
-    if(!fListTree){
-        printf("ERROR: fListTree not available\n");
         return;
     }
     return;
