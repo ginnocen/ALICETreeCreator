@@ -19,22 +19,22 @@
 Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
 TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
 Bool_t runGridTest=kFALSE;                               // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE
-TString runMode="full";                             // sets the run grid mode: "full", "terminate"
+TString runMode="full";                                  // sets the run grid mode: "full", "terminate"
 
-TString aliPhysVersion="vAN-20181021-1";
+TString aliPhysVersion="vAN-20181104-1";
 
-Bool_t isRunOnMC=kFALSE;                                 // set to kTRUE to run on Mone Carlo and uncomment/comment accordingly the following lines about paths on Alien
+Bool_t isRunOnMC=kTRUE;                                 // set to kTRUE to run on Mone Carlo and uncomment/comment accordingly the following lines about paths on Alien
 //paths on Alien
 // Monte Carlo
-//TString gridDataDir="/alice/sim/2018/LHC18a4a2_fast/";
-//TString gridDataPattern="AOD";
+TString gridDataDir="/alice/sim/2018/LHC18a4a2_fast/";
+TString gridDataPattern="AOD";
 // Data
-TString gridDataDir="/alice/data/2017/LHC17p/";
-TString gridDataPattern="/pass1_FAST/AOD";
+//TString gridDataDir="/alice/data/2017/LHC17p/";
+//TString gridDataPattern="/pass1_FAST/AOD";
 
 
 // Alien output directory
-TString gridWorkingDir="testNtupleCreator_LHC17p_FAST_run282343";
+TString gridWorkingDir="testNtupleCreator_LHC18a4a2_fast_test";
 TString gridOutputDir="output";
 
 //run numbers
@@ -89,7 +89,7 @@ void runAnalysis()
     gInterpreter->LoadMacro("AliHFTreeHandlerDplustoKpipi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,kFALSE,1,1,1)));
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1)));
 
 #else
 
@@ -109,7 +109,7 @@ void runAnalysis()
     gROOT->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator_v1.C");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,kFALSE,1,1,1);
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1);
 
 #endif
 
@@ -186,7 +186,7 @@ void runAnalysis()
         // (see below) mode, set SetMergeViaJDL(kFALSE)
         // to collect final results
         alienHandler->SetMaxMergeStages(3); //2, 3
-        alienHandler->SetMergeViaJDL(kTRUE);
+        alienHandler->SetMergeViaJDL(kFALSE);
 
         // define the output folders
         alienHandler->SetGridWorkingDir(gridWorkingDir.Data());

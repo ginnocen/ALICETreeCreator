@@ -96,11 +96,17 @@ fWriteVariableTreeDplus(0),
 fVariablesTreeD0(0x0),
 fVariablesTreeDs(0x0),
 fVariablesTreeDplus(0x0),
+fGenTreeD0(0x0),
+fGenTreeDs(0x0),
+fGenTreeDplus(0x0),
 fTreeEvChar(0x0),
 fWriteOnlySignal(kFALSE),
 fTreeHandlerD0(0x0),
 fTreeHandlerDs(0x0),
 fTreeHandlerDplus(0x0),
+fTreeHandlerGenD0(0x0),
+fTreeHandlerGenDs(0x0),
+fTreeHandlerGenDplus(0x0),
 fPIDoptD0(AliHFTreeHandler::kRawPID),
 fPIDoptDs(AliHFTreeHandler::kRawPID),
 fPIDoptDplus(AliHFTreeHandler::kRawPID),
@@ -110,8 +116,8 @@ fNcontributors(0),
 fNtracks(0),
 fIsTrigSel(kFALSE),
 fIsPileup(kFALSE),
-fRunNumber(0)
-
+fRunNumber(0),
+fFillMCGenTrees(kTRUE)
 {
 
 /// Default constructor
@@ -155,7 +161,8 @@ fNcontributors(0),
 fNtracks(0),
 fIsTrigSel(kFALSE),
 fIsPileup(kFALSE),
-fRunNumber(0)
+fRunNumber(0),
+fFillMCGenTrees(kTRUE)
 {
     /// Standard constructor
     
@@ -202,11 +209,18 @@ fRunNumber(0)
     DefineOutput(5,TTree::Class());
     // Output slot #6 stores the tree of the D0 candidate variables after track selection
     DefineOutput(6,TTree::Class());
-    // Output slot #7 stores the tree of the D+ candidate variables after track selection
+    // Output slot #7 stores the tree of the gen D0 variables
     DefineOutput(7,TTree::Class());
-    // Output slot #8 stores the tree of the Ds+ candidate variables after track selection
+    // Output slot #8 stores the tree of the D+ candidate variables after track selection
     DefineOutput(8,TTree::Class());
+    // Output slot #9 stores the tree of the gen D0 variables
+    DefineOutput(9,TTree::Class());
+    // Output slot #10 stores the tree of the Ds+ candidate variables after track selection
+    DefineOutput(10,TTree::Class());
+    // Output slot #11 stores the tree of the gen Ds+ variables
+    DefineOutput(11,TTree::Class());
 }
+
 //________________________________________________________________________
 AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
 {
@@ -255,16 +269,28 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
         fCounter=0x0;
     }
     if(fTreeHandlerD0) {
-        delete fTreeHandlerD0;
-        fTreeHandlerD0 = 0x0;
+      delete fTreeHandlerD0;
+      fTreeHandlerD0 = 0x0;
     }
     if(fTreeHandlerDs) {
-        delete fTreeHandlerDs;
-        fTreeHandlerDs = 0x0;
+      delete fTreeHandlerDs;
+      fTreeHandlerDs = 0x0;
     }
     if(fTreeHandlerDplus) {
-        delete fTreeHandlerDplus;
-        fTreeHandlerDplus = 0x0;
+      delete fTreeHandlerDplus;
+      fTreeHandlerDplus = 0x0;
+    }
+    if(fTreeHandlerGenD0) {
+      delete fTreeHandlerGenD0;
+      fTreeHandlerGenD0 = 0x0;
+    }
+    if(fTreeHandlerGenDs) {
+      delete fTreeHandlerGenDs;
+      fTreeHandlerGenDs = 0x0;
+    }
+    if(fTreeHandlerGenDplus) {
+      delete fTreeHandlerGenDplus;
+      fTreeHandlerGenDplus = 0x0;
     }
     if(fTreeEvChar) {
         delete fTreeEvChar;
@@ -352,28 +378,51 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     fTreeEvChar->Branch(varnames[6].Data(),&fRunNumber,Form("%s/I",varnames[6].Data()));    
     
     if(fWriteVariableTreeD0){
+        OpenFile(6);
         TString nameoutput = "tree_D0";
         fTreeHandlerD0 = new AliHFTreeHandlerD0toKpi(fPIDoptD0);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerD0->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeD0 = (TTree*)fTreeHandlerD0->BuildTree(nameoutput,nameoutput);
-//        fVariablesTreeD0->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeD0);
+      
+        if(fFillMCGenTrees && fReadMC) {
+          OpenFile(7);
+          TString nameoutput = "tree_D0_gen";
+          fTreeHandlerGenD0 = new AliHFTreeHandlerD0toKpi(0);
+          fGenTreeD0 = (TTree*)fTreeHandlerGenD0->BuildTreeMCGen(nameoutput,nameoutput);
+          fTreeEvChar->AddFriend(fGenTreeD0);
+        }
     }
     if(fWriteVariableTreeDs){
+        OpenFile(8);
         TString nameoutput = "tree_Ds";
         fTreeHandlerDs = new AliHFTreeHandlerDstoKKpi(fPIDoptDs);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDs->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDs = (TTree*)fTreeHandlerDs->BuildTree(nameoutput,nameoutput);
-//        fVariablesTreeDs->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeDs);
+      
+      if(fFillMCGenTrees && fReadMC) {
+        OpenFile(9);
+        TString nameoutput = "tree_Ds_gen";
+        fTreeHandlerGenDs = new AliHFTreeHandlerDstoKKpi(0);
+        fGenTreeDs = (TTree*)fTreeHandlerGenDs->BuildTreeMCGen(nameoutput,nameoutput);
+        fTreeEvChar->AddFriend(fGenTreeDs);
+      }
     }
     if(fWriteVariableTreeDplus){
+        OpenFile(10);
         TString nameoutput = "tree_Dplus";
         fTreeHandlerDplus = new AliHFTreeHandlerDplustoKpipi(fPIDoptDplus);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDplus->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDplus = (TTree*)fTreeHandlerDplus->BuildTree(nameoutput,nameoutput);
-//        fVariablesTreeDplus->SetDirectory(0);
         fTreeEvChar->AddFriend(fVariablesTreeDplus);
+      if(fFillMCGenTrees && fReadMC) {
+        OpenFile(11);
+        TString nameoutput = "tree_Dplus_gen";
+        fTreeHandlerGenDplus = new AliHFTreeHandlerDplustoKpipi(0);
+        fGenTreeDplus = (TTree*)fTreeHandlerGenDplus->BuildTreeMCGen(nameoutput,nameoutput);
+        fTreeEvChar->AddFriend(fGenTreeDplus);
+      }
     }
 
   // Post the data
@@ -381,10 +430,19 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     PostData(2,fHistoNormCounter);
     PostData(4,fListCounter);
     PostData(5,fTreeEvChar);
-    PostData(6,fVariablesTreeD0);
-    PostData(7,fVariablesTreeDplus);
-    PostData(8,fVariablesTreeDs);
-   
+    if(fWriteVariableTreeD0){
+      PostData(6,fVariablesTreeD0);
+      if(fFillMCGenTrees && fReadMC) PostData(7,fGenTreeD0);
+    }
+    if(fWriteVariableTreeDs){
+      PostData(8,fVariablesTreeDs);
+      if(fFillMCGenTrees && fReadMC) PostData(9,fGenTreeDs);
+    }
+    if(fWriteVariableTreeDplus){
+      PostData(10,fVariablesTreeDplus);
+      if(fFillMCGenTrees && fReadMC) PostData(11,fGenTreeDplus);
+    }
+  
     return;
 }
 
@@ -535,15 +593,25 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     
     if(fWriteVariableTreeD0) Process2Prong(array2prong,aod,mcArray,aod->GetMagneticField());
     if(fWriteVariableTreeDs || fWriteVariableTreeDplus) Process3Prong(array3Prong,aod,mcArray,aod->GetMagneticField());
+    if(fFillMCGenTrees && fReadMC) ProcessMCGen(mcArray);
   
     // Post the data
     PostData(1,fNentries);
     PostData(2,fHistoNormCounter);
     PostData(4,fListCounter);
     PostData(5,fTreeEvChar);
-    PostData(6,fVariablesTreeD0);
-    PostData(7,fVariablesTreeDplus);
-    PostData(8,fVariablesTreeDs);
+    if(fWriteVariableTreeD0){
+      PostData(6,fVariablesTreeD0);
+      if(fFillMCGenTrees && fReadMC) PostData(7,fGenTreeD0);
+    }
+    if(fWriteVariableTreeDs){
+      PostData(8,fVariablesTreeDs);
+      if(fFillMCGenTrees && fReadMC) PostData(9,fGenTreeDs);
+    }
+    if(fWriteVariableTreeDplus){
+      PostData(10,fVariablesTreeDplus);
+      if(fFillMCGenTrees && fReadMC) PostData(11,fGenTreeDplus);
+    }
 
     return;
 }
@@ -611,10 +679,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
             continue;
         }
         
-        //fiducial acceptance
-        Bool_t isFidAcc=fFiltCutsD0toKpi->IsInFiducialAcceptance(d->Pt(),d->Y(421));
-        
-        if(isFidAcc){
             Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
             Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
             Bool_t isSelAnCutsD0=kFALSE;
@@ -714,8 +778,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
             }//end D0bar
             if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
             if(unsetvtx) d->UnsetOwnPrimaryVtx();
-        }//end is fid acc
-        
+      
     }//end loop on candidates
   
     fTreeHandlerD0->FillTree();
@@ -767,8 +830,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
             nFilteredDs++;
             if((vHF->FillRecoCand(aod,ds))) {////Fill the data members of the candidate only if they are empty.
 
-                Bool_t isFidAcc=fFiltCutsDstoKKpi->IsInFiducialAcceptance(ds->Pt(),ds->YDs());
-                if(isFidAcc){
                     Int_t isSelectedAnalysis=fCutsDstoKKpi->IsSelected(ds,AliRDHFCuts::kAll,aod);
                     Bool_t isSelAnCutsKKpi=kFALSE;
                     Bool_t isSelAnCutspiKK=kFALSE;
@@ -894,7 +955,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
                         if(recVtx)fFiltCutsDstoKKpi->CleanOwnPrimaryVtx(ds,aod,origownvtx);
                         if(unsetvtx) ds->UnsetOwnPrimaryVtx();
                     }//end is selected
-                }//fid acc
             }
             else{
                 fNentries->Fill(18); //monitor how often this fails
@@ -913,10 +973,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
             nFilteredDplus++;
             fNentries->Fill(19);
             if((vHF->FillRecoCand(aod,dplus))) {////Fill the data members of the candidate only if they are empty.
-           
-               Bool_t isFidAcc=fFiltCutsDplustoKpipi->IsInFiducialAcceptance(dplus->Pt(),dplus->YDplus());
-               if(isFidAcc){//is fid acc
-            
+              
                 Int_t isSelectedFilt    =fFiltCutsDplustoKpipi->IsSelected(dplus,AliRDHFCuts::kAll,aod);
                 Int_t isSelectedAnalysis=fCutsDplustoKpipi->IsSelected(dplus,AliRDHFCuts::kAll,aod);
                 Bool_t isSelAnCuts=kFALSE;
@@ -973,10 +1030,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
                 if(recVtx)fFiltCutsDplustoKpipi->CleanOwnPrimaryVtx(dplus,aod,origownvtx);
                 if(unsetvtx) dplus->UnsetOwnPrimaryVtx();
                 } //end topol and PID cuts
-                
-               
-               }//end is fid acc               
-                
+              
             }//end ok fill reco cand
             else{
                 fNentries->Fill(21); //monitor how often this fails
@@ -986,10 +1040,88 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
         
     }//end loop on cadidates
     
-    fTreeHandlerDs->FillTree();
-    fTreeHandlerDplus->FillTree();
+    if(fWriteVariableTreeDs) fTreeHandlerDs->FillTree();
+    if(fWriteVariableTreeDplus) fTreeHandlerDplus->FillTree();
 
     delete vHF;
     return;
 }
+
+//_________________________________________________________________
+void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
+  /// Fill MC gen trees
+  
+  for(Int_t iPart=0; iPart<arrayMC->GetEntriesFast(); iPart++){
+      
+    AliAODMCParticle* mcPart = dynamic_cast<AliAODMCParticle*>(arrayMC->At(iPart));
+    Int_t absPDG = TMath::Abs(mcPart->GetPdgCode());
+    
+      if(absPDG == 411 || absPDG == 421 || absPDG == 431) {
+        Bool_t isPrimary = kFALSE;
+        Bool_t isFeeddown = kFALSE;
+        Int_t orig = AliVertexingHFUtils::CheckOrigin(arrayMC,mcPart,kTRUE);//Prompt = 4, FeedDown = 5
+        if(orig==4){
+          isPrimary = kTRUE;
+          isFeeddown = kFALSE;
+        }
+        else if(orig==5){
+          isPrimary = kFALSE;
+          isFeeddown = kTRUE;
+        }
+
+        Int_t  deca = 0;
+        Int_t  labDau[3] = {-1,-1,-1};
+        Bool_t isDaugInAcc = kFALSE;
+        Int_t nProng = 0;
+
+        if(absPDG == 411 && fWriteVariableTreeDplus) {
+          deca = AliVertexingHFUtils::CheckDplusDecay(arrayMC,mcPart,labDau);
+          if(deca<1 || labDau[0]==-1) continue;
+          isDaugInAcc = CheckDaugAcc(arrayMC,3,labDau);
+          fTreeHandlerGenDplus->SetDauInAcceptance(isDaugInAcc);
+          fTreeHandlerGenDplus->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
+          fTreeHandlerGenDplus->SetMCGenVariables(mcPart);
+        }
+        else if(absPDG == 421 && fWriteVariableTreeD0) {
+          deca = AliVertexingHFUtils::CheckD0Decay(arrayMC,mcPart,labDau);
+          if(deca!=1 || labDau[0]==-1) continue;
+          isDaugInAcc = CheckDaugAcc(arrayMC,2,labDau);
+          fTreeHandlerGenD0->SetDauInAcceptance(isDaugInAcc);
+          fTreeHandlerGenD0->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
+          fTreeHandlerGenD0->SetMCGenVariables(mcPart);
+        }
+        else if(absPDG == 431 && fWriteVariableTreeDs) {
+          deca = AliVertexingHFUtils::CheckDsDecay(arrayMC,mcPart,labDau);
+          if(deca!=1 || labDau[0]==-1) continue;
+          isDaugInAcc = CheckDaugAcc(arrayMC,3,labDau);
+          fTreeHandlerGenDs->SetDauInAcceptance(isDaugInAcc);
+          fTreeHandlerGenDs->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
+          fTreeHandlerGenDs->SetMCGenVariables(mcPart);
+        }
+      }
+    }
+  
+  if(fWriteVariableTreeD0) fTreeHandlerGenD0->FillTree();
+  if(fWriteVariableTreeDs) fTreeHandlerGenDs->FillTree();
+  if(fWriteVariableTreeDplus) fTreeHandlerGenDplus->FillTree();
+}
+
+//--------------------------------------------------------
+Bool_t AliAnalysisTaskSEHFTreeCreator_v1::CheckDaugAcc(TClonesArray* arrayMC,Int_t nProng, Int_t *labDau){
+  /// check if the decay products are in the good eta and pt range
+  
+  for (Int_t iProng = 0; iProng<nProng; iProng++){
+    AliAODMCParticle* mcPartDaughter=dynamic_cast<AliAODMCParticle*>(arrayMC->At(labDau[iProng]));
+    if(!mcPartDaughter) {
+      return kFALSE;
+    }
+    Double_t eta = mcPartDaughter->Eta();
+    Double_t pt = mcPartDaughter->Pt();
+    if (TMath::Abs(eta) > 0.9 || pt < 0.1) {
+      return kFALSE;
+    }
+  }
+  return kTRUE;
+}
+
 //________________________________________________________________
