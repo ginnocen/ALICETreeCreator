@@ -33,7 +33,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   fCosPiDs(),
   fCosPiKPhi(),
   fNormd0MeasMinusExp(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kMassKK)
 {
   //
   // Default constructor
@@ -51,7 +51,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   fCosPiDs(),
   fCosPiKPhi(),
   fNormd0MeasMinusExp(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kMassKK)
 {
   //
   // Standard constructor
