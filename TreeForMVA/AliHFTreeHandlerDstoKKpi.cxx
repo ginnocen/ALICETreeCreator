@@ -33,7 +33,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
   fCosPiDs(),
   fCosPiKPhi(),
   fNormd0MeasMinusExp(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kMassKK)
 {
   //
   // Default constructor
@@ -51,7 +51,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
   fCosPiDs(),
   fCosPiKPhi(),
   fNormd0MeasMinusExp(),
-  fMassKKOpt(kDeltaMassKKPhi)
+  fMassKKOpt(kMassKK)
 {
   //
   // Standard constructor
@@ -170,8 +170,8 @@ void AliHFTreeHandlerDstoKKpi::FillTree() {
   fTreeVar->Fill();
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
-  ResetDmesonCommonVarVectors();
   if(!fIsMCGenTree) {
+    ResetDmesonCommonVarVectors();
     fSigmaVertex.clear();
     fMassKK.clear();
     fCosPiDs.clear();
@@ -180,6 +180,9 @@ void AliHFTreeHandlerDstoKKpi::FillTree() {
     for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  }
+  else {
+    ResetMCGenVectors();
   }
   fCandTypeMap=0;
   fNCandidates=0;

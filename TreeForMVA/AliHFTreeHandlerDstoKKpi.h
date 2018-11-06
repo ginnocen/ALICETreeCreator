@@ -43,6 +43,11 @@ class AliHFTreeHandlerDstoKKpi : public AliHFTreeHandler
       else fCandTypeMap &= ~kDplustoKKpi;
     }
   
+    static bool IsDplustoKKpi(int candtype) {
+      if(candtype>>6&1) return true;
+      return false;
+    }
+
   private:
 
     vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter

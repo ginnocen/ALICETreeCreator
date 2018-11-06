@@ -37,9 +37,9 @@ class AliHFTreeHandler : public TObject
       kBkg      = BIT(2),
       kPrompt   = BIT(3),
       kFD       = BIT(4),
-      kRefl     = BIT(5)
+      kRefl     = BIT(5),
     };
-
+  
     enum optpid {
       kNoPID,
       kNsigmaPID,
@@ -48,7 +48,8 @@ class AliHFTreeHandler : public TObject
       kNsigmaCombPID,
       kNsigmaCombPIDint,
       kNsigmaCombPIDfloatandint, //--> to test
-      kRawPID
+      kRawPID,
+      kRawAndNsigmaPID
     };
 
     enum piddet {
@@ -80,6 +81,8 @@ class AliHFTreeHandler : public TObject
       else fCandTypeMap &= ~kSelected;
     }
 
+    void SetDauInAcceptance(bool dauinacc = true) {fDauInAccFlag=dauinacc;}
+  
     static bool IsSelectedStd(int candtype) {
       if(candtype&1) return true;
       return false;
@@ -122,7 +125,8 @@ class AliHFTreeHandler : public TObject
     void ResetDmesonCommonVarVectors();
     void ResetSingleTrackVarVectors();
     void ResetPidVarVectors();
-
+    void ResetMCGenVectors();
+  
     //utils methods
     double CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF);
     int RoundFloatToInt(double num);
@@ -159,12 +163,15 @@ class AliHFTreeHandler : public TObject
     vector<int> fITSclsMapProng[knMaxProngs];///vectors of prong track ITS cluster map
     vector<float> fTrackIntegratedLengthProng[knMaxProngs]; /// vectors of prong track integrated lengths
     vector<float> fStartTimeResProng[knMaxProngs]; /// vectors of prong track start time resolutions (for TOF)
-    vector<float> fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables
-    vector<int> fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables (integers)
+    vector<float> fPIDNsigmaVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID nsigma variables
+    vector<int> fPIDNsigmaIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID nsigma variables (integers)
+    vector<float> fPIDrawVector[knMaxProngs][knMaxDet4Pid]; ///vectors of raw PID variables
     int fPidOpt; /// option for PID variables
     bool fFillOnlySignal; ///flag to enable only signal filling
     bool fIsMCGenTree; ///flag to know if is a tree for MC generated particles
-
+    bool fDauInAccFlag; ///flag to know if the daughter are in acceptance in case of MC gen
+    vector<bool> fDauInAcceptance; ///vector of flags to know if the daughter are in acceptance in case of MC gen
+  
   /// \cond CLASSIMP
   ClassDef(AliHFTreeHandler,1); /// 
   /// \endcond

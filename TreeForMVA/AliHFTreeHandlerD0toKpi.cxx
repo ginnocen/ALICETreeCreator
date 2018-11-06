@@ -152,14 +152,17 @@ void AliHFTreeHandlerD0toKpi::FillTree() {
   fTreeVar->Fill();
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
-  ResetDmesonCommonVarVectors();
   if(!fIsMCGenTree) {
+    ResetDmesonCommonVarVectors();
     fCosThetaStar.clear();
     fImpParProd.clear();
     fNormd0MeasMinusExp.clear();
     for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();
     if(fPidOpt!=kNoPID) ResetPidVarVectors();
+  }
+  else {
+    ResetMCGenVectors();
   }
   fCandTypeMap=0;
   fNCandidates=0;
