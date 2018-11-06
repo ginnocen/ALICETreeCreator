@@ -4,12 +4,13 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
                                                      TString cutsfile="",
                                                      Int_t AODProtection = 1,
                                                      Bool_t writeOnlySignalTree=kFALSE,
+                                                     Bool_t fillMGgenTrees=kFALSE,
                                                      Int_t fillTreeD0=1,
                                                      Int_t fillTreeDs=1,
                                                      Int_t fillTreeDplus=1,
-                                                     Int_t pidOptD0=AliHFTreeHandler::kRawPID,
-                                                     Int_t pidOptDs=AliHFTreeHandler::kRawPID,
-                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawPID)
+                                                     Int_t pidOptD0=AliHFTreeHandler::kRawAndNsigmaPID,
+                                                     Int_t pidOptDs=AliHFTreeHandler::kRawAndNsigmaPID,
+                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawAndNsigmaPID)
 {
     //
     //
@@ -60,6 +61,9 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     AliAnalysisTaskSEHFTreeCreator_v1 *task = new AliAnalysisTaskSEHFTreeCreator_v1("TreeCreatorTask",cutsList);
 
     task->SetReadMC(readMC);
+    if(readMC) {
+      task->SetFillMCGenTrees(fillMGgenTrees);
+    }
     task->SetSystem(system);
     task->SetAODMismatchProtection(AODProtection);
     task->SetWriteOnlySignalTree(writeOnlySignalTree);
@@ -85,6 +89,9 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     TString treeD0name = "coutputTreeD0";
     TString treeDplusname = "coutputTreeDplus";
     TString treeDsname = "coutputTreeDs";
+    TString treeGenD0name = "coutputTreeGenD0";
+    TString treeGenDplusname = "coutputTreeGenDplus";
+    TString treeGenDsname = "coutputTreeGenDs";
 
     inname += finDirname.Data();
     histoname += finDirname.Data();
@@ -95,6 +102,9 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     treeD0name += finDirname.Data();
     treeDplusname += finDirname.Data();
     treeDsname += finDirname.Data();
+    treeGenD0name += finDirname.Data();
+    treeGenDplusname += finDirname.Data();
+    treeGenDsname += finDirname.Data();
 
     AliAnalysisDataContainer *cinput = mgr->CreateContainer(inname,TChain::Class(),AliAnalysisManager::kInputContainer);
     TString outputfile = AliAnalysisManager::GetCommonFileName();
@@ -105,23 +115,60 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     AliAnalysisDataContainer *coutputCuts    = mgr->CreateContainer(cutsname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputNorm    = mgr->CreateContainer(normname,TList::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
     AliAnalysisDataContainer *coutputTreeEvChar    = mgr->CreateContainer(treeevcharname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
-    AliAnalysisDataContainer *coutputTreeD0    = mgr->CreateContainer(treeD0name,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
-    AliAnalysisDataContainer *coutputTreeDplus    = mgr->CreateContainer(treeDplusname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
-    AliAnalysisDataContainer *coutputTreeDs    = mgr->CreateContainer(treeDsname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+  
+  
+    AliAnalysisDataContainer *coutputTreeD0 = 0x0;
+    AliAnalysisDataContainer *coutputTreeGenD0 = 0x0;
+    AliAnalysisDataContainer *coutputTreeDplus = 0x0;
+    AliAnalysisDataContainer *coutputTreeGenDplus = 0x0;
+    AliAnalysisDataContainer *coutputTreeDs = 0x0;
+    AliAnalysisDataContainer *coutputTreeGenDs = 0x0;
 
-
+    if(fillTreeD0) {
+      coutputTreeD0 = mgr->CreateContainer(treeD0name,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+      coutputTreeD0->SetSpecialOutput();
+      if(readMC && fillMGgenTrees) {
+        coutputTreeGenD0 = mgr->CreateContainer(treeGenD0name,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+        coutputTreeGenD0->SetSpecialOutput();
+      }
+    }
+  
+    if(fillTreeDplus) {
+      coutputTreeDplus = mgr->CreateContainer(treeDplusname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+      coutputTreeDplus->SetSpecialOutput();
+      if(readMC && fillMGgenTrees) {
+        coutputTreeGenDplus = mgr->CreateContainer(treeGenDplusname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+        coutputTreeGenDplus->SetSpecialOutput();
+      }
+    }
+  
+    if(fillTreeDs) {
+      coutputTreeDs = mgr->CreateContainer(treeDsname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+      coutputTreeDs->SetSpecialOutput();
+      if(readMC && fillMGgenTrees) {
+        coutputTreeGenDs = mgr->CreateContainer(treeGenDsname,TTree::Class(),AliAnalysisManager::kOutputContainer,outputfile.Data());
+        coutputTreeGenDs->SetSpecialOutput();
+      }
+    }
+      
     mgr->ConnectInput(task,0,mgr->GetCommonInputContainer());
     mgr->ConnectOutput(task,1,coutputEntries);
     mgr->ConnectOutput(task,2,coutputCounter);
     mgr->ConnectOutput(task,3,coutputCuts);
     mgr->ConnectOutput(task,4,coutputNorm);
     mgr->ConnectOutput(task,5,coutputTreeEvChar);
-    mgr->ConnectOutput(task,6,coutputTreeD0);
-    mgr->ConnectOutput(task,7,coutputTreeDplus);
-    mgr->ConnectOutput(task,8,coutputTreeDs);
-
+    if(fillTreeD0) {
+      mgr->ConnectOutput(task,6,coutputTreeD0);
+      if(readMC && fillMGgenTrees) mgr->ConnectOutput(task,7,coutputTreeGenD0);
+    }
+    if(fillTreeDs) {
+      mgr->ConnectOutput(task,8,coutputTreeDs);
+      if(readMC && fillMGgenTrees) mgr->ConnectOutput(task,9,coutputTreeGenDs);
+    }
+    if(fillTreeDplus) {
+      mgr->ConnectOutput(task,10,coutputTreeDplus);
+      if(readMC && fillMGgenTrees) mgr->ConnectOutput(task,11,coutputTreeGenDplus);
+    }
+  
     return task;
-
-
-
 }

@@ -68,14 +68,17 @@ public:
     void SetPIDoptD0Tree(Int_t opt){fPIDoptD0=opt;}
     void SetPIDoptDsTree(Int_t opt){fPIDoptDs=opt;}
     void SetPIDoptDplusTree(Int_t opt){fPIDoptDplus=opt;}
-        
+    void SetFillMCGenTrees(Bool_t fillMCgen) {fFillMCGenTrees=fillMCgen;}
     
     Int_t  GetSystem() const {return fSys;}
     Bool_t GetWriteOnlySignalTree() const {return fWriteOnlySignal;}
     
     void Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield);
     void Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield);
-    
+    void ProcessMCGen(TClonesArray *mcarray);
+  
+    Bool_t CheckDaugAcc(TClonesArray* arrayMC,Int_t nProng, Int_t *labDau);
+
 private:
     
     AliAnalysisTaskSEHFTreeCreator_v1(const AliAnalysisTaskSEHFTreeCreator_v1&);
@@ -111,15 +114,20 @@ private:
     TTree                   *fVariablesTreeD0;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDs;           //!<! tree of the candidate variables
     TTree                   *fVariablesTreeDplus;        //!<! tree of the candidate variables
+    TTree                   *fGenTreeD0;                 //!<! tree of the gen D0 variables
+    TTree                   *fGenTreeDs;                 //!<! tree of the gen Ds variables
+    TTree                   *fGenTreeDplus;              //!<! tree of the gen D+ variables
     TTree                   *fTreeEvChar;                //!<!
     bool                    fWriteOnlySignal;
     AliHFTreeHandlerD0toKpi        *fTreeHandlerD0;             //!<! handler object for the tree with topological variables
     AliHFTreeHandlerDstoKKpi       *fTreeHandlerDs;             //!<! handler object for the tree with topological variables
     AliHFTreeHandlerDplustoKpipi   *fTreeHandlerDplus;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerD0toKpi        *fTreeHandlerGenD0;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDstoKKpi       *fTreeHandlerGenDs;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDplustoKpipi   *fTreeHandlerGenDplus;          //!<! handler object for the tree with topological variables
     int                     fPIDoptD0;
     int                     fPIDoptDs;
     int                     fPIDoptDplus;
-    bool                    fEnableFillNormd0MeasMinusExp;
     Float_t                 fCentrality;
     Float_t                 fzVtx;
     Int_t                   fNcontributors;
@@ -128,7 +136,7 @@ private:
     Int_t                   fIsPileup;
     Int_t                   fRunNumber; 
 
-    
+    Bool_t                  fFillMCGenTrees;
     
     
     /// \cond CLASSIMP
