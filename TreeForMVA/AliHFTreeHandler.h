@@ -48,7 +48,8 @@ class AliHFTreeHandler : public TObject
       kNsigmaCombPID,
       kNsigmaCombPIDint,
       kNsigmaCombPIDfloatandint, //--> to test
-      kRawPID
+      kRawPID,
+      kRawAndNsigmaPID
     };
 
     enum piddet {
@@ -159,8 +160,9 @@ class AliHFTreeHandler : public TObject
     vector<int> fITSclsMapProng[knMaxProngs];///vectors of prong track ITS cluster map
     vector<float> fTrackIntegratedLengthProng[knMaxProngs]; /// vectors of prong track integrated lengths
     vector<float> fStartTimeResProng[knMaxProngs]; /// vectors of prong track start time resolutions (for TOF)
-    vector<float> fPIDVarVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables
-    vector<int> fPIDVarIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID variables (integers)
+    vector<float> fPIDNsigmaVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID nsigma variables
+    vector<int> fPIDNsigmaIntVector[knMaxProngs][knMaxDet4Pid][knMaxHypo4Pid]; ///vectors of PID nsigma variables (integers)
+    vector<float> fPIDrawVector[knMaxProngs][knMaxDet4Pid]; ///vectors of raw PID variables
     int fPidOpt; /// option for PID variables
     bool fFillOnlySignal; ///flag to enable only signal filling
     bool fIsMCGenTree; ///flag to know if is a tree for MC generated particles
