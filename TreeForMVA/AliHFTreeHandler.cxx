@@ -167,7 +167,7 @@ bool AliHFTreeHandler::SetMCGenVariables(AliAODMCParticle* mcpart) {
   fEta.push_back(mcpart->Eta());
   fPhi.push_back(mcpart->Phi());
   fDauInAcceptance.push_back(fDauInAccFlag);
-
+  
   return true;
 }
 
