@@ -37,9 +37,9 @@ class AliHFTreeHandler : public TObject
       kBkg      = BIT(2),
       kPrompt   = BIT(3),
       kFD       = BIT(4),
-      kRefl     = BIT(5)
+      kRefl     = BIT(5),
     };
-
+  
     enum optpid {
       kNoPID,
       kNsigmaPID,
@@ -81,6 +81,8 @@ class AliHFTreeHandler : public TObject
       else fCandTypeMap &= ~kSelected;
     }
 
+    void SetDauInAcceptance(bool dauinacc = true) {fDauInAccFlag=dauinacc;}
+  
     static bool IsSelectedStd(int candtype) {
       if(candtype&1) return true;
       return false;
@@ -123,7 +125,8 @@ class AliHFTreeHandler : public TObject
     void ResetDmesonCommonVarVectors();
     void ResetSingleTrackVarVectors();
     void ResetPidVarVectors();
-
+    void ResetMCGenVectors();
+  
     //utils methods
     double CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF);
     int RoundFloatToInt(double num);
@@ -166,7 +169,9 @@ class AliHFTreeHandler : public TObject
     int fPidOpt; /// option for PID variables
     bool fFillOnlySignal; ///flag to enable only signal filling
     bool fIsMCGenTree; ///flag to know if is a tree for MC generated particles
-
+    bool fDauInAccFlag; ///flag to know if the daughter are in acceptance in case of MC gen
+    vector<bool> fDauInAcceptance; ///vector of flags to know if the daughter are in acceptance in case of MC gen
+  
   /// \cond CLASSIMP
   ClassDef(AliHFTreeHandler,1); /// 
   /// \endcond

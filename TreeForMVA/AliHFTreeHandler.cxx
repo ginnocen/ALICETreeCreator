@@ -65,7 +65,9 @@ AliHFTreeHandler::AliHFTreeHandler():
   fPIDrawVector(),
   fPidOpt(kNsigmaPID),
   fFillOnlySignal(false),
-  fIsMCGenTree(false)
+  fIsMCGenTree(false),
+  fDauInAccFlag(false),
+  fDauInAcceptance()
 {
   //
   // Default constructor
@@ -110,7 +112,9 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
   fPIDrawVector(),
   fPidOpt(PIDopt),
   fFillOnlySignal(false),
-  fIsMCGenTree(false)
+  fIsMCGenTree(false),
+  fDauInAccFlag(false),
+  fDauInAcceptance()
 {
   //
   // Standard constructor
@@ -144,7 +148,7 @@ TTree* AliHFTreeHandler::BuildTreeMCGen(TString name, TString title) {
   fTreeVar->Branch("y_cand",&fY);
   fTreeVar->Branch("eta_cand",&fEta);
   fTreeVar->Branch("phi_cand",&fPhi);
-  //fTreeVar->Branch("dau_in_acc",);
+  fTreeVar->Branch("dau_in_acc",&fDauInAcceptance);
 
   return fTreeVar;
 }
@@ -162,6 +166,7 @@ bool AliHFTreeHandler::SetMCGenVariables(AliAODMCParticle* mcpart) {
   fY.push_back(mcpart->Y());
   fEta.push_back(mcpart->Eta());
   fPhi.push_back(mcpart->Phi());
+  fDauInAcceptance.push_back(fDauInAccFlag);
 
   return true;
 }
@@ -454,21 +459,31 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
 
 //________________________________________________________________
 void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
-
+  
   fCandType.clear();
   fInvMass.clear();
   fPt.clear();
   fY.clear();
   fEta.clear();
   fPhi.clear();
-  if(!fIsMCGenTree) {
-    fDecayLength.clear();
-    fDecayLengthXY.clear();
-    fNormDecayLengthXY.clear();
-    fCosP.clear();
-    fCosPXY.clear();
-    fImpParXY.clear();
-  }
+  fDecayLength.clear();
+  fDecayLengthXY.clear();
+  fNormDecayLengthXY.clear();
+  fCosP.clear();
+  fCosPXY.clear();
+  fImpParXY.clear();
+}
+
+//________________________________________________________________
+void AliHFTreeHandler::ResetMCGenVectors() {
+  
+  fCandType.clear();
+  fInvMass.clear();
+  fPt.clear();
+  fY.clear();
+  fEta.clear();
+  fPhi.clear();
+  fDauInAcceptance.clear();
 }
 
 //________________________________________________________________
