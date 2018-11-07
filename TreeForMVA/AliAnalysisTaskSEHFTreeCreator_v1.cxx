@@ -672,119 +672,123 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
     AliAnalysisVertexingHF *vHF = new AliAnalysisVertexingHF();
     
     for (Int_t i2prong = 0; i2prong < n2prong; i2prong++) {
-        AliAODRecoDecayHF2Prong *d = (AliAODRecoDecayHF2Prong*)array2prong->UncheckedAt(i2prong);
         fNentries->Fill(11);
-        
-        if(fUseSelectionBit && d->GetSelectionMap()) if(!d->HasSelectionBit(AliRDHFCuts::kD0toKpiCuts)){
-            continue;
-        }
-        fNentries->Fill(12);
-        nFilteredD0++;
-        if(!(vHF->FillRecoCand(aod,d))) {//Fill the data members of the candidate only if they are empty.
-            fNentries->Fill(14); //monitor how often this fails
-            continue;
-        }
-        
-            Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
-            Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
-            Bool_t isSelAnCutsD0=kFALSE;
-            Bool_t isSelAnCutsD0bar=kFALSE;
-            if(isSelectedAnalysis==1 || isSelectedAnalysis==3) isSelAnCutsD0=kTRUE;
-            if(isSelectedAnalysis==2 || isSelectedAnalysis==3) isSelAnCutsD0bar=kTRUE;
-            if(isSelectedFilt){
-                fNentries->Fill(13);
-                nSelectedD0++;
-            }
-            else continue;
-            
-            Bool_t unsetvtx=kFALSE;
-            if(!d->GetOwnPrimaryVtx()){
-            d->SetOwnPrimaryVtx(vtx1);
-            unsetvtx=kTRUE;
-            // NOTE: the own primary vertex should be unset, otherwise there is a memory leak
-            // Pay attention if you use continue inside this loop!!!
-            }
-            Bool_t recVtx=kFALSE;
-            AliAODVertex *origownvtx=0x0;
-            if(fFiltCutsD0toKpi->GetIsPrimaryWithoutDaughters()){
-              if(d->GetOwnPrimaryVtx()) origownvtx=new AliAODVertex(*d->GetOwnPrimaryVtx());
-                if(fFiltCutsD0toKpi->RecalcOwnPrimaryVtx(d,aod))recVtx=kTRUE;
-                  else fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
-            }
-            
-            Int_t pdgDgD0toKpi[2]={321,211};
-            Int_t labD0 = -1;
-            Int_t pdgD0 = -99;
-            Int_t origin= -1;
-            AliAODMCParticle *partD0=0x0;
 
-            if(fReadMC) {
-              labD0 = d->MatchToMC(421,arrMC,2,pdgDgD0toKpi); //return MC particle label if the array corresponds to a D0, -1 if not (cf. AliAODRecoDecay.cxx)
-              if(labD0>=0){
-               partD0 = (AliAODMCParticle*)arrMC->At(labD0);
-               pdgD0 = partD0->GetPdgCode();
-               origin = AliVertexingHFUtils::CheckOrigin(arrMC,partD0,kTRUE);
-              }
-             }
-            
-            bool issignal = kFALSE;
-            bool isbkg =    kFALSE;
-            bool isFD =     kFALSE;
-            bool isprompt = kFALSE;
-            bool isrefl =   kFALSE;
-            Int_t masshypo = 0;
-            
-            
-            if (isSelectedFilt==1 || isSelectedFilt==3) { //D0
-                masshypo=0;
-                if(fReadMC){
-                    if(labD0>=0){
-                        if(origin==4) isprompt=kTRUE;
-                        else if(origin==5) isFD=kTRUE;
-                        if(pdgD0==421){
-                            issignal=kTRUE;
-                        }
-                        else {
-                            isrefl=kTRUE;
-                        }
-                    }//end labD0check
-                    else{//background
-                        isbkg=kTRUE;
+        //D0
+        Bool_t isD0tagged=kTRUE;
+        AliAODRecoDecayHF2Prong *d = (AliAODRecoDecayHF2Prong*)array2prong->UncheckedAt(i2prong);
+        if(fUseSelectionBit && d->GetSelectionMap()) if(!d->HasSelectionBit(AliRDHFCuts::kD0toKpiCuts)){
+            isD0tagged=kFALSE;
+        }
+        
+        if(isD0tagged && fWriteVariableTreeD0){
+            fNentries->Fill(12);
+            nFilteredD0++;
+            if((vHF->FillRecoCand(aod,d))) {//Fill the data members of the candidate only if they are empty.
+        
+                Int_t isSelectedFilt     = fFiltCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
+                Int_t isSelectedAnalysis = fCutsD0toKpi->IsSelected(d,AliRDHFCuts::kAll,aod); //selected
+                Bool_t isSelAnCutsD0=kFALSE;
+                Bool_t isSelAnCutsD0bar=kFALSE;
+                if(isSelectedAnalysis==1 || isSelectedAnalysis==3) isSelAnCutsD0=kTRUE;
+                if(isSelectedAnalysis==2 || isSelectedAnalysis==3) isSelAnCutsD0bar=kTRUE;
+                if(isSelectedFilt){
+                    fNentries->Fill(13);
+                    nSelectedD0++;
+
+                    Bool_t unsetvtx=kFALSE;
+                    if(!d->GetOwnPrimaryVtx()){
+                        d->SetOwnPrimaryVtx(vtx1);
+                        unsetvtx=kTRUE;
+                        // NOTE: the own primary vertex should be unset, otherwise there is a memory leak
+                        // Pay attention if you use continue inside this loop!!!
                     }
-                    fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
-                }//end read MC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
-                fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
-            }//end D0
-            if (isSelectedFilt>1){//D0bar
-                issignal = kFALSE;
-                isbkg =    kFALSE;
-                isFD =     kFALSE;
-                isprompt = kFALSE;
-                isrefl =   kFALSE;
-                masshypo = 1;
-                if(fReadMC){
-                    if(labD0>=0){
-                        if(origin==4) isprompt=kTRUE;
-                        else if(origin==5) isFD=kTRUE;
-                        if(pdgD0==-421){
-                            issignal=kTRUE;
-                        }
-                        else {
-                            isrefl=kTRUE;
-                        }
-                    } //end label check
-                    else{ //background MC
-                        isbkg=kTRUE;
+                    Bool_t recVtx=kFALSE;
+                    AliAODVertex *origownvtx=0x0;
+                    if(fFiltCutsD0toKpi->GetIsPrimaryWithoutDaughters()){
+                      if(d->GetOwnPrimaryVtx()) origownvtx=new AliAODVertex(*d->GetOwnPrimaryVtx());
+                        if(fFiltCutsD0toKpi->RecalcOwnPrimaryVtx(d,aod))recVtx=kTRUE;
+                          else fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
                     }
-                fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
-                }//end readMC
-                fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
-                fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
-            }//end D0bar
-            if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
-            if(unsetvtx) d->UnsetOwnPrimaryVtx();
-      
+            
+                    Int_t pdgDgD0toKpi[2]={321,211};
+                    Int_t labD0 = -1;
+                    Int_t pdgD0 = -99;
+                    Int_t origin= -1;
+
+                    if(fReadMC) {
+                        AliAODMCParticle *partD0=0x0;
+                        labD0 = d->MatchToMC(421,arrMC,2,pdgDgD0toKpi); //return MC particle label if the array corresponds to a D0, -1 if not (cf. AliAODRecoDecay.cxx)
+                        if(labD0>=0){
+                            partD0 = (AliAODMCParticle*)arrMC->At(labD0);
+                            pdgD0 = partD0->GetPdgCode();
+                            origin = AliVertexingHFUtils::CheckOrigin(arrMC,partD0,kTRUE);
+                        }
+                    }
+            
+                    bool issignal = kFALSE;
+                    bool isbkg =    kFALSE;
+                    bool isFD =     kFALSE;
+                    bool isprompt = kFALSE;
+                    bool isrefl =   kFALSE;
+                    Int_t masshypo = 0;
+            
+            
+                    if (isSelectedFilt==1 || isSelectedFilt==3) { //D0
+                        masshypo=0;
+                        if(fReadMC){
+                            if(labD0>=0){
+                                if(origin==4) isprompt=kTRUE;
+                                else if(origin==5) isFD=kTRUE;
+                                if(pdgD0==421){
+                                    issignal=kTRUE;
+                                }
+                                else {
+                                    isrefl=kTRUE;
+                                }
+                            }//end labD0check
+                            else{//background
+                                isbkg=kTRUE;
+                            }
+                            fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
+                        }//end read MC
+                        fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
+                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
+                    }//end D0
+                    if (isSelectedFilt>1){//D0bar
+                        issignal = kFALSE;
+                        isbkg =    kFALSE;
+                        isFD =     kFALSE;
+                        isprompt = kFALSE;
+                        isrefl =   kFALSE;
+                        masshypo = 1;
+                        if(fReadMC){
+                            if(labD0>=0){
+                                if(origin==4) isprompt=kTRUE;
+                                else if(origin==5) isFD=kTRUE;
+                                if(pdgD0==-421){
+                                    issignal=kTRUE;
+                                }
+                                else {
+                                    isrefl=kTRUE;
+                                }
+                            } //end label check
+                            else{ //background MC
+                                isbkg=kTRUE;
+                            }
+                            fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
+                        }//end readMC
+                        fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
+                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHF);
+                    }//end D0bar
+                    if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
+                    if(unsetvtx) d->UnsetOwnPrimaryVtx();
+                }//end is selected filt
+            }
+            else {
+                fNentries->Fill(14); //monitor how often this fails
+            }
+        }//end D0
     }//end loop on candidates
   
     fTreeHandlerD0->FillTree();
