@@ -34,6 +34,8 @@ from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
 from xgboost import XGBClassifier
 from xgboost import plot_tree
+from sklearn.tree import export_graphviz
+from subprocess import check_call
 
 
 def getclassifiers(MLtype):
@@ -46,7 +48,7 @@ def getclassifiers(MLtype):
     ]
                                         
     names = [
-      "ScikitGradientBoostingClassifier","ScikitRandom_Forest","ScikitAdaBoost","ScikitDecision_Tree"
+      "ScikitTreeGradientBoostingClassifier","ScikitTreeRandom_Forest","ScikitTreeAdaBoost","ScikitTreeDecision_Tree"
 #       "ScikitLinearSVC", "ScikitSVC_rbf","ScikitLogisticRegression"
     ]
 
@@ -130,7 +132,7 @@ def apply(MLtype,names_,trainedmodels_,test_set_,mylistvariablestraining_):
       test_set_['y_test_prob'+name] = pd.Series(y_test_prob, index=test_set_.index)
   return test_set_
 
-def savemodels(names_,trainedmodels_,folder_,suffix_):
+def savemodels(names_,trainedmodels_,mylistvariablestraining_,myvariablesy_,folder_,suffix_):
     for name, model in zip(names_, trainedmodels_):
       if "Keras" in name: 
         architecture_file= folder_+"/"+name+suffix_+"_architecture.json"
@@ -139,10 +141,21 @@ def savemodels(names_,trainedmodels_,folder_,suffix_):
         with open(architecture_file, 'w') as json_file:
           json_file.write(arch_json)
         model.model.save_weights(weights_file)
-      else: 
+      if "Scikit" in name: 
         fileoutmodel = folder_+"/"+name+suffix_+".sav"
         pickle.dump(model, open(fileoutmodel, 'wb'))
-        
+        if "ScikitTreeDecision_Tree" in name: 
+          export_graphviz(
+            model,
+            out_file=folder_+"/graph"+name+suffix_+".dot",
+            feature_names=mylistvariablestraining_,
+            class_names=myvariablesy_,
+            rounded=True,
+            filled=True
+          )
+          check_call(['dot','-Tpng',folder_+"/graph"+name+suffix_+".dot",'-o',folder_+"/graph"+name+suffix_+".png"])
+
+
 def readmodels(names_,folder_,suffix_):
   trainedmodels_=[]
   for name in names_:
@@ -154,7 +167,7 @@ def readmodels(names_,folder_,suffix_):
 
 
 def importanceplotall(mylistvariables_,names_,trainedmodels_,suffix_,folder):
-  figure1 = plt.figure(figsize=(25,15))
+  figure1 = plt.figure(figsize=(20,15))
   plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.4, hspace=0.2)
 
   i=1

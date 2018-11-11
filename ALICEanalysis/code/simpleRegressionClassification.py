@@ -20,7 +20,7 @@ from sklearn.utils import shuffle
 from utilitiesOptimisation import studysignificance
 
 ############### choose your ML method ################
-nevents=5000
+nevents=500
 MLtype="BinaryClassification" #other options are "Regression", "BinaryClassification"
 MLsubtype="HFmeson" #other options are "PID","HFmeson","test"
 optionanalysis="Ds" #other options are "Ds, Bplus,Lc,PIDKaon,PIDPion,testregression
@@ -31,12 +31,12 @@ varmin=[2]
 varmax=[4]
 
 ############### choose if you want scikit or keras models or both ################
-activateScikitModels=1; activateXGBoostModels=1; activateKerasModels=0
+activateScikitModels=1; activateXGBoostModels=0; activateKerasModels=0
 loadsampleOption=0 #0=loadfromTree,1=loadfromDF,2=loadyourownDFfortesting
 docorrelation=0; doStandard=0; doPCA=0
-dotraining=1; dotesting=1; doapplytodata=1
-doLearningCurve=1; docrossvalidation=1
-doROCcurve=1; doOptimisation=0; doBinarySearch=0; doBoundary=0; doimportance=1 #classification specifics
+dotraining=1; dotesting=0; doapplytodata=0
+doLearningCurve=0; docrossvalidation=0
+doROCcurve=0; doOptimisation=0; doBinarySearch=0; doBoundary=0; doimportance=0 #classification specifics
 doplotdistributiontargetregression=0 #regression specifics
 
 ncores=-1
@@ -174,7 +174,7 @@ if (activateKerasModels==1):
 if (dotraining==1):
   print (names)
   trainedmodels=fit(names, classifiers,X_train,y_train)
-  savemodels(names,trainedmodels,output,suffix)
+  savemodels(names,trainedmodels,mylistvariables,myvariablesy,output,suffix)
   
 if (dotesting==1):
   filenametest_set_ML=output+"/testsample%sMLdecision.pkl" % (suffix)
