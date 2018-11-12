@@ -185,10 +185,10 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
         cuts->SetMinPtCandidate(1.);
         cuts->SetMaxPtCandidate(24.);
         cuts->SetMaxPtStrongPid(9999.);
-        
-        cuts->SetRemoveDaughtersFromPrim(kTRUE); //activate for pp
     }
   
+    cuts->SetRemoveDaughtersFromPrim(kTRUE); //activate for pp
+
     //event selection
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7);

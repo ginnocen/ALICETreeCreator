@@ -26,6 +26,7 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. Van Doremalen
 ////////////////////////////////////////////////////////////
 
 #include <Riostream.h>
@@ -111,11 +112,11 @@ fPIDoptD0(AliHFTreeHandler::kRawAndNsigmaPID),
 fPIDoptDs(AliHFTreeHandler::kRawAndNsigmaPID),
 fPIDoptDplus(AliHFTreeHandler::kRawAndNsigmaPID),
 fCentrality(-999.),
-fzVtx(0.),
+fzVtxReco(0.),
+fzVtxGen(0.),
 fNcontributors(0),
 fNtracks(0),
-fIsTrigSel(kFALSE),
-fIsPileup(kFALSE),
+fIsEvRej(0),
 fRunNumber(0),
 fFillMCGenTrees(kTRUE)
 {
@@ -162,11 +163,11 @@ fPIDoptD0(AliHFTreeHandler::kRawAndNsigmaPID),
 fPIDoptDs(AliHFTreeHandler::kRawAndNsigmaPID),
 fPIDoptDplus(AliHFTreeHandler::kRawAndNsigmaPID),
 fCentrality(-999.),
-fzVtx(0.),
+fzVtxReco(0.),
+fzVtxGen(0.),
 fNcontributors(0),
 fNtracks(0),
-fIsTrigSel(kFALSE),
-fIsPileup(kFALSE),
+fIsEvRej(0),
 fRunNumber(0),
 fFillMCGenTrees(kTRUE)
 {
@@ -374,15 +375,15 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
   
     fTreeEvChar = new TTree("tree_event_char","tree_event_char");
     //set variables
-    TString varnames[7] = {"centrality", "z_vtx", "n_vtx_contributors", "n_tracks", "is_sel_trigger", "is_pileup", "run_number"};
+    TString varnames[7] = {"centrality", "z_vtx_reco", "n_vtx_contributors", "n_tracks", "is_ev_rej", "run_number", "z_vtx_gen"};
     fTreeEvChar->Branch(varnames[0].Data(),&fCentrality,Form("%s/F",varnames[0].Data()));
-    fTreeEvChar->Branch(varnames[1].Data(),&fzVtx,Form("%s/F",varnames[1].Data()));
+    fTreeEvChar->Branch(varnames[1].Data(),&fzVtxReco,Form("%s/F",varnames[1].Data()));
     fTreeEvChar->Branch(varnames[2].Data(),&fNcontributors,Form("%s/I",varnames[2].Data()));
     fTreeEvChar->Branch(varnames[3].Data(),&fNtracks,Form("%s/I",varnames[3].Data()));
-    fTreeEvChar->Branch(varnames[4].Data(),&fIsTrigSel,Form("%s/I",varnames[4].Data()));
-    fTreeEvChar->Branch(varnames[5].Data(),&fIsPileup,Form("%s/I",varnames[5].Data())); 
-    fTreeEvChar->Branch(varnames[6].Data(),&fRunNumber,Form("%s/I",varnames[6].Data()));    
-    
+    fTreeEvChar->Branch(varnames[4].Data(),&fIsEvRej,Form("%s/I",varnames[4].Data()));
+    fTreeEvChar->Branch(varnames[5].Data(),&fRunNumber,Form("%s/I",varnames[7].Data()));
+    if(fReadMC) fTreeEvChar->Branch(varnames[6].Data(),&fzVtxGen,Form("%s/F",varnames[6].Data()));
+  
     if(fWriteVariableTreeD0){
         OpenFile(6);
         TString nameoutput = "tree_D0";
@@ -533,16 +534,20 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
             printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: MC header branch not found!\n");
             return;
         }
+      fzVtxGen = mcHeader->GetVtxZ();
     }
     Bool_t isSameEvSelD0=!((fFiltCutsD0toKpi->IsEventSelected(aod) && !fCutsD0toKpi->IsEventSelected(aod))||(!fFiltCutsD0toKpi->IsEventSelected(aod) && fCutsD0toKpi->IsEventSelected(aod)));
     Bool_t isSameEvSelDs=!((fFiltCutsDstoKKpi->IsEventSelected(aod) && !fCutsDstoKKpi->IsEventSelected(aod))||(!fFiltCutsDstoKKpi->IsEventSelected(aod) && fCutsDstoKKpi->IsEventSelected(aod)));
     Bool_t isSameEvSelDplus=!((fFiltCutsDplustoKpipi->IsEventSelected(aod) && !fCutsDplustoKpipi->IsEventSelected(aod))||(!fFiltCutsDplustoKpipi->IsEventSelected(aod) && fCutsDplustoKpipi->IsEventSelected(aod)));
-    Bool_t isSameEvSel=isSameEvSelD0 && isSameEvSelDs && isSameEvSelDplus;
+    Bool_t isSameEvSel=true;
+    if(fWriteVariableTreeD0) isSameEvSel = isSameEvSel && isSameEvSelD0;
+    if(fWriteVariableTreeDs) isSameEvSel = isSameEvSel && isSameEvSelDs;
+    if(fWriteVariableTreeDplus) isSameEvSel = isSameEvSel && isSameEvSelDplus;
     if(!isSameEvSel) {
       Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts same meson");
       return;
     }
-    if((fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDstoKKpi->IsEventSelected(aod)) || (fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDplustoKpipi->IsEventSelected(aod))){
+    if((fWriteVariableTreeD0 && fWriteVariableTreeDs && (fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDstoKKpi->IsEventSelected(aod))) || (fWriteVariableTreeD0 && fWriteVariableTreeDplus & (fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDplustoKpipi->IsEventSelected(aod))) || (fWriteVariableTreeDs && fWriteVariableTreeDplus & (fFiltCutsDstoKKpi->IsEventSelected(aod)!=fFiltCutsDplustoKpipi->IsEventSelected(aod)))){
       Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts different meson");
       return;
     }
@@ -580,21 +585,17 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
       }
     }
     
-    Bool_t isEvRejTrigger = fFiltCutsD0toKpi->IsEventRejectedDueToTrigger();
-    Bool_t isEvRejPileup  = fFiltCutsD0toKpi->IsEventRejectedDueToPileup();
-    
-    if(!isEvSel && !isEvRejPileup) return;
+    Bool_t isEvRejCent  = fFiltCutsD0toKpi->IsEventRejectedDueToCentrality();
+
+    if(!isEvSel && isEvRejCent) return; //cut only centrality, else tag only
     fNentries->Fill(4);
     // AOD primary vertex
     AliAODVertex *vtx = (AliAODVertex*)aod->GetPrimaryVertex();
     fNcontributors = vtx->GetNContributors();
-    fzVtx = vtx->GetZ();
+    fzVtxReco = vtx->GetZ();
     fNtracks = aod->GetNumberOfTracks();
-    if(isEvRejPileup) fIsPileup = 1;
-    else fIsPileup = 0;
-    if(isEvRejTrigger) fIsTrigSel = 0;
-    else fIsTrigSel = 1;
-    fRunNumber=aod->GetRunNumber();             
+    fIsEvRej = fFiltCutsD0toKpi->GetEventRejectionBitMap();
+    fRunNumber=aod->GetRunNumber();
     fTreeEvChar->Fill();
     
     if(fWriteVariableTreeD0) Process2Prong(array2prong,aod,mcArray,aod->GetMagneticField());
@@ -1086,7 +1087,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
 
         if(absPDG == 411 && fWriteVariableTreeDplus) {
           deca = AliVertexingHFUtils::CheckDplusDecay(arrayMC,mcPart,labDau);
-          if(deca<1 || labDau[0]==-1) continue;
+          if(deca<1 || labDau[0]<0 || labDau[1]<0) continue;
           isDaugInAcc = CheckDaugAcc(arrayMC,3,labDau);
           fTreeHandlerGenDplus->SetDauInAcceptance(isDaugInAcc);
           fTreeHandlerGenDplus->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
@@ -1094,7 +1095,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
         }
         else if(absPDG == 421 && fWriteVariableTreeD0) {
           deca = AliVertexingHFUtils::CheckD0Decay(arrayMC,mcPart,labDau);
-          if(deca!=1 || labDau[0]==-1) continue;
+          if(deca!=1 || labDau[0]<0 || labDau[1]<0) continue;
           isDaugInAcc = CheckDaugAcc(arrayMC,2,labDau);
           fTreeHandlerGenD0->SetDauInAcceptance(isDaugInAcc);
           fTreeHandlerGenD0->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
@@ -1102,7 +1103,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
         }
         else if(absPDG == 431 && fWriteVariableTreeDs) {
           deca = AliVertexingHFUtils::CheckDsDecay(arrayMC,mcPart,labDau);
-          if(deca!=1 || labDau[0]==-1) continue;
+          if(deca!=1 || labDau[0]<0 || labDau[1]<0) continue;
           isDaugInAcc = CheckDaugAcc(arrayMC,3,labDau);
           fTreeHandlerGenDs->SetDauInAcceptance(isDaugInAcc);
           fTreeHandlerGenDs->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);

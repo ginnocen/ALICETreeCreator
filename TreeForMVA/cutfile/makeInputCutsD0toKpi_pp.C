@@ -135,7 +135,6 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     
     cutsD0toKpi->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
     cutsD0toKpi->SetUseSpecialCuts(kTRUE);
-    cutsD0toKpi->SetRemoveDaughtersFromPrim(kTRUE);
     for(Int_t iv=0;iv<nvars;iv++) delete [] cutsMatrixTransposeStand[iv];
     delete [] cutsMatrixTransposeStand;
     cutsMatrixTransposeStand=NULL;
@@ -168,6 +167,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     else cout<<"PID is not used"<<endl;
   }
   
+  cutsD0toKpi->SetRemoveDaughtersFromPrim(kTRUE);
+
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
   cutsD0toKpi->SetTriggerClass("");
