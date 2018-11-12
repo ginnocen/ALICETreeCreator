@@ -26,6 +26,7 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. Van Doremalen
 ////////////////////////////////////////////////////////////
 
 #include <Riostream.h>

@@ -17,7 +17,6 @@
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
 // L. Van Doremalen
-// L. Van Doremalen
 ///*************************************************************************
 
 #include <TROOT.h>
