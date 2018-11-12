@@ -584,9 +584,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
       }
     }
     
-    Bool_t isEvRejTrigger = fFiltCutsD0toKpi->IsEventRejectedDueToTrigger();
-    Bool_t isEvRejPileup  = fFiltCutsD0toKpi->IsEventRejectedDueToPileup();
-    Bool_t isEvRejZvtxOutOfFid  = fFiltCutsD0toKpi->IsEventRejectedDueToZVertexOutsideFiducialRegion();
     Bool_t isEvRejCent  = fFiltCutsD0toKpi->IsEventRejectedDueToCentrality();
 
     if(!isEvSel && isEvRejCent) return; //cut only centrality, else tag only
