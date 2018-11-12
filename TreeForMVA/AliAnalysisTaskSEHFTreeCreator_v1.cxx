@@ -588,7 +588,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     Bool_t isEvRejCent  = fFiltCutsD0toKpi->IsEventRejectedDueToCentrality();
 
     if(!isEvSel && isEvRejCent) return; //cut only centrality, else tag only
-    fNentries->Fill(4);
+    if(isEvSel) fNentries->Fill(4);
     // AOD primary vertex
     AliAODVertex *vtx = (AliAODVertex*)aod->GetPrimaryVertex();
     fNcontributors = vtx->GetNContributors();
