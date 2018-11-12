@@ -16,6 +16,8 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. Van Doremalen
+// L. Van Doremalen
 ///*************************************************************************
 
 #include <TROOT.h>
@@ -129,18 +131,18 @@ private:
     int                     fPIDoptDs;
     int                     fPIDoptDplus;
     Float_t                 fCentrality;
-    Float_t                 fzVtx;
+    Float_t                 fzVtxReco;
+    Float_t                 fzVtxGen;
     Int_t                   fNcontributors;
     Int_t                   fNtracks;
-    Int_t                   fIsTrigSel;
-    Int_t                   fIsPileup;
-    Int_t                   fRunNumber; 
+    Int_t                   fIsEvRej;
+    Int_t                   fRunNumber;
 
     Bool_t                  fFillMCGenTrees;
     
     
     /// \cond CLASSIMP
-    ClassDef(AliAnalysisTaskSEHFTreeCreator_v1,2);
+    ClassDef(AliAnalysisTaskSEHFTreeCreator_v1,3);
     /// \endcond
 };
 
