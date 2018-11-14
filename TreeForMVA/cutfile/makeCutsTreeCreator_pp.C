@@ -9,6 +9,7 @@
 #include "makeInputCutsD0toKpi_pp.C"
 #include "makeInputCutsDstoKKpi_pp.C"
 #include "makeInputCutsDplustoKpipi_pp.C"
+#include "makeInputCutsLctopKpi.C"
 
 Float_t minCent=0.;
 Float_t maxCent=100.;
@@ -35,8 +36,15 @@ void makeCutsTreeCreator_pp()
     Printf("\n\n");
     Printf("Dplus analysis cuts");
     AliRDHFCutsDplustoKpipi  *analysisCutsDplustoKpipi = makeInputCutsDplustoKpipi_pp(1,"DplustoKpipiAnalysisCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("*************************************************************");
+    Printf("LctopKpi filtering cuts");
+    AliRDHFCutsLctopKpi *looseCutsLctopKpi = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("LctopKpi analysis cuts");
+    AliRDHFCutsLctopKpi *analysisCutsLctopKpi= makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
   
-    TFile* fout=new TFile("D0DsDplusCuts_pp.root","recreate");
+    TFile* fout=new TFile("D0DsDplusLcCuts_pp.root","recreate");
     fout->cd();
     looseCutsD0toKpi->Write();
     analysisCutsD0toKpi->Write();
@@ -44,6 +52,8 @@ void makeCutsTreeCreator_pp()
     analysisCutsDstoKKpi->Write();
     looseCutsDplustoKpipi->Write();
     analysisCutsDplustoKpipi->Write();
+    looseCutsLctopKpi->Write();
+    analysisCutsLctopKpi->Write();
     fout->Close();
     
 }
