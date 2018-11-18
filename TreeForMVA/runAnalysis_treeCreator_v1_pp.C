@@ -42,7 +42,7 @@ const Int_t nruns = 1;
 Int_t runlist[nruns] = {282343};// 282342, 282341, 282340, 282314, 282313, 282312, 282309, 282307, 282306, 282305, 282304, 282303, 282302, 282247, 282230, 282229, 282227, 282224, 282206, 282189, 282147, 282146, 282127, 282126, 282125, 282123, 282122, 282120, 282119, 282118, 282099, 282098, 282078, 282051, 282050, 282031, 282025, 282021, 282016, 282008, 282367, 282366, 282365};
 
 //Task configuration
-TString cutFile="./cutfile/D0DsDplusCuts_pp.root";          // file containing the cuts for the different mesons
+TString cutFile="./cutfile/D0DsDplusBplusCuts_pp.root";          // file containing the cuts for the different mesons
   														 // to generate the cut file: 1) move to cutfile directory
   														 //                           2) .L makeCutsTreeCreator.C
   														 //                           3) makeCutsTreeCreator();
@@ -88,8 +88,9 @@ void runAnalysis()
     gInterpreter->LoadMacro("AliHFTreeHandlerD0toKpi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDplustoKpipi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
+    gInterpreter->LoadMacro("AliHFTreeHandlerBplustoD0pi.cxx++g");
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1)));
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0)));
 
 #else
 
@@ -107,9 +108,10 @@ void runAnalysis()
     gROOT->LoadMacro("AliHFTreeHandlerD0toKpi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDplustoKpipi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
+    gROOT->LoadMacro("AliHFTreeHandlerBplustoD0pi.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator_v1.C");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1);
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0);
 
 #endif
 
@@ -146,8 +148,8 @@ void runAnalysis()
 
         // make sure your source files get copied to grid
         //alienHandler->SetAdditionalLibs("AliHFCutOptTreeHandler.cxx AliHFCutOptTreeHandler.h");
-        alienHandler->SetAdditionalLibs("AliHFTreeHandler.cxx AliHFTreeHandler.h AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerD0toKpi.h AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDplustoKpipi.h AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerDstoKKpi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h");
-        alienHandler->SetAnalysisSource("AliHFTreeHandler.cxx AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDstoKKpi.cxx AliAnalysisTaskSEHFTreeCreator_v1.cxx");
+        alienHandler->SetAdditionalLibs("AliHFTreeHandler.cxx AliHFTreeHandler.h AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerD0toKpi.h AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDplustoKpipi.h AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerDstoKKpi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h AliHFTreeHandlerBplustoD0pi.cxx AliHFTreeHandlerBplustoD0pi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h");
+        alienHandler->SetAnalysisSource("AliHFTreeHandler.cxx AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerBplustoD0pi.cxx AliAnalysisTaskSEHFTreeCreator_v1.cxx");
 
         // select the aliphysics version. all other packages
         // are LOADED AUTOMATICALLY!
