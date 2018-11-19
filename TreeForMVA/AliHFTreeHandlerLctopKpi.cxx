@@ -79,7 +79,7 @@ TTree* AliHFTreeHandlerLctopKpi::BuildTree(TString name, TString title)
   //set common variables
   AddCommonDmesonVarBranches();
 
-  //set D+ variables
+  //set Lc variables
   fTreeVar->Branch("sig_vert",&fSigmaVertex);
   fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
   for(unsigned int iProng=0; iProng<fNProngs; iProng++){
@@ -104,8 +104,6 @@ bool AliHFTreeHandlerLctopKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
   }
   fNCandidates++;
 
-  fCandTypeMap &= ~kRefl; //protection --> D+ ->Kpipi cannot be reflected
-
   //topological variables
   //common
   fCandType.push_back(fCandTypeMap);
@@ -121,16 +119,12 @@ bool AliHFTreeHandlerLctopKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
   fImpParXY.push_back(cand->ImpParXY());
   fNormd0MeasMinusExp.push_back(ComputeMaxd0MeasMinusExp(cand,bfield));
 
-  //D+ -> Kpipi variables
+  //Lc -> pKpi variables
   if(masshypo==1){ //pKpi
     fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassLcpKpi());
   }
   else if(masshypo==2){ //piKp
     fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassLcpiKp());
-  }
-  else if(masshypo==3){ //pid identifies as both pKpi and piKp - choose randomly
-    if(fRandom->Rndm() < 0.5) fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassLcpKpi());
-    else                      fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassLcpiKp());
   }
   else return false;
   fSigmaVertex.push_back(((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert());
