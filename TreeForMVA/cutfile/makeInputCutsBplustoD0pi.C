@@ -228,25 +228,28 @@ void setFilterBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi){
     // These can have a large effect on the CPU time of the analysis
     
     for (int i = 0; i < nptbins; ++i){
-        RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07); // 71 - "inv. mass width[GeV] D0";
-        RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
-        RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.05); // 71 - "dca [cm]";
-        RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 75 - "d0 BPlus [cm]";
-        RDHFBPlustoD0Pi->SetCut(49, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0); // 78 - "d0d0 [cm^2]";
-        RDHFBPlustoD0Pi->SetCut(56, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0); // 85 - "pseudoProperDecayTime";
-        RDHFBPlustoD0Pi->SetCut(64, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.96); // 93 - "pointing angle XY [Cos(theta)]";
+        RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.06); // 71 - "inv. mass width[GeV] D0";
+        //Needed to delete the hardcoded invariant mass window
+        RDHFBPlustoD0Pi->SetCut(39, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 1.1);  // 39 - "inv. mass width[GeV]" (Bplus);
+        //        RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
+        //        RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.05); // 71 - "dca [cm]";
+        //        RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 75 - "d0 BPlus [cm]";
+        //        RDHFBPlustoD0Pi->SetCut(49, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0); // 78 - "d0d0 [cm^2]";
+        //        RDHFBPlustoD0Pi->SetCut(56, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0); // 85 - "pseudoProperDecayTime";
+        //        RDHFBPlustoD0Pi->SetCut(64, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.96); // 93 - "pointing angle XY [Cos(theta)]";
     }
     
     // We set cuts for all D0 candidates
     // These can have a large effect on the CPU time of the analysis
     
     for (int i = 0; i < nptbinsD0forD0ptbin; ++i){
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07); // 00 - "inv. mass width[GeV]";
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(2, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.7);  // 02 - "pointing angle [Cos(theta)]";
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(3, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 03 - "dca [cm]";
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(4, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 2.5);  // 04 - "Pt D0 [GeV/c]";
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(12, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.5);  // 12 "angle between both daughters";
-        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(17, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.0);  // 17 - "pseudoProperDecayTime";
+        //A bit looser (0.07 vs 0.06) than when D0/D0bar issue is solved, to be on the safe side.
+        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07); // 00 - "inv. mass width[GeV]" (D0);
+        //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(2, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.7);  // 02 - "pointing angle [Cos(theta)]";
+        //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(3, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 03 - "dca [cm]";
+        //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(4, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 2.5);  // 04 - "Pt D0 [GeV/c]";
+        //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(12, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.5);  // 12 "angle between both daughters";
+        //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(17, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.0);  // 17 - "pseudoProperDecayTime";
     }
     //TODO: decide wrt to what D0 is doing for filtering:
     // 00 - "inv. mass width[GeV]"         --> 0.4 instead of 0.7

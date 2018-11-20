@@ -88,9 +88,10 @@ void runAnalysis()
     gInterpreter->LoadMacro("AliHFTreeHandlerD0toKpi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDplustoKpipi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
+    gInterpreter->LoadMacro("AliHFTreeHandlerLctopKpi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerBplustoD0pi.cxx++g");
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0)));
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_v1*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_v1.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0,0)));
 
 #else
 
@@ -108,10 +109,11 @@ void runAnalysis()
     gROOT->LoadMacro("AliHFTreeHandlerD0toKpi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDplustoKpipi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDstoKKpi.cxx++g");
+    gROOT->LoadMacro("AliHFTreeHandlerLctopKpi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerBplustoD0pi.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_v1.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator_v1.C");
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0);
+    AliAnalysisTaskSEHFTreeCreator_v1 *task = AddTaskHFTreeCreator_v1(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,0,0);
 
 #endif
 
@@ -148,8 +150,8 @@ void runAnalysis()
 
         // make sure your source files get copied to grid
         //alienHandler->SetAdditionalLibs("AliHFCutOptTreeHandler.cxx AliHFCutOptTreeHandler.h");
-        alienHandler->SetAdditionalLibs("AliHFTreeHandler.cxx AliHFTreeHandler.h AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerD0toKpi.h AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDplustoKpipi.h AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerDstoKKpi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h AliHFTreeHandlerBplustoD0pi.cxx AliHFTreeHandlerBplustoD0pi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h");
-        alienHandler->SetAnalysisSource("AliHFTreeHandler.cxx AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerBplustoD0pi.cxx AliAnalysisTaskSEHFTreeCreator_v1.cxx");
+        alienHandler->SetAdditionalLibs("AliHFTreeHandler.cxx AliHFTreeHandler.h AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerD0toKpi.h AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDplustoKpipi.h AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerDstoKKpi.h AliHFTreeHandlerBplustoD0pi.cxx AliHFTreeHandlerBplustoD0pi.h AliHFTreeHandlerLctopKpi.cxx AliHFTreeHandlerLctopKpi.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h AliAnalysisTaskSEHFTreeCreator_v1.cxx AliAnalysisTaskSEHFTreeCreator_v1.h");
+        alienHandler->SetAnalysisSource("AliHFTreeHandler.cxx AliHFTreeHandlerD0toKpi.cxx AliHFTreeHandlerDplustoKpipi.cxx AliHFTreeHandlerDstoKKpi.cxx AliHFTreeHandlerBplustoD0pi.cxx AliHFTreeHandlerLctopKpi.cxx AliAnalysisTaskSEHFTreeCreator_v1.cxx");
 
         // select the aliphysics version. all other packages
         // are LOADED AUTOMATICALLY!
