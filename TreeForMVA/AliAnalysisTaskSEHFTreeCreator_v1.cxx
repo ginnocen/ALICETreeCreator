@@ -444,10 +444,9 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     fNentries->GetXaxis()->SetBinLabel(23,"n. LctopKpi after filtering");
     fNentries->GetXaxis()->SetBinLabel(24,"n. LctopKpi after selection");
     fNentries->GetXaxis()->SetBinLabel(25,"n. of not on-the-fly rec LctopKpi");
-    fNentries->GetXaxis()->SetBinLabel(26, "n. of 2 prong candidates for Bplus");
-    fNentries->GetXaxis()->SetBinLabel(27, "n. Bplus after filtering");
-    fNentries->GetXaxis()->SetBinLabel(28, "n. Bplus after selection");
-    fNentries->GetXaxis()->SetBinLabel(29, "n. of not on-the-fly rec Bplus");
+    fNentries->GetXaxis()->SetBinLabel(26, "n. Bplus after filtering");
+    fNentries->GetXaxis()->SetBinLabel(27, "n. Bplus after selection");
+    fNentries->GetXaxis()->SetBinLabel(28, "n. of not on-the-fly rec Bplus");
     
     nameoutput=GetOutputSlot(2)->GetContainer()->GetName();
     fHistoNormCounter=new TH2F(nameoutput, "Number of events for norm;;centrality", 5,-0.5,4.5,102,-1.,101.);
@@ -773,8 +772,8 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
       if(fFillMCGenTrees && fReadMC) PostData(13,fGenTreeLctopKpi);
     }
     if(fWriteVariableTreeBplus){
-        PostData(12,fVariablesTreeBplus);
-        if(fFillMCGenTrees && fReadMC) PostData(13,fGenTreeBplus);
+        PostData(14,fVariablesTreeBplus);
+        if(fFillMCGenTrees && fReadMC) PostData(15,fGenTreeBplus);
     }
 
     return;
@@ -968,7 +967,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
         }
         
         if(isD0fromBplustagged && fWriteVariableTreeBplus){
-            fNentries->Fill(26);
+            fNentries->Fill(25);
             nFilteredBplus++;
             if ((vHF->FillRecoCand(aod, dfromB))) { //Fill the data members of the candidate only if they are empty.
 
@@ -1059,7 +1058,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
                               if(fCutsBplustoD0pi->IsD0SelectedPreRecVtxMVA(dfromB,pionTrack,vtx1_Bplus,bfield,0) > 0) isSelAnCutsBplus = kFALSE;
                               if(fCutsBplustoD0pi->IsSelected(&trackBPlus, 0, aod) < 1) isSelAnCutsBplus = kFALSE;
 
-                              fNentries->Fill(27);
+                              fNentries->Fill(26);
                               nSelectedBplus++;
                                 
                               Int_t labBplus = -1;
@@ -1095,7 +1094,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
                   } //end loop over pion track
                 } //end D0 filt pre selection
             } else {
-              fNentries->Fill(28); //monitor how often this fails
+              fNentries->Fill(27); //monitor how often this fails
             }
         }//end Bplus
 
@@ -1565,7 +1564,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
         }
         if(absPDG == 4122 && fWriteVariableTreeLctopKpi) {
           deca = AliVertexingHFUtils::CheckLcpKpiDecay(arrayMC,mcPart,labDau);
-          if(deca<1 || labDau[0]==-1) continue;
+          if(deca<1 || labDau[0]==-1 || labDau[1]<0) continue;
           isDaugInAcc = CheckDaugAcc(arrayMC,3,labDau);
           fTreeHandlerGenLctopKpi->SetDauInAcceptance(isDaugInAcc);
           fTreeHandlerGenLctopKpi->SetCandidateType(kTRUE,kFALSE,isPrimary,isFeeddown,kFALSE);
