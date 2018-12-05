@@ -90,7 +90,7 @@ TTree* AliHFTreeHandlerLctopKpi::BuildTree(TString name, TString title)
   AddSingleTrackBranches();
 
   //set PID variables
-  if(fPidOpt!=kNoPID) AddPidBranches(true,true,false,true,true);
+  if(fPidOpt!=kNoPID) AddPidBranches(true,true,true,true,true);
 
   return fTreeVar;
 }

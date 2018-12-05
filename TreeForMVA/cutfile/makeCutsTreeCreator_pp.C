@@ -10,7 +10,7 @@
 #include "makeInputCutsD0toKpi_pp.C"
 #include "makeInputCutsDstoKKpi_pp.C"
 #include "makeInputCutsDplustoKpipi_pp.C"
-#include "makeInputCutsLctopKpi.C"
+#include "makeInputCutsLctopKpi_pp.C"
 #include "makeInputCutsBplustoD0pi_pp.C"
 
 Float_t minCent=0.;
@@ -41,10 +41,10 @@ void makeCutsTreeCreator_pp()
     Printf("\n\n");
     Printf("*************************************************************");
     Printf("LctopKpi filtering cuts");
-    AliRDHFCutsLctopKpi *looseCutsLctopKpi = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent);
+    AliRDHFCutsLctopKpi *looseCutsLctopKpi = makeInputCutsLctopKpi_pp(0,"LctopKpiFilteringCuts",minCent,maxCent);
     Printf("\n\n");
     Printf("LctopKpi analysis cuts");
-    AliRDHFCutsLctopKpi *analysisCutsLctopKpi= makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
+    AliRDHFCutsLctopKpi *analysisCutsLctopKpi= makeInputCutsLctopKpi_pp(1,"LctopKpiAnalysisCuts",minCent,maxCent);
     Printf("\n\n");
     Printf("*************************************************************");
     Printf("Bplus filtering cuts");
