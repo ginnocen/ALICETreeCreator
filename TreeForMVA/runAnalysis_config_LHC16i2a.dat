@@ -1,0 +1,11 @@
+#fill all the lines below in the correct order(use # to comment unused lines)
+#system (pp, pPb, PbPb)
+PbPb
+#data directory
+/alice/sim/2016/LHC16i2a/
+#data pattern
+/AOD198
+#AliPhysics version
+vAN-20181204_ROOT6-1
+#run numbers
+246994

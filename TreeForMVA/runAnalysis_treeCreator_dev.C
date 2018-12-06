@@ -1,4 +1,11 @@
 #if !defined (__CINT__) || defined (__CLING__)
+#include <fstream>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
 #include "AliAnalysisAlien.h"
 #include "AliAnalysisManager.h"
 #include "AliAODInputHandler.h"
@@ -6,12 +13,13 @@
 #include "AliPhysicsSelectionTask.h"
 #include "AliMultSelectionTask.h"
 #include "AliAnalysisTaskPIDResponse.h"
-
-#include "AliAnalysisTaskSEDs.h"
-#include "AliAnalysisTaskSED0Mass.h"
+#include "AliAnalysisTaskSECleanupVertexingHF.h"
 
 #include "AliAnalysisTaskSEHFTreeCreator_dev.h"
 #endif
+
+using namespace std;
+enum system {kpp, kpPb, kPbPb};
 
 //SETTINGS
 //************************************
@@ -19,30 +27,13 @@
 Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
 TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
 Bool_t runGridTest=kFALSE;                               // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE
-TString runMode="terminate";                                  // sets the run grid mode: "full", "terminate"
-
-TString aliPhysVersion="vAN-20181204_ROOT6-1";
-
-Bool_t isRunOnMC=kTRUE;                                 // set to kTRUE to run on Mone Carlo and uncomment/comment accordingly the following lines about paths on Alien
-//paths on Alien
-// Monte Carlo
-TString gridDataDir="/alice/sim/2018/LHC18a4a2_fast/";
-TString gridDataPattern="AOD";
-// Data
-//TString gridDataDir="/alice/data/2017/LHC17p/";
-//TString gridDataPattern="/pass1_FAST/AOD";
-
 
 // Alien output directory
-TString gridWorkingDir="testNtupleCreator_LHC18a4a2_fast_test";
+TString gridWorkingDir="testNtupleCreator_LHC16i2a";
 TString gridOutputDir="output";
 
-//run numbers
-const Int_t nruns = 1;
-Int_t runlist[nruns] = {282343};// 282342, 282341, 282340, 282314, 282313, 282312, 282309, 282307, 282306, 282305, 282304, 282303, 282302, 282247, 282230, 282229, 282227, 282224, 282206, 282189, 282147, 282146, 282127, 282126, 282125, 282123, 282122, 282120, 282119, 282118, 282099, 282098, 282078, 282051, 282050, 282031, 282025, 282021, 282016, 282008, 282367, 282366, 282365};
-
 //Task configuration
-TString cutFile="./cutfile/D0DsDplusLcBplusCuts_pp.root"; // file containing the cuts for the different mesons
+TString cutFile="./cutfile/D0DsDplusLcBplusCuts.root"; // file containing the cuts for the different mesons
   														  // to generate the cut file: 1) move to cutfile directory
   														  //                           2) .L makeCutsTreeCreator.C
   														  //                           3) makeCutsTreeCreator();
@@ -50,12 +41,24 @@ TString cutFile="./cutfile/D0DsDplusLcBplusCuts_pp.root"; // file containing the
 //************************************
 
 
-void runAnalysis()
+void runAnalysis(TString configfilename="runAnalysis_config_LHC18a4a2_fast.dat", TString runMode = "full");
+Bool_t loadConfigFile(TString configfilename, vector<Int_t> &runs, Bool_t &isRunOnMC, TString &aliPhysVersion, TString &gridDataDir, TString &gridDataPattern, Int_t &System);
+
+void runAnalysis(TString configfilename, TString runMode)
 {
     // set if you want to run the analysis locally (kTRUE), or on grid (kFALSE)
     Bool_t local = runLocal;
     // if you run on grid, specify test mode (kTRUE) or full grid model (kFALSE)
     Bool_t gridTest = runGridTest;
+
+    vector<Int_t> runlist;
+    Bool_t isRunOnMC;
+    Int_t System=-1;
+    TString aliPhysVersion = "";
+    TString gridDataDir = "";
+    TString gridDataPattern = "";
+    loadConfigFile(configfilename,runlist,isRunOnMC,aliPhysVersion,gridDataDir,gridDataPattern,System);
+    const Int_t nruns = runlist.size();
 
     // since we will compile a class, tell root where to look for headers
 #if !defined (__CINT__) || defined (__CLING__)
@@ -74,15 +77,17 @@ void runAnalysis()
 
     // compile the class and load the add task macro
     // here we have to differentiate between using the just-in-time compiler
-    // from root6, or the interpreter of root5
+    // from root6, or the Int_terpreter of root5
 #if !defined (__CINT__) || defined (__CLING__)
 
-    // AliPhysicsSelectionTask *physseltask = reinterpret_cast<AliPhysicsSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s (%d)", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C"),isRunOnMC)));
+    AliPhysicsSelectionTask *physseltask = reinterpret_cast<AliPhysicsSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s (%d)", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C"),isRunOnMC)));
 
     AliAnalysisTaskPIDResponse *pidResp = reinterpret_cast<AliAnalysisTaskPIDResponse *>(gInterpreter->ProcessLine(Form(".x %s (%d)", gSystem->ExpandPathName("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C"),isRunOnMC)));
 
-//    AliMultSelectionTask *multSel = reinterpret_cast<AliMultSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"))));
-//    //multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
+    if(System==kpPb || System==kPbPb) {
+        AliMultSelectionTask *multSel = reinterpret_cast<AliMultSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"))));
+        if(gridDataDir.Contains("LHC15o") || gridDataDir.Contains("LHC16i2")) multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
+    }
 
     gInterpreter->LoadMacro("AliHFTreeHandler_dev.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerD0toKpi_dev.cxx++g");
@@ -93,6 +98,10 @@ void runAnalysis()
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
     AliAnalysisTaskSEHFTreeCreator_dev *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_dev*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_dev.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,1,1)));
 
+    if(System==kPbPb) {
+        AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
+    }
+
 #else
 
     gROOT->LoadMacro("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C");
@@ -101,9 +110,11 @@ void runAnalysis()
     gROOT->LoadMacro("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
     AliAnalysisTaskPIDResponse *pidResp = AddTaskPIDResponse(isRunOnMC);
 
-//    gROOT->LoadMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
-//    AliMultSelectionTask *multSel = AddTaskMultSelection();
-    //multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
+    if(System==kpPb || System==kPbPb) {
+        gROOT->LoadMacro("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
+        AliMultSelectionTask *multSel = AddTaskMultSelection();
+        if(gridDataDir.Contains("LHC15o") || gridDataDir.Contains("LHC16i2")) multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
+    }
 
     gROOT->LoadMacro("AliHFTreeHandler_dev.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerD0toKpi_dev.cxx++g");
@@ -114,6 +125,11 @@ void runAnalysis()
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator_dev.C");
     AliAnalysisTaskSEHFTreeCreator_dev *task = AddTaskHFTreeCreator_dev(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,1,1);
+
+    if(System==kPbPb) {
+        gROOT->LoadMacro("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C");
+        AliAnalysisTaskSECleanupVertexingHF *taskclean = AddTaskCleanupVertexingHF();
+    }
 
 #endif
 
@@ -137,8 +153,6 @@ void runAnalysis()
 
         // start the analysis locally, reading the events from the tchain
         mgr->StartAnalysis("local", chainAOD);
-
-
 
     } else {
 
@@ -212,4 +226,63 @@ void runAnalysis()
             mgr->StartAnalysis("grid");
         }
     }
+}
+
+Bool_t loadConfigFile(TString configfilename, vector<Int_t> &runs, Bool_t &isRunOnMC, TString &aliPhysVersion, TString &gridDataDir, TString &gridDataPattern, Int_t &System) {
+  
+    ifstream infile(configfilename.Data());
+    if(!infile || !infile.is_open()) {
+        cerr<<"Config file not found! Exit."<<endl;
+        return kFALSE;
+    }
+  
+    string line;
+    TString teststring="#";
+    TString strSystem="";
+    while(teststring.Contains("#")) {
+        getline(infile, line);
+        teststring = line;
+        strSystem = teststring;
+    }
+    if(strSystem=="pp") System = kpp;
+    else if(strSystem=="pPb") System = kpPb;
+    else if(strSystem=="PbPb") System = kPbPb;
+    else {
+        cerr<<"Wrong colliding system! Exit."<<endl;
+        return kFALSE;
+    }
+    teststring="#";
+    while(teststring.Contains("#")) {
+        getline(infile, line);
+        teststring = line;
+        gridDataDir = teststring;
+    }
+    if(gridDataDir.Contains("sim")) isRunOnMC = kTRUE;
+    else isRunOnMC = kFALSE;
+    teststring="#";
+    while(teststring.Contains("#")) {
+        getline(infile, line);
+        teststring = line;
+        gridDataPattern = line;
+    }
+    teststring="#";
+    while(teststring.Contains("#")) {
+        getline(infile, line);
+        teststring = line;
+        aliPhysVersion = line;
+    }
+
+    while(!infile.eof()) {
+    
+        getline(infile, line);
+        teststring = line;
+        Int_t run=-1;
+        if(!teststring.Contains("#")) {
+            stringstream convert(line);
+            if( !(convert >> run) ) run = -1;
+            runs.push_back(run);
+        }
+    }
+  
+    return kTRUE;
 }
