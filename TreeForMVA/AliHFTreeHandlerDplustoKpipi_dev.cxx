@@ -4,7 +4,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandlerDstoKKpi
+// \class AliHFTreeHandlerDplustoKpipi_dev
 // \brief helper class to handle a tree for D+ cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -16,24 +16,19 @@
 /////////////////////////////////////////////////////////////
 
 #include <TString.h>
-#include <TDatabasePDG.h>
-#include "AliHFTreeHandlerDstoKKpi.h"
+#include "AliHFTreeHandlerDplustoKpipi_dev.h"
 #include "AliAODRecoDecayHF3Prong.h"
 
 /// \cond CLASSIMP
-ClassImp(AliHFTreeHandlerDstoKKpi);
+ClassImp(AliHFTreeHandlerDplustoKpipi_dev);
 /// \endcond
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
-  AliHFTreeHandler(),
+AliHFTreeHandlerDplustoKpipi_dev::AliHFTreeHandlerDplustoKpipi_dev():
+  AliHFTreeHandler_dev(),
   fImpParProng(),
   fSigmaVertex(),
-  fMassKK(),
-  fCosPiDs(),
-  fCosPiKPhi(),
-  fNormd0MeasMinusExp(),
-  fMassKKOpt(kMassKK)
+  fNormd0MeasMinusExp()
 {
   //
   // Default constructor
@@ -43,15 +38,11 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
-  AliHFTreeHandler(PIDopt),
+AliHFTreeHandlerDplustoKpipi_dev::AliHFTreeHandlerDplustoKpipi_dev(int PIDopt):
+  AliHFTreeHandler_dev(PIDopt),
   fImpParProng(),
   fSigmaVertex(),
-  fMassKK(),
-  fCosPiDs(),
-  fCosPiKPhi(),
-  fNormd0MeasMinusExp(),
-  fMassKKOpt(kMassKK)
+  fNormd0MeasMinusExp()
 {
   //
   // Standard constructor
@@ -61,7 +52,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::~AliHFTreeHandlerDstoKKpi()
+AliHFTreeHandlerDplustoKpipi_dev::~AliHFTreeHandlerDplustoKpipi_dev()
 {
   //
   // Default Destructor
@@ -69,7 +60,7 @@ AliHFTreeHandlerDstoKKpi::~AliHFTreeHandlerDstoKKpi()
 }
 
 //________________________________________________________________
-TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title) 
+TTree* AliHFTreeHandlerDplustoKpipi_dev::BuildTree(TString name, TString title) 
 {
   fIsMCGenTree=false;
 
@@ -82,42 +73,38 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
   //set common variables
   AddCommonDmesonVarBranches();
 
-  //set Ds variables
-  TString massKKname="";
-  if(fMassKKOpt==kMassKK) massKKname = "mass_KK";
-  else if(fMassKKOpt==kDeltaMassKKPhi) massKKname = "delta_mass_KK";
+  //set D+ variables
   fTreeVar->Branch("sig_vert",&fSigmaVertex);
-  fTreeVar->Branch(massKKname.Data(),&fMassKK);
-  fTreeVar->Branch("cos_PiDs",&fCosPiDs);
-  fTreeVar->Branch("cos_PiKPhi_3",&fCosPiKPhi);
   fTreeVar->Branch("max_norm_d0d0exp",&fNormd0MeasMinusExp);
   for(unsigned int iProng=0; iProng<fNProngs; iProng++){
     fTreeVar->Branch(Form("imp_par_prong%d",iProng),&fImpParProng[iProng]);
   }
-    
+
   //set single-track variables
   AddSingleTrackBranches();
-  
-  //sed pid variables
+
+  //set PID variables
   if(fPidOpt!=kNoPID) AddPidBranches(true,true,false,true,true);
 
   return fTreeVar;
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDplustoKpipi_dev::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
   if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
-    if(!(fCandTypeMap&kSignal || fCandTypeMap&kRefl)) return true;
+    if(!(fCandTypeMap&kSignal)) return true;
   }
   fNCandidates++;
+
+  fCandTypeMap &= ~kRefl; //protection --> D+ ->Kpipi cannot be reflected
 
   //topological variables
   //common
   fCandType.push_back(fCandTypeMap);
   fPt.push_back(cand->Pt());
-  fY.push_back(cand->Y(431));
+  fY.push_back(cand->Y(411));
   fEta.push_back(cand->Eta());
   fPhi.push_back(cand->Phi());
   fDecayLength.push_back(cand->DecayLength());
@@ -128,29 +115,14 @@ bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
   fImpParXY.push_back(cand->ImpParXY());
   fNormd0MeasMinusExp.push_back(ComputeMaxd0MeasMinusExp(cand,bfield));
 
-  //Ds+ -> KKpi variables
+  //D+ -> Kpipi variables
+  fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDplus());
   fSigmaVertex.push_back(((AliAODRecoDecayHF3Prong*)cand)->GetSigmaVert());
-  float massPhi = 0;
-  float cospikphi=-2;
-  if(fMassKKOpt==kDeltaMassKKPhi) massPhi = TDatabasePDG::Instance()->GetParticle(333)->Mass();
-  if(masshypo==0){ //phiKKpi
-    fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDsKKpi());
-    fMassKK.push_back(TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(0,1,321,321)-massPhi));
-    fCosPiDs.push_back(((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFrameKKpi());
-    cospikphi = ((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFrameKKpi();
-  }
-  else if(masshypo==1){ //phipiKK
-    fInvMass.push_back(((AliAODRecoDecayHF3Prong*)cand)->InvMassDspiKK());
-    fMassKK.push_back(TMath::Abs(((AliAODRecoDecayHF3Prong*)cand)->InvMass2Prongs(1,2,321,321)-massPhi));
-    fCosPiDs.push_back(((AliAODRecoDecayHF3Prong*)cand)->CosPiDsLabFramepiKK());
-    cospikphi = ((AliAODRecoDecayHF3Prong*)cand)->CosPiKPhiRFramepiKK();
-  }
-  fCosPiKPhi.push_back(cospikphi*cospikphi*cospikphi);
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fImpParProng[iProng].push_back(cand->Getd0Prong(iProng));
   }
     
-  //single-track variables
+  //single track variables
   AliAODTrack* prongtracks[3];
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) prongtracks[iProng] = (AliAODTrack*)cand->GetDaughter(iProng);
   bool setsingletrack = SetSingleTrackVars(prongtracks);  
@@ -166,16 +138,13 @@ bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
 }
 
 //________________________________________________________________
-void AliHFTreeHandlerDstoKKpi::FillTree() {
+void AliHFTreeHandlerDplustoKpipi_dev::FillTree() {
   fTreeVar->Fill();
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
   if(!fIsMCGenTree) {
     ResetDmesonCommonVarVectors();
     fSigmaVertex.clear();
-    fMassKK.clear();
-    fCosPiDs.clear();
-    fCosPiKPhi.clear();
     fNormd0MeasMinusExp.clear();
     for(unsigned int iProng=0; iProng<fNProngs; iProng++) fImpParProng[iProng].clear();
     ResetSingleTrackVarVectors();

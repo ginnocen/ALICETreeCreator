@@ -1,5 +1,5 @@
-#ifndef ALIHFTREEHANDLER_H
-#define ALIHFTREEHANDLER_H
+#ifndef ALIHFTREEHANDLER_DEV_H
+#define ALIHFTREEHANDLER_DEV_H
 
 /* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -7,7 +7,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandler
+// \class AliHFTreeHandler_dev
 // \brief helper class to handle a tree for cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -16,9 +16,11 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 /////////////////////////////////////////////////////////////
 
-#include "vector"
+#include <vector>
 #include <TTree.h>
 #include "AliAODTrack.h"
 #include "AliAODPidHF.h"
@@ -27,7 +29,7 @@
 
 using std::vector;
 
-class AliHFTreeHandler : public TObject
+class AliHFTreeHandler_dev : public TObject
 {
   public:
   
@@ -57,10 +59,10 @@ class AliHFTreeHandler : public TObject
       kTOF
     };
 
-    AliHFTreeHandler();
-    AliHFTreeHandler(int PIDopt);
+    AliHFTreeHandler_dev();
+    AliHFTreeHandler_dev(int PIDopt);
 
-    virtual ~AliHFTreeHandler();
+    virtual ~AliHFTreeHandler_dev();
 
     //core methods --> implemented in each derived class
     virtual TTree* BuildTree(TString name, TString title) = 0;
@@ -173,7 +175,7 @@ class AliHFTreeHandler : public TObject
     vector<bool> fDauInAcceptance; ///vector of flags to know if the daughter are in acceptance in case of MC gen
   
   /// \cond CLASSIMP
-  ClassDef(AliHFTreeHandler,1); /// 
+  ClassDef(AliHFTreeHandler_dev,1); /// 
   /// \endcond
 };
 

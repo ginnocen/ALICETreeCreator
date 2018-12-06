@@ -1,5 +1,5 @@
-#ifndef ALIHFTREEHANDLERDPLUSTOKPIPI_H
-#define ALIHFTREEHANDLERDPLUSTOKPIPI_H
+#ifndef ALIHFTREEHANDLERD0TOKPI_DEV_H
+#define ALIHFTREEHANDLERD0TOKPI_DEV_H
 
 /* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -7,7 +7,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandlerDplustoKpipi
+// \class AliHFTreeHandlerD0toKpi_dev
 // \brief helper class to handle a tree for D+ cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -18,31 +18,31 @@
 // L. Vermunt, luuk.vermunt@cern.ch
 /////////////////////////////////////////////////////////////
 
-#include "AliHFTreeHandler.h"
+#include "AliHFTreeHandler_dev.h"
 
 using std::vector;
 
-class AliHFTreeHandlerDplustoKpipi : public AliHFTreeHandler
+class AliHFTreeHandlerD0toKpi_dev : public AliHFTreeHandler_dev
 {
   public:
-    AliHFTreeHandlerDplustoKpipi();
-    AliHFTreeHandlerDplustoKpipi(int PIDopt);
+    AliHFTreeHandlerD0toKpi_dev();
+    AliHFTreeHandlerD0toKpi_dev(int PIDopt);
 
-    virtual ~AliHFTreeHandlerDplustoKpipi();
+    virtual ~AliHFTreeHandlerD0toKpi_dev();
 
     virtual TTree* BuildTree(TString name="tree", TString title="tree");
-    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo=0, AliAODPidHF* pidHF=0x0);
-    virtual void FillTree();
+    virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfiled, int masshypo=0, AliAODPidHF* pidHF=0x0);
+    virtual void FillTree(); //to be called for each event, not each candidate!
 
   private:
 
     vector<float> fImpParProng[knMaxProngs]; ///vectors of prong impact parameter
-    vector<float> fSigmaVertex; /// vector of candidate sigma vertex
+    vector<float> fCosThetaStar; /// vector of candidate costhetastar
+    vector<float> fImpParProd; /// vector of daughter impact-parameter product
     vector<float> fNormd0MeasMinusExp; ///vector of candidate topomatic variable
 
     /// \cond CLASSIMP
-    ClassDef(AliHFTreeHandlerDplustoKpipi,1); /// 
+    ClassDef(AliHFTreeHandlerD0toKpi_dev,1); /// 
     /// \endcond
 };
-
 #endif

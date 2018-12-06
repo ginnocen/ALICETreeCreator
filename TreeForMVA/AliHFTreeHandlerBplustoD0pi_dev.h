@@ -1,5 +1,5 @@
-#ifndef ALIHFTREEHANDLERBPLUSTOD0PI_H
-#define ALIHFTREEHANDLERBPLUSTOD0PI_H
+#ifndef ALIHFTREEHANDLERBPLUSTOD0PI_DEV_H
+#define ALIHFTREEHANDLERBPLUSTOD0PI_DEV_H
 
 /* Copyright(c) 1998-2008, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -7,7 +7,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandlerBplustoD0pi
+// \class AliHFTreeHandlerBplustoD0pi_dev
 // \brief helper class to handle a tree for D+ cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -19,17 +19,17 @@
 // L. van Doremalen, lennart.van.doremalen@cern.ch
 /////////////////////////////////////////////////////////////
 
-#include "AliHFTreeHandler.h"
+#include "AliHFTreeHandler_dev.h"
 
 using std::vector;
 
-class AliHFTreeHandlerBplustoD0pi : public AliHFTreeHandler
+class AliHFTreeHandlerBplustoD0pi_dev : public AliHFTreeHandler_dev
 {
   public:
-    AliHFTreeHandlerBplustoD0pi();
-    AliHFTreeHandlerBplustoD0pi(int PIDopt);
+    AliHFTreeHandlerBplustoD0pi_dev();
+    AliHFTreeHandlerBplustoD0pi_dev(int PIDopt);
 
-    virtual ~AliHFTreeHandlerBplustoD0pi();
+    virtual ~AliHFTreeHandlerBplustoD0pi_dev();
 
     virtual TTree* BuildTree(TString name="tree", TString title="tree");
     virtual bool SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo=0, AliAODPidHF* pidHF=0x0);
@@ -63,7 +63,7 @@ class AliHFTreeHandlerBplustoD0pi : public AliHFTreeHandler
     vector<float> fAngleProngs_D0; ///vector of angle between D0's prongs
     
     /// \cond CLASSIMP
-    ClassDef(AliHFTreeHandlerBplustoD0pi,1); /// 
+    ClassDef(AliHFTreeHandlerBplustoD0pi_dev,1); /// 
     /// \endcond
 };
 #endif

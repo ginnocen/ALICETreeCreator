@@ -27,6 +27,7 @@
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
 // L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 //
 ////////////////////////////////////////////////////////////
 
@@ -62,23 +63,23 @@
 #include "AliAnalysisVertexingHF.h"
 #include "AliNormalizationCounter.h"
 #include "AliAnalysisTaskSE.h"
-#include "AliHFTreeHandler.h"
-#include "AliHFTreeHandlerD0toKpi.h"
-#include "AliHFTreeHandlerDplustoKpipi.h"
-#include "AliHFTreeHandlerDstoKKpi.h"
-#include "AliHFTreeHandlerLctopKpi.h"
-#include "AliHFTreeHandlerBplustoD0pi.h"
-#include "AliAnalysisTaskSEHFTreeCreator_v1.h"
+#include "AliHFTreeHandler_dev.h"
+#include "AliHFTreeHandlerD0toKpi_dev.h"
+#include "AliHFTreeHandlerDplustoKpipi_dev.h"
+#include "AliHFTreeHandlerDstoKKpi_dev.h"
+#include "AliHFTreeHandlerLctopKpi_dev.h"
+#include "AliHFTreeHandlerBplustoD0pi_dev.h"
+#include "AliAnalysisTaskSEHFTreeCreator_dev.h"
 
 using std::cout;
 using std::endl;
 
 /// \cond CLASSIMP
-ClassImp(AliAnalysisTaskSEHFTreeCreator_v1);
+ClassImp(AliAnalysisTaskSEHFTreeCreator_dev);
 /// \endcond
 
 //________________________________________________________________________
-AliAnalysisTaskSEHFTreeCreator_v1::AliAnalysisTaskSEHFTreeCreator_v1():
+AliAnalysisTaskSEHFTreeCreator_dev::AliAnalysisTaskSEHFTreeCreator_dev():
 AliAnalysisTaskSE(),
 fNentries(0x0),
 fHistoNormCounter(0x0),
@@ -126,11 +127,11 @@ fTreeHandlerGenDs(0x0),
 fTreeHandlerGenDplus(0x0),
 fTreeHandlerGenLctopKpi(0x0),
 fTreeHandlerGenBplus(0x0),
-fPIDoptD0(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptDs(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptDplus(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptLctopKpi(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptBplus(AliHFTreeHandler::kRawAndNsigmaPID),
+fPIDoptD0(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptDs(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptDplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptLctopKpi(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptBplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fCentrality(-999.),
 fzVtxReco(0.),
 fzVtxGen(0.),
@@ -145,7 +146,7 @@ fFillMCGenTrees(kTRUE)
 
 }
 //________________________________________________________________________
-AliAnalysisTaskSEHFTreeCreator_v1::AliAnalysisTaskSEHFTreeCreator_v1(const char *name, TList *cutsList):
+AliAnalysisTaskSEHFTreeCreator_dev::AliAnalysisTaskSEHFTreeCreator_dev(const char *name, TList *cutsList):
 AliAnalysisTaskSE(name),
 fNentries(0x0),
 fHistoNormCounter(0x0),
@@ -193,11 +194,11 @@ fTreeHandlerGenDs(0x0),
 fTreeHandlerGenDplus(0x0),
 fTreeHandlerGenLctopKpi(0x0),
 fTreeHandlerGenBplus(0x0),
-fPIDoptD0(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptDs(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptDplus(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptLctopKpi(AliHFTreeHandler::kRawAndNsigmaPID),
-fPIDoptBplus(AliHFTreeHandler::kRawAndNsigmaPID),
+fPIDoptD0(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptDs(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptDplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptLctopKpi(AliHFTreeHandler_dev::kRawAndNsigmaPID),
+fPIDoptBplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fCentrality(-999.),
 fzVtxReco(0.),
 fzVtxGen(0.),
@@ -288,7 +289,7 @@ fFillMCGenTrees(kTRUE)
 }
 
 //________________________________________________________________________
-AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
+AliAnalysisTaskSEHFTreeCreator_dev::~AliAnalysisTaskSEHFTreeCreator_dev()
 {
     if (fListCuts) {
         delete fListCuts;
@@ -398,11 +399,11 @@ AliAnalysisTaskSEHFTreeCreator_v1::~AliAnalysisTaskSEHFTreeCreator_v1()
 }
 
 //________________________________________________________________________
-void AliAnalysisTaskSEHFTreeCreator_v1::Init()
+void AliAnalysisTaskSEHFTreeCreator_dev::Init()
 {
     /// Initialization
     
-    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_v1::Init() \n");
+    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_dev::Init() \n");
     
     PostData(3,fListCuts);
     
@@ -410,12 +411,12 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Init()
 }
 
 //________________________________________________________________________
-void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
+void AliAnalysisTaskSEHFTreeCreator_dev::UserCreateOutputObjects()
 {
     
     /// Create the output container
     //
-    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects() \n");
+    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_dev::UserCreateOutputObjects() \n");
     
     const char* nameoutput=GetOutputSlot(1)->GetContainer()->GetName();
     fNentries=new TH1F(nameoutput, "Number of events", 30,-0.5,29.5);
@@ -483,7 +484,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fWriteVariableTreeD0){
         OpenFile(6);
         TString nameoutput = "tree_D0";
-        fTreeHandlerD0 = new AliHFTreeHandlerD0toKpi(fPIDoptD0);
+        fTreeHandlerD0 = new AliHFTreeHandlerD0toKpi_dev(fPIDoptD0);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerD0->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeD0 = (TTree*)fTreeHandlerD0->BuildTree(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fVariablesTreeD0);
@@ -491,7 +492,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
         if(fFillMCGenTrees && fReadMC) {
           OpenFile(7);
           TString nameoutput = "tree_D0_gen";
-          fTreeHandlerGenD0 = new AliHFTreeHandlerD0toKpi(0);
+          fTreeHandlerGenD0 = new AliHFTreeHandlerD0toKpi_dev(0);
           fGenTreeD0 = (TTree*)fTreeHandlerGenD0->BuildTreeMCGen(nameoutput,nameoutput);
           fTreeEvChar->AddFriend(fGenTreeD0);
         }
@@ -499,7 +500,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fWriteVariableTreeDs){
         OpenFile(8);
         TString nameoutput = "tree_Ds";
-        fTreeHandlerDs = new AliHFTreeHandlerDstoKKpi(fPIDoptDs);
+        fTreeHandlerDs = new AliHFTreeHandlerDstoKKpi_dev(fPIDoptDs);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDs->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDs = (TTree*)fTreeHandlerDs->BuildTree(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fVariablesTreeDs);
@@ -507,7 +508,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
       if(fFillMCGenTrees && fReadMC) {
         OpenFile(9);
         TString nameoutput = "tree_Ds_gen";
-        fTreeHandlerGenDs = new AliHFTreeHandlerDstoKKpi(0);
+        fTreeHandlerGenDs = new AliHFTreeHandlerDstoKKpi_dev(0);
         fGenTreeDs = (TTree*)fTreeHandlerGenDs->BuildTreeMCGen(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fGenTreeDs);
       }
@@ -515,14 +516,14 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fWriteVariableTreeDplus){
         OpenFile(10);
         TString nameoutput = "tree_Dplus";
-        fTreeHandlerDplus = new AliHFTreeHandlerDplustoKpipi(fPIDoptDplus);
+        fTreeHandlerDplus = new AliHFTreeHandlerDplustoKpipi_dev(fPIDoptDplus);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerDplus->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeDplus = (TTree*)fTreeHandlerDplus->BuildTree(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fVariablesTreeDplus);
       if(fFillMCGenTrees && fReadMC) {
         OpenFile(11);
         TString nameoutput = "tree_Dplus_gen";
-        fTreeHandlerGenDplus = new AliHFTreeHandlerDplustoKpipi(0);
+        fTreeHandlerGenDplus = new AliHFTreeHandlerDplustoKpipi_dev(0);
         fGenTreeDplus = (TTree*)fTreeHandlerGenDplus->BuildTreeMCGen(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fGenTreeDplus);
       }
@@ -530,14 +531,14 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fWriteVariableTreeLctopKpi){
         OpenFile(12);
         TString nameoutput = "tree_LctopKpi";
-        fTreeHandlerLctopKpi = new AliHFTreeHandlerLctopKpi(fPIDoptLctopKpi);
+        fTreeHandlerLctopKpi = new AliHFTreeHandlerLctopKpi_dev(fPIDoptLctopKpi);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerLctopKpi->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeLctopKpi = (TTree*)fTreeHandlerLctopKpi->BuildTree(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fVariablesTreeLctopKpi);
       if(fFillMCGenTrees && fReadMC) {
         OpenFile(13);
         TString nameoutput = "tree_LctopKpi_gen";
-        fTreeHandlerGenLctopKpi = new AliHFTreeHandlerLctopKpi(0);
+        fTreeHandlerGenLctopKpi = new AliHFTreeHandlerLctopKpi_dev(0);
         fGenTreeLctopKpi = (TTree*)fTreeHandlerGenLctopKpi->BuildTreeMCGen(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fGenTreeLctopKpi);
       }
@@ -545,14 +546,14 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
     if(fWriteVariableTreeBplus){
         OpenFile(14);
         TString nameoutput = "tree_Bplus";
-        fTreeHandlerBplus = new AliHFTreeHandlerBplustoD0pi(fPIDoptBplus);
+        fTreeHandlerBplus = new AliHFTreeHandlerBplustoD0pi_dev(fPIDoptBplus);
         if(fReadMC && fWriteOnlySignal) fTreeHandlerBplus->SetFillOnlySignal(fWriteOnlySignal);
         fVariablesTreeBplus = (TTree*)fTreeHandlerBplus->BuildTree(nameoutput,nameoutput);
         fTreeEvChar->AddFriend(fVariablesTreeBplus);
         if(fFillMCGenTrees && fReadMC) {
             OpenFile(15);
             TString nameoutput = "tree_Bplus_gen";
-            fTreeHandlerGenBplus = new AliHFTreeHandlerBplustoD0pi(0);
+            fTreeHandlerGenBplus = new AliHFTreeHandlerBplustoD0pi_dev(0);
             fGenTreeBplus = (TTree*)fTreeHandlerGenBplus->BuildTreeMCGen(nameoutput,nameoutput);
             fTreeEvChar->AddFriend(fGenTreeBplus);
         }
@@ -588,7 +589,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserCreateOutputObjects()
 }
 
 //________________________________________________________________________
-void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
+void AliAnalysisTaskSEHFTreeCreator_dev::UserExec(Option_t */*option*/)
 
 {
     /// Execute analysis for current event:
@@ -635,7 +636,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     }
     
     if(!array2prong || !array3Prong || !aod) {
-        printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: input branches not found!\n");
+        printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: input branches not found!\n");
         return;
     }
     // fix for temporary bug in ESDfilter
@@ -658,14 +659,14 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
         // load MC particles
         mcArray = (TClonesArray*)aod->GetList()->FindObject(AliAODMCParticle::StdBranchName());
         if(!mcArray) {
-            printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: MC particles branch not found!\n");
+            printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: MC particles branch not found!\n");
             return;
         }
         
         // load MC header
         mcHeader = (AliAODMCHeader*)aod->GetList()->FindObject(AliAODMCHeader::StdBranchName());
         if(!mcHeader) {
-            printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: MC header branch not found!\n");
+            printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: MC header branch not found!\n");
             return;
         }
       fzVtxGen = mcHeader->GetVtxZ();
@@ -682,7 +683,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     if(fWriteVariableTreeLctopKpi) isSameEvSel = isSameEvSel && isSameEvSelLctopKpi;
     if(fWriteVariableTreeBplus) isSameEvSel = isSameEvSel && isSameEvSelBplus;
     if(!isSameEvSel) {
-      Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts same meson");
+      Printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: differences in the event selection cuts same meson");
       return;
     }
     if((fWriteVariableTreeD0 && fWriteVariableTreeDs && (fFiltCutsD0toKpi->IsEventSelected(aod)!=fFiltCutsDstoKKpi->IsEventSelected(aod))) || 
@@ -696,7 +697,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
         (fWriteVariableTreeDplus && fWriteVariableTreeBplus && (fFiltCutsDplustoKpipi->IsEventSelected(aod)!=fFiltCutsBplustoD0pi->IsEventSelected(aod))) ||
         (fWriteVariableTreeLctopKpi && fWriteVariableTreeBplus && (fFiltCutsLctopKpi->IsEventSelected(aod)!=fFiltCutsBplustoD0pi->IsEventSelected(aod))) 
         ){
-      Printf("AliAnalysisTaskSEHFTreeCreator_v1::UserExec: differences in the event selection cuts different meson");
+      Printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: differences in the event selection cuts different meson");
       return;
     }
     
@@ -779,11 +780,11 @@ void AliAnalysisTaskSEHFTreeCreator_v1::UserExec(Option_t */*option*/)
     return;
 }
 //________________________________________________________________________
-void AliAnalysisTaskSEHFTreeCreator_v1::Terminate(Option_t */*option*/)
+void AliAnalysisTaskSEHFTreeCreator_dev::Terminate(Option_t */*option*/)
 {
     /// Terminate analysis
     //
-    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_v1: Terminate() \n");
+    if(fDebug > 1) printf("AliAnalysisTaskSEHFTreeCreator_dev: Terminate() \n");
     
     
     fNentries = dynamic_cast<TH1F*>(GetOutputData(1));
@@ -809,7 +810,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Terminate(Option_t */*option*/)
     return;
 }
 //--------------------------------------------------------
-void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield){
+void AliAnalysisTaskSEHFTreeCreator_dev::Process2Prong(TClonesArray *array2prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield){
 
     AliAODVertex *vtx1 = (AliAODVertex*)aod->GetPrimaryVertex();
     //Needed separate one for Bplus, because D0 deletes its daughters from PV
@@ -823,7 +824,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
     Int_t nSelectedD0=0;
     Int_t nFilteredD0=0;
 
-    UInt_t pdgDgBplustoD0pi[2] = {211,421};
     Int_t pdgDgBplustoD0piInt[2] = {211,421};
     Int_t nSelectedBplus = 0;
     Int_t nFilteredBplus = 0;
@@ -1107,7 +1107,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process2Prong(TClonesArray *array2prong,
     return;
 }
 //--------------------------------------------------------
-void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield){
+void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong, AliAODEvent *aod, TClonesArray *arrMC, Float_t bfield){
     
     AliAODVertex *vtx1 = (AliAODVertex*)aod->GetPrimaryVertex();
     
@@ -1117,7 +1117,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
     Int_t pdgDstoKKpi[3]={321,321,211};
     Int_t nSelectedDs=0;
     Int_t nFilteredDs=0;
-    Double_t massPhi=TDatabasePDG::Instance()->GetParticle(333)->Mass();
     
     AliAODPidHF* pidHFDs = fFiltCutsDstoKKpi->GetPidHF();
     if(!pidHFDs) pidHFDs=0x0;
@@ -1511,7 +1510,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::Process3Prong(TClonesArray *array3Prong,
 }
 
 //_________________________________________________________________
-void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
+void AliAnalysisTaskSEHFTreeCreator_dev::ProcessMCGen(TClonesArray *arrayMC){
   /// Fill MC gen trees
   
   for(Int_t iPart=0; iPart<arrayMC->GetEntriesFast(); iPart++){
@@ -1536,7 +1535,6 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
         Int_t  deca = 0;
         Int_t  labDau[3] = {-1,-1,-1};
         Bool_t isDaugInAcc = kFALSE;
-        Int_t nProng = 0;
 
         if(absPDG == 411 && fWriteVariableTreeDplus) {
           deca = AliVertexingHFUtils::CheckDplusDecay(arrayMC,mcPart,labDau);
@@ -1589,7 +1587,7 @@ void AliAnalysisTaskSEHFTreeCreator_v1::ProcessMCGen(TClonesArray *arrayMC){
 }
 
 //--------------------------------------------------------
-Bool_t AliAnalysisTaskSEHFTreeCreator_v1::CheckDaugAcc(TClonesArray* arrayMC,Int_t nProng, Int_t *labDau){
+Bool_t AliAnalysisTaskSEHFTreeCreator_dev::CheckDaugAcc(TClonesArray* arrayMC,Int_t nProng, Int_t *labDau){
   /// check if the decay products are in the good eta and pt range
   
   for (Int_t iProng = 0; iProng<nProng; iProng++){
@@ -1606,7 +1604,7 @@ Bool_t AliAnalysisTaskSEHFTreeCreator_v1::CheckDaugAcc(TClonesArray* arrayMC,Int
   return kTRUE;
 }
 //-------------------------------------------------------------------------------------
-AliAODVertex* AliAnalysisTaskSEHFTreeCreator_v1::ReconstructBplusVertex(const AliVVertex *primary, TObjArray *tracks, Double_t bField, Double_t dispersion) {
+AliAODVertex* AliAnalysisTaskSEHFTreeCreator_dev::ReconstructBplusVertex(const AliVVertex *primary, TObjArray *tracks, Double_t bField, Double_t dispersion) {
     //
     // Helper function to recalculate a vertex.
     //
