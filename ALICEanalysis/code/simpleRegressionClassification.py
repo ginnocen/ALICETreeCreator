@@ -29,7 +29,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 nevents=1000
 MLtype="BinaryClassification" #other options are "Regression", "BinaryClassification"
 MLsubtype="HFmeson" #other options are "PID","HFmeson","test","jettagging","nuclei"
-optionanalysis="Dplus" #other options are "Ds,Dplus, Bplus,Lc,PIDKaon,PIDPion,testregression,lightquarkjet,hypertritium
+optionanalysis="Ds" #other options are "Ds,Dplus, Bplus,Lc,PIDKaon,PIDPion,testregression,lightquarkjet,hypertritium
 
 
 ############### choose the skimming parameters for your dataset ################
