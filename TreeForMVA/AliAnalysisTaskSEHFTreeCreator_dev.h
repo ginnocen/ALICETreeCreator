@@ -1,5 +1,5 @@
-#ifndef AliAnalysisTaskSEHFTreeCreator_v1_H
-#define AliAnalysisTaskSEHFTreeCreator_v1_H
+#ifndef ALIANALYSISTASKSEHFTREECREATOR_DEV_H
+#define ALIANALYSISTASKSEHFTREECREATOR_DEV_H
 
 /* Copyright(c) 1998-2009, ALICE Experiment at CERN, All rights reserved. *
  * See cxx source for full Copyright notice                               */
@@ -7,7 +7,7 @@
 /* $Id$ */
 
 ///*************************************************************************
-/// \class AliAnalysisTaskSEHFTreeCreator_v1
+/// \class AliAnalysisTaskSEHFTreeCreator_dev
 ///
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -17,6 +17,7 @@
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
 // L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 ///*************************************************************************
 
 #include <TROOT.h>
@@ -34,25 +35,25 @@
 #include "AliRDHFCutsLctopKpi.h"
 #include "AliRDHFCutsBPlustoD0Pi.h"
 #include "AliNormalizationCounter.h"
-#include "AliHFTreeHandler.h"
-#include "AliHFTreeHandlerD0toKpi.h"
-#include "AliHFTreeHandlerDplustoKpipi.h"
-#include "AliHFTreeHandlerDstoKKpi.h"
-#include "AliHFTreeHandlerLctopKpi.h"
-#include "AliHFTreeHandlerBplustoD0pi.h"
+#include "AliHFTreeHandler_dev.h"
+#include "AliHFTreeHandlerD0toKpi_dev.h"
+#include "AliHFTreeHandlerDplustoKpipi_dev.h"
+#include "AliHFTreeHandlerDstoKKpi_dev.h"
+#include "AliHFTreeHandlerLctopKpi_dev.h"
+#include "AliHFTreeHandlerBplustoD0pi_dev.h"
 
 
 class AliAODEvent;
 
-class AliAnalysisTaskSEHFTreeCreator_v1 : public AliAnalysisTaskSE
+class AliAnalysisTaskSEHFTreeCreator_dev : public AliAnalysisTaskSE
 {
 public:
 
 
     
-    AliAnalysisTaskSEHFTreeCreator_v1();
-    AliAnalysisTaskSEHFTreeCreator_v1(const char *name,TList *cutsList);
-    virtual ~AliAnalysisTaskSEHFTreeCreator_v1();
+    AliAnalysisTaskSEHFTreeCreator_dev();
+    AliAnalysisTaskSEHFTreeCreator_dev(const char *name,TList *cutsList);
+    virtual ~AliAnalysisTaskSEHFTreeCreator_dev();
     
     
     /// Implementation of interface methods
@@ -91,8 +92,8 @@ public:
     
 private:
     
-    AliAnalysisTaskSEHFTreeCreator_v1(const AliAnalysisTaskSEHFTreeCreator_v1&);
-    AliAnalysisTaskSEHFTreeCreator_v1& operator=(const AliAnalysisTaskSEHFTreeCreator_v1&);
+    AliAnalysisTaskSEHFTreeCreator_dev(const AliAnalysisTaskSEHFTreeCreator_dev&);
+    AliAnalysisTaskSEHFTreeCreator_dev& operator=(const AliAnalysisTaskSEHFTreeCreator_dev&);
     
     
     
@@ -144,16 +145,16 @@ private:
     TTree                   *fGenTreeBplus;              //!<! tree of the gen B+ variables
     TTree                   *fTreeEvChar;                //!<!
     bool                    fWriteOnlySignal;
-    AliHFTreeHandlerD0toKpi        *fTreeHandlerD0;             //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerDstoKKpi       *fTreeHandlerDs;             //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerDplustoKpipi   *fTreeHandlerDplus;          //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerLctopKpi       *fTreeHandlerLctopKpi;          //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerBplustoD0pi    *fTreeHandlerBplus;          //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerD0toKpi        *fTreeHandlerGenD0;             //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerDstoKKpi       *fTreeHandlerGenDs;             //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerDplustoKpipi   *fTreeHandlerGenDplus;          //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerLctopKpi       *fTreeHandlerGenLctopKpi;       //!<! handler object for the tree with topological variables
-    AliHFTreeHandlerBplustoD0pi    *fTreeHandlerGenBplus;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerD0toKpi_dev        *fTreeHandlerD0;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDstoKKpi_dev       *fTreeHandlerDs;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDplustoKpipi_dev   *fTreeHandlerDplus;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerLctopKpi_dev       *fTreeHandlerLctopKpi;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerBplustoD0pi_dev    *fTreeHandlerBplus;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerD0toKpi_dev        *fTreeHandlerGenD0;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDstoKKpi_dev       *fTreeHandlerGenDs;             //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerDplustoKpipi_dev   *fTreeHandlerGenDplus;          //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerLctopKpi_dev       *fTreeHandlerGenLctopKpi;       //!<! handler object for the tree with topological variables
+    AliHFTreeHandlerBplustoD0pi_dev    *fTreeHandlerGenBplus;          //!<! handler object for the tree with topological variables
     int                     fPIDoptD0;
     int                     fPIDoptDs;
     int                     fPIDoptDplus;
@@ -171,7 +172,7 @@ private:
     
     
     /// \cond CLASSIMP
-    ClassDef(AliAnalysisTaskSEHFTreeCreator_v1,4);
+    ClassDef(AliAnalysisTaskSEHFTreeCreator_dev,4);
     /// \endcond
 };
 

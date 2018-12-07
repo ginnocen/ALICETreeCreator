@@ -4,7 +4,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandler
+// \class AliHFTreeHandler_dev
 // \brief helper class to handle a tree for cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -13,22 +13,24 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include <cmath>
 #include <limits>
-#include "AliHFTreeHandler.h"
+#include "AliHFTreeHandler_dev.h"
 #include "AliPID.h"
 #include "AliAODRecoDecayHF.h"
 #include "AliPIDResponse.h"
 #include "AliESDtrack.h"
 
 /// \cond CLASSIMP
-ClassImp(AliHFTreeHandler);
+ClassImp(AliHFTreeHandler_dev);
 /// \endcond
 
 //________________________________________________________________
-AliHFTreeHandler::AliHFTreeHandler():
+AliHFTreeHandler_dev::AliHFTreeHandler_dev():
   TObject(),
   fTreeVar(0x0),
   fNProngs(),
@@ -75,7 +77,7 @@ AliHFTreeHandler::AliHFTreeHandler():
 }
 
 //________________________________________________________________
-AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
+AliHFTreeHandler_dev::AliHFTreeHandler_dev(int PIDopt):
   TObject(),
   fTreeVar(0x0),
   fNProngs(),
@@ -122,7 +124,7 @@ AliHFTreeHandler::AliHFTreeHandler(int PIDopt):
 }
 
 //________________________________________________________________
-AliHFTreeHandler::~AliHFTreeHandler()
+AliHFTreeHandler_dev::~AliHFTreeHandler_dev()
 {
   //
   // Destructor
@@ -132,7 +134,7 @@ AliHFTreeHandler::~AliHFTreeHandler()
 }
 
 //________________________________________________________________
-TTree* AliHFTreeHandler::BuildTreeMCGen(TString name, TString title) {
+TTree* AliHFTreeHandler_dev::BuildTreeMCGen(TString name, TString title) {
 
   fIsMCGenTree = true;
 
@@ -154,7 +156,7 @@ TTree* AliHFTreeHandler::BuildTreeMCGen(TString name, TString title) {
 }
 
 //________________________________________________________________
-bool AliHFTreeHandler::SetMCGenVariables(AliAODMCParticle* mcpart) {
+bool AliHFTreeHandler_dev::SetMCGenVariables(AliAODMCParticle* mcpart) {
 
   if(!mcpart) return false;
   if(!(fCandTypeMap&kSignal)) return true; // fill only signal in the generated
@@ -172,7 +174,7 @@ bool AliHFTreeHandler::SetMCGenVariables(AliAODMCParticle* mcpart) {
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected) 
+void AliHFTreeHandler_dev::SetCandidateType(bool issignal, bool isbkg, bool isprompt, bool isFD, bool isreflected) 
 {  
   if(issignal) fCandTypeMap |= kSignal;
   else fCandTypeMap &= ~kSignal;
@@ -187,7 +189,7 @@ void AliHFTreeHandler::SetCandidateType(bool issignal, bool isbkg, bool isprompt
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::AddCommonDmesonVarBranches() {
+void AliHFTreeHandler_dev::AddCommonDmesonVarBranches() {
 
   fTreeVar->Branch("n_cand",&fNCandidates);
   fTreeVar->Branch("cand_type",&fCandType);
@@ -205,7 +207,7 @@ void AliHFTreeHandler::AddCommonDmesonVarBranches() {
 } 
 
 //________________________________________________________________
-void AliHFTreeHandler::AddSingleTrackBranches() {
+void AliHFTreeHandler_dev::AddSingleTrackBranches() {
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fTreeVar->Branch(Form("p_prong%d",iProng),&fPProng[iProng]);
@@ -222,7 +224,7 @@ void AliHFTreeHandler::AddSingleTrackBranches() {
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
+void AliHFTreeHandler_dev::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
 {
 
   if(fPidOpt==kNoPID) return;
@@ -271,7 +273,7 @@ void AliHFTreeHandler::AddPidBranches(bool usePionHypo, bool useKaonHypo, bool u
 }
 
 //________________________________________________________________
-bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[]) {
+bool AliHFTreeHandler_dev::SetSingleTrackVars(AliAODTrack* prongtracks[]) {
 
   //Impact parameters of the prongs are defined as a species dependent variable because the prongs 
   //cannot be obtained in similar way for the different AliAODRecoDecay objects (AliAODTrack cannot
@@ -301,7 +303,7 @@ bool AliHFTreeHandler::SetSingleTrackVars(AliAODTrack* prongtracks[]) {
 }
 
 //________________________________________________________________
-bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF, bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
+bool AliHFTreeHandler_dev::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF, bool usePionHypo, bool useKaonHypo, bool useProtonHypo, bool useTPC, bool useTOF) 
 {
   if(!pidHF) return false;
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
@@ -458,7 +460,7 @@ bool AliHFTreeHandler::SetPidVars(AliAODTrack* prongtracks[], AliAODPidHF* pidHF
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
+void AliHFTreeHandler_dev::ResetDmesonCommonVarVectors() {
   
   fCandType.clear();
   fInvMass.clear();
@@ -475,7 +477,7 @@ void AliHFTreeHandler::ResetDmesonCommonVarVectors() {
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::ResetMCGenVectors() {
+void AliHFTreeHandler_dev::ResetMCGenVectors() {
   
   fCandType.clear();
   fInvMass.clear();
@@ -487,7 +489,7 @@ void AliHFTreeHandler::ResetMCGenVectors() {
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::ResetSingleTrackVarVectors() {
+void AliHFTreeHandler_dev::ResetSingleTrackVarVectors() {
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     fPProng[iProng].clear();
     fPtProng[iProng].clear();
@@ -503,7 +505,7 @@ void AliHFTreeHandler::ResetSingleTrackVarVectors() {
 }
 
 //________________________________________________________________
-void AliHFTreeHandler::ResetPidVarVectors() {
+void AliHFTreeHandler_dev::ResetPidVarVectors() {
 
   for(unsigned int iProng=0; iProng<fNProngs; iProng++) {
     for(unsigned int iDet=0; iDet<knMaxDet4Pid; iDet++) {
@@ -521,7 +523,7 @@ void AliHFTreeHandler::ResetPidVarVectors() {
 }
 
 //________________________________________________________________
-double AliHFTreeHandler::CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF)
+double AliHFTreeHandler_dev::CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF)
 {
   if(nsigmaTPC > -998. && nsigmaTOF > -998.) return TMath::Sqrt((nsigmaTPC*nsigmaTPC+nsigmaTOF*nsigmaTOF)/2);
   else if(nsigmaTPC > -998. && nsigmaTOF < -998.) return nsigmaTPC;
@@ -530,7 +532,7 @@ double AliHFTreeHandler::CombineNsigmaDiffDet(double nsigmaTPC, double nsigmaTOF
 }
 
 //________________________________________________________________
-int AliHFTreeHandler::RoundFloatToInt(double num) 
+int AliHFTreeHandler_dev::RoundFloatToInt(double num) 
 {
   if(num>=static_cast<double>(numeric_limits<int>::max())) return numeric_limits<int>::max();
   else if(num<=static_cast<double>(numeric_limits<int>::min())) return numeric_limits<int>::min();
@@ -539,7 +541,7 @@ int AliHFTreeHandler::RoundFloatToInt(double num)
 }
 
 //________________________________________________________________
-float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield)
+float AliHFTreeHandler_dev::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float bfield)
 {
   float dd0max=0;
   unsigned int fNProngs_cand = (unsigned int)cand->GetNProngs();
@@ -554,7 +556,7 @@ float AliHFTreeHandler::ComputeMaxd0MeasMinusExp(AliAODRecoDecayHF* cand, float 
 }
 
 //________________________________________________________________
-float AliHFTreeHandler::GetTOFmomentum(AliAODTrack* track, AliPIDResponse* pidrespo)
+float AliHFTreeHandler_dev::GetTOFmomentum(AliAODTrack* track, AliPIDResponse* pidrespo)
 {
   float t_d = pidrespo->GetTOFResponse().GetExpectedSignal(track, AliPID::kTriton); //largest mass possible with Z=1
   float len = track->GetIntegratedLength();

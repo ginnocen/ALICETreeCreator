@@ -4,7 +4,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandlerDplustoKpipi
+// \class AliHFTreeHandlerDplustoKpipi_dev
 // \brief helper class to handle a tree for D+ cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -13,19 +13,21 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include <TString.h>
-#include "AliHFTreeHandlerDplustoKpipi.h"
+#include "AliHFTreeHandlerDplustoKpipi_dev.h"
 #include "AliAODRecoDecayHF3Prong.h"
 
 /// \cond CLASSIMP
-ClassImp(AliHFTreeHandlerDplustoKpipi);
+ClassImp(AliHFTreeHandlerDplustoKpipi_dev);
 /// \endcond
 
 //________________________________________________________________
-AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
-  AliHFTreeHandler(),
+AliHFTreeHandlerDplustoKpipi_dev::AliHFTreeHandlerDplustoKpipi_dev():
+  AliHFTreeHandler_dev(),
   fImpParProng(),
   fSigmaVertex(),
   fNormd0MeasMinusExp()
@@ -38,8 +40,8 @@ AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi():
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(int PIDopt):
-  AliHFTreeHandler(PIDopt),
+AliHFTreeHandlerDplustoKpipi_dev::AliHFTreeHandlerDplustoKpipi_dev(int PIDopt):
+  AliHFTreeHandler_dev(PIDopt),
   fImpParProng(),
   fSigmaVertex(),
   fNormd0MeasMinusExp()
@@ -52,7 +54,7 @@ AliHFTreeHandlerDplustoKpipi::AliHFTreeHandlerDplustoKpipi(int PIDopt):
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDplustoKpipi::~AliHFTreeHandlerDplustoKpipi()
+AliHFTreeHandlerDplustoKpipi_dev::~AliHFTreeHandlerDplustoKpipi_dev()
 {
   //
   // Default Destructor
@@ -60,7 +62,7 @@ AliHFTreeHandlerDplustoKpipi::~AliHFTreeHandlerDplustoKpipi()
 }
 
 //________________________________________________________________
-TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title) 
+TTree* AliHFTreeHandlerDplustoKpipi_dev::BuildTree(TString name, TString title) 
 {
   fIsMCGenTree=false;
 
@@ -90,7 +92,7 @@ TTree* AliHFTreeHandlerDplustoKpipi::BuildTree(TString name, TString title)
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDplustoKpipi_dev::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
   if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
@@ -138,7 +140,7 @@ bool AliHFTreeHandlerDplustoKpipi::SetVariables(AliAODRecoDecayHF* cand, float b
 }
 
 //________________________________________________________________
-void AliHFTreeHandlerDplustoKpipi::FillTree() {
+void AliHFTreeHandlerDplustoKpipi_dev::FillTree() {
   fTreeVar->Fill();
   
   //VERY IMPORTANT: CLEAR ALL VECTORS

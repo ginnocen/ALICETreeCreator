@@ -1,4 +1,4 @@
-AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
+AliAnalysisTaskSEHFTreeCreator_dev *AddTaskHFTreeCreator_dev(Bool_t readMC=kTRUE,
                                                      Int_t system=1/*0=pp,1=PbPb*/,
                                                      TString finDirname="HFTreeCreator",
                                                      TString cutsfile="",
@@ -10,11 +10,11 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
                                                      Int_t fillTreeDplus=1,
                                                      Int_t fillTreeLctopKpi=1,
                                                      Int_t fillTreeBplus=1,
-                                                     Int_t pidOptD0=AliHFTreeHandler::kRawAndNsigmaPID,
-                                                     Int_t pidOptDs=AliHFTreeHandler::kRawAndNsigmaPID,
-                                                     Int_t pidOptDplus=AliHFTreeHandler::kRawAndNsigmaPID,
-                                                     Int_t pidOptLctopKpi=AliHFTreeHandler::kRawAndNsigmaPID,
-                                                     Int_t pidOptBplus=AliHFTreeHandler::kRawAndNsigmaPID)
+                                                     Int_t pidOptD0=AliHFTreeHandler_dev::kRawAndNsigmaPID,
+                                                     Int_t pidOptDs=AliHFTreeHandler_dev::kRawAndNsigmaPID,
+                                                     Int_t pidOptDplus=AliHFTreeHandler_dev::kRawAndNsigmaPID,
+                                                     Int_t pidOptLctopKpi=AliHFTreeHandler_dev::kRawAndNsigmaPID,
+                                                     Int_t pidOptBplus=AliHFTreeHandler_dev::kRawAndNsigmaPID)
 {
     //
     //
@@ -74,7 +74,7 @@ AliAnalysisTaskSEHFTreeCreator_v1 *AddTaskHFTreeCreator_v1(Bool_t readMC=kTRUE,
     cutsList->Add(analysisCutsLctopKpi);
     cutsList->Add(analysisCutsBplustoD0pi);
 
-    AliAnalysisTaskSEHFTreeCreator_v1 *task = new AliAnalysisTaskSEHFTreeCreator_v1("TreeCreatorTask",cutsList);
+    AliAnalysisTaskSEHFTreeCreator_dev *task = new AliAnalysisTaskSEHFTreeCreator_dev("TreeCreatorTask",cutsList);
 
     task->SetReadMC(readMC);
     if(readMC) {

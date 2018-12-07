@@ -4,7 +4,7 @@
 /* $Id$ */
 
 //*************************************************************************
-// \class AliHFTreeHandlerDstoKKpi
+// \class AliHFTreeHandlerDstoKKpi_dev
 // \brief helper class to handle a tree for D+ cut optimisation and MVA analyses
 // \authors:
 // F. Catalano, fabio.catalano@cern.ch
@@ -13,20 +13,22 @@
 // G. Innocenti, gian.michele.innocenti@cern.ch
 // F. Prino, prino@to.infn.it
 // L. Vermunt, luuk.vermunt@cern.ch
+// L. van Doremalen, lennart.van.doremalen@cern.ch
+// J. Norman, jaime.norman@cern.ch
 /////////////////////////////////////////////////////////////
 
 #include <TString.h>
 #include <TDatabasePDG.h>
-#include "AliHFTreeHandlerDstoKKpi.h"
+#include "AliHFTreeHandlerDstoKKpi_dev.h"
 #include "AliAODRecoDecayHF3Prong.h"
 
 /// \cond CLASSIMP
-ClassImp(AliHFTreeHandlerDstoKKpi);
+ClassImp(AliHFTreeHandlerDstoKKpi_dev);
 /// \endcond
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
-  AliHFTreeHandler(),
+AliHFTreeHandlerDstoKKpi_dev::AliHFTreeHandlerDstoKKpi_dev():
+  AliHFTreeHandler_dev(),
   fImpParProng(),
   fSigmaVertex(),
   fMassKK(),
@@ -43,8 +45,8 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi():
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
-  AliHFTreeHandler(PIDopt),
+AliHFTreeHandlerDstoKKpi_dev::AliHFTreeHandlerDstoKKpi_dev(int PIDopt):
+  AliHFTreeHandler_dev(PIDopt),
   fImpParProng(),
   fSigmaVertex(),
   fMassKK(),
@@ -61,7 +63,7 @@ AliHFTreeHandlerDstoKKpi::AliHFTreeHandlerDstoKKpi(int PIDopt):
 }
 
 //________________________________________________________________
-AliHFTreeHandlerDstoKKpi::~AliHFTreeHandlerDstoKKpi()
+AliHFTreeHandlerDstoKKpi_dev::~AliHFTreeHandlerDstoKKpi_dev()
 {
   //
   // Default Destructor
@@ -69,7 +71,7 @@ AliHFTreeHandlerDstoKKpi::~AliHFTreeHandlerDstoKKpi()
 }
 
 //________________________________________________________________
-TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title) 
+TTree* AliHFTreeHandlerDstoKKpi_dev::BuildTree(TString name, TString title) 
 {
   fIsMCGenTree=false;
 
@@ -105,7 +107,7 @@ TTree* AliHFTreeHandlerDstoKKpi::BuildTree(TString name, TString title)
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDstoKKpi_dev::SetVariables(AliAODRecoDecayHF* cand, float bfield, int masshypo, AliAODPidHF* pidHF) 
 {
   if(!cand) return false;
   if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
@@ -166,7 +168,7 @@ bool AliHFTreeHandlerDstoKKpi::SetVariables(AliAODRecoDecayHF* cand, float bfiel
 }
 
 //________________________________________________________________
-void AliHFTreeHandlerDstoKKpi::FillTree() {
+void AliHFTreeHandlerDstoKKpi_dev::FillTree() {
   fTreeVar->Fill();
   
   //VERY IMPORTANT: CLEAR ALL VECTORS
