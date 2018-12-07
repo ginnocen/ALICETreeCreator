@@ -10,7 +10,7 @@ Methods to define: analysis type, data used, variables for training and other ap
 Methods to load and prepare data for training
 """
 
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier 
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, AdaBoostClassifier
 import pandas as pd
 import uproot
 
@@ -148,12 +148,16 @@ def getvariablecorrelation(case):
   return mylistvariablesx,mylistvariablesy
 
 def getgridsearchparameters(case):
+  '''
+  Function to take algorithms for the grid search
+  '''
   if (case=="Ds" or case=="Dplus" or case=="Lc"):
-    namesCV=["Random_Forest","GradientBoostingClassifier"]
-    classifiersCV=[RandomForestClassifier(),GradientBoostingClassifier()]
-    param_gridCV = [[{'n_estimators': [3, 10, 50, 100], 'max_features': [2,4,6,8],'max_depth': [1,4]}],[{'learning_rate': [0.01,0.05, 0.1], 'n_estimators': [1000, 2000, 5000],'max_depth' : [1, 2, 4]}]]
-    changeparameter=["n_estimators","n_estimators"]
-  return namesCV,classifiersCV,param_gridCV,changeparameter
+    namesCV=["AdaBoost","RandomForest","GradientBoostingClassifier"]
+    classifiersCV=[AdaBoostClassifier(),RandomForestClassifier(),GradientBoostingClassifier()]
+    param_gridCV = [[{'n_estimators':[100,200,300],'learning_rate':[0.1,0.5,0.9]}],[{'n_estimators':[100,200,300], 'max_features':[1,5,8],'max_depth':[1,2,3]}],[{'learning_rate':[0.01,0.05,0.1], 'n_estimators':[1000,2000,3000],'max_depth' :[5,10,15]}]]
+    keys = [['param_n_estimators','param_learning_rate'],["param_n_estimators","param_max_features", "param_max_depth"], ["param_learning_rate","param_n_estimators","param_max_depth"]]
+    changeparameter=["param_n_estimators","param_n_estimators","param_n_estimators"]
+  return namesCV,classifiersCV,param_gridCV,changeparameter,keys
   
 
 def getDataMCfiles(case):

@@ -17,7 +17,7 @@ from utilitiesPerformance import precision_recall,plot_learning_curves,confusion
 from utilitiesPCA import GetPCADataFrameAndPC,GetDataFrameStandardised,plotvariancePCA
 from utilitiesCorrelations import scatterplot,correlationmatrix,vardistplot
 from utilitiesGeneral import splitdataframe_sigbkg,checkdir,getdataframeDataMC,filterdataframeDataMC,createstringselection,writeTree
-from utilitiesGridSearch import do_gridsearch,plot_gridsearch
+from utilitiesGridSearch import do_gridsearch,plot_gridsearch,perform_plot_gridsearch
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from utilitiesOptimisation import studysignificance
@@ -26,7 +26,7 @@ from utilitiesOptimisation import studysignificance
 pd.options.mode.chained_assignment = None  # default='warn'
 
 ############### choose your ML method ################
-nevents=1000
+nevents=50000
 MLtype="BinaryClassification" #other options are "Regression", "BinaryClassification"
 MLsubtype="HFmeson" #other options are "PID","HFmeson","test","jettagging","nuclei"
 optionanalysis="Ds" #other options are "Ds,Dplus, Bplus,Lc,PIDKaon,PIDPion,testregression,lightquarkjet,hypertritium
@@ -38,12 +38,12 @@ varmin=[2]
 varmax=[4]
 
 ############### choose if you want scikit or keras models or both ################
-activateScikitModels=1; activateXGBoostModels=0; activateKerasModels=0
+activateScikitModels=1; activateXGBoostModels=1; activateKerasModels=0
 loadsampleOption=0 #0=loadfromTree,1=loadfromDF,2=loadyourownDFfortesting
-docorrelation=1; doStandard=0; doPCA=0
-dotraining=1; dotesting=1; doapplytodata=1
-doLearningCurve=1; docrossvalidation=1
-doROCcurve=1; doOptimisation=1; doBinarySearch=1; doBoundary=1; doimportance=1 #classification specifics
+docorrelation=0; doStandard=0; doPCA=0
+dotraining=0; dotesting=0; doapplytodata=0
+doLearningCurve=0; docrossvalidation=0
+doROCcurve=0; doOptimisation=0; doBinarySearch=1; doBoundary=0; doimportance=0 #classification specifics
 doplotdistributiontargetregression=0 #regression specifics
 
 ncores=-1
@@ -99,6 +99,7 @@ mylistvariablesall=getvariablesall(optionanalysis)
 
 
 if(loadsampleOption==0): 
+  print("=== Loading sample from tree")
   fileData,fileMC=getDataMCfiles(optionanalysis)
   trename=getTreeName(optionanalysis)
   dataframeData,dataframeMC=getdataframeDataMC(fileData,fileMC,trename,mylistvariablesall)
@@ -117,6 +118,7 @@ if(loadsampleOption==0):
   y_train=train_set[myvariablesy]
 
 if(loadsampleOption==1): 
+  print("=== Loading sample from DataFrame")
   train_set = pd.read_pickle(dataframe+"/dataframetrainsampleN%s.pkl" % (suffix))
   test_set = pd.read_pickle(dataframe+"/dataframetestsampleN%s.pkl" % (suffix))
   print ("dimension of the dataset",len(train_set))
@@ -125,6 +127,7 @@ if(loadsampleOption==1):
 
 
 if(loadsampleOption==2): 
+  print("=== Loading sample from user testing DataFrame")
   mylistvariables=["volume"]
   mylistvariablesothers=[]
   myvariablessignal="signal"
@@ -151,6 +154,7 @@ if(loadsampleOption==2):
 
   
 if(docorrelation==1):
+  print("=== Doing correlations ...")
   train_set_ptsel_sig,train_set_ptsel_bkg=splitdataframe_sigbkg(train_set,myvariablessignal)
   vardistplot(train_set_ptsel_sig, train_set_ptsel_bkg,mylistvariablesall,plotdir)
   scatterplot(train_set_ptsel_sig, train_set_ptsel_bkg,mylistvariablesx,mylistvariablesy,plotdir)
@@ -158,35 +162,42 @@ if(docorrelation==1):
   correlationmatrix(train_set_ptsel_bkg,plotdir,"background")
 
 if (doStandard==1):
+  print("=== Standardising the sample ...")
   X_train=GetDataFrameStandardised(X_train)
 
 if (doPCA==1):
+  print("=== Doing PCA ...")
   n_pca=9
   X_train,pca=GetPCADataFrameAndPC(X_train,n_pca)
   plotvariancePCA(pca,plotdir)
 
 
 if (activateScikitModels==1):
+  print("\t---> SciKit models activated")
   classifiersScikit,namesScikit=getclassifiers(MLtype)
   classifiers=classifiers+classifiersScikit
   names=names+namesScikit
 
 if (activateXGBoostModels==1):
+  print("\t---> XGBoost models activated")
   classifiersXGBoost,namesXGBoost=getclassifiersXGBoost(MLtype)
   classifiers=classifiers+classifiersXGBoost
   names=names+namesXGBoost
 
 if (activateKerasModels==1):
+  print("\t---> Keras models activated")
   classifiersDNN,namesDNN=getclassifiersDNN(MLtype,len(X_train.columns))
   classifiers=classifiers+classifiersDNN
   names=names+namesDNN
 
 if (dotraining==1):
+  print("=== Doing the training ...")
   print (names)
   trainedmodels=fit(names, classifiers,X_train,y_train)
   savemodels(names,trainedmodels,mylistvariables,myvariablesy,output,suffix)
   
 if (dotesting==1):
+  print("=== Doing the testing ...")
   filenametest_set_ML=output+"/testsample%sMLdecision.pkl" % (suffix)
   filenametest_set_ML_root=output+"/testsample%sMLdecision.root" % (suffix)
   ntuplename=getTreeName(optionanalysis)+"Tested"
@@ -195,6 +206,7 @@ if (dotesting==1):
   writeTree(filenametest_set_ML_root,ntuplename,test_setML)
 
 if (doapplytodata==1):
+  print("=== Apllying algorithms to data ...")
   fileData,fileMC=getDataMCfiles(optionanalysis)
   trename=getTreeName(optionanalysis)
   dataframeData,dataframeMC=getdataframeDataMC(fileData,fileMC,trename,mylistvariablesall)
@@ -207,6 +219,7 @@ if (doapplytodata==1):
   writeTree(filenameMC_ML_root,ntuplename,dataframeMCML)
 
 if (docrossvalidation==1): 
+  print("=== Doing cross validation ...")
   df_scores=[]
   if (MLtype=="Regression" ):
     df_scores=cross_validation_mse_continuous(names,classifiers,X_train,y_train,5,ncores)
@@ -216,13 +229,16 @@ if (docrossvalidation==1):
 
 
 if (doLearningCurve==1):
+  print("=== Plotting learning curves ...")
 #   confusion(mylistvariables,names,classifiers,suffix,X_train,y_train,5)
   plot_learning_curves(names,classifiers,suffix,plotdir,X_train,y_train,10)
   
 if (doROCcurve==1):
+  print("=== Plotting ROC curves ...")
   precision_recall(mylistvariables,names,classifiers,suffix,X_train,y_train,5,plotdir)
 
 if(doOptimisation==1):
+  print("=== Doing significance optimization ...")
   if not ((MLsubtype=="HFmeson") & (optionanalysis=="Ds")):
     print ("==================ERROR==================")
     print ("Optimisation is not implemented for this classification problem. The code is going to fail")
@@ -242,17 +258,22 @@ if (doBoundary==1):
   mydecisionboundaries=decisionboundaries(names2var,trainedmodelsPCA,suffix+"2PCA",X_train_2PC,y_train,plotdir)
 
 if (doBinarySearch==1):
-  namesCV,classifiersCV,param_gridCV,changeparameter=getgridsearchparameters(optionanalysis)
-  grid_search_models,grid_search_bests=do_gridsearch(namesCV,classifiersCV,mylistvariables,param_gridCV,X_train,y_train,3,ncores)
+  print("=== Doing binary search for algorithms ...")
+  namesCV,classifiersCV,param_gridCV,changeparameter,keys=getgridsearchparameters(optionanalysis)
+  grid_search_models,grid_search_bests,dfscore=do_gridsearch(namesCV,classifiersCV,mylistvariables,param_gridCV,X_train,y_train,3,ncores)
   savemodels(namesCV,grid_search_models,mylistvariables,myvariablesy,output,"GridSearchCV"+suffix)
+  #plot_gridsearch(namesCV,changeparameter,grid_search_models,plotdir,suffix)
+  perform_plot_gridsearch(namesCV,dfscore,keys,changeparameter,plotdir,suffix)
 
-  plot_gridsearch(namesCV,changeparameter,grid_search_models,plotdir,suffix)
 
 if (doimportance==1):
+  print("=== Testing variable importance ...")
   importanceplotall(mylistvariables,namesScikit+namesXGBoost,classifiersScikit+classifiersXGBoost,suffix,plotdir)
   
 if (doplotdistributiontargetregression==1):
   plotdistributiontarget(names,test_setML,myvariablesy,suffix,plotdir)
   plotscattertarget(names,test_setML,myvariablesy,suffix,plotdir)
+
+  print("... execution end!")
   
 
