@@ -14,7 +14,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV
 from sklearn_evaluation import plot
-from utilitiesGeneral import makestring, make_lst_str_2, make_lst_str_set, makecombinations, splitlist
+from utilitiesGridSearch_auxiliary import makestring, make_lst_str_2, make_lst_str_set, makecombinations, splitlist
 
 
 def do_gridsearch(namesCV_,classifiersCV_,mylistvariables_,param_gridCV_,X_train_,y_train_,cv_,ncores):

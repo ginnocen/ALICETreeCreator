@@ -12,9 +12,9 @@ using namespace std;
 void DoPlots(TNtuple* ntuple, TString str, TCanvas* cDist, TCanvas* cEff, int ipad);
 void PlotTest()
 {
-    TString stroutdir = "../output_Nevents1000_BinaryClassificationDs_dfselection_pt_cand_ML_2.0_4.0";
-    vector<TString> models = {"ScikitTreeRandom_Forest","ScikitTreeAdaBoost","ScikitTreeDecision_Tree"};
-    TString inputfilename(TString::Format("%s/testsampleNevents1000_BinaryClassificationDs_dfselection_pt_cand_ML_2.0_4.0MLdecision.root",stroutdir.Data()));
+    TString stroutdir = "../output_Nevents50000_BinaryClassificationDs_dfselection_pt_cand_ML_2.0_4.0";
+    vector<TString> models = {"ScikitTreeGradientBoostingClassifier","ScikitTreeRandom_Forest","ScikitTreeAdaBoost","ScikitTreeDecision_Tree","XGBoostXGBClassifier"};
+    TString inputfilename(TString::Format("%s/testsampleNevents50000_BinaryClassificationDs_dfselection_pt_cand_ML_2.0_4.0MLdecision.root",stroutdir.Data()));
     TFile* inputfile = TFile::Open(inputfilename.Data());
 
     TString tuplename("fTreeDsFlaggedTested");

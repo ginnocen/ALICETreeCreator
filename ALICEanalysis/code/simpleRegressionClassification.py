@@ -26,7 +26,7 @@ from utilitiesOptimisation import studysignificance
 pd.options.mode.chained_assignment = None  # default='warn'
 
 ############### choose your ML method ################
-nevents=50000
+nevents=10
 MLtype="BinaryClassification" #other options are "Regression", "BinaryClassification"
 MLsubtype="HFmeson" #other options are "PID","HFmeson","test","jettagging","nuclei"
 optionanalysis="Ds" #other options are "Ds,Dplus, Bplus,Lc,PIDKaon,PIDPion,testregression,lightquarkjet,hypertritium
