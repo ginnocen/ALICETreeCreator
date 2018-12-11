@@ -8,6 +8,8 @@
 
 using namespace std;
 
+//Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
+
 void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Ds", Bool_t isMC = kFALSE){
 
   TFile *f = TFile::Open(input.Data());
@@ -28,19 +30,19 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   cout << "\n\nRUNNING Ds: " << input.Data() << endl;
   TFile *fout = new TFile(output.Data(),"recreate");
 
-  TH1F* hEvent = 0;
-  TH2F* hNorm = 0;
-  for(auto k : *dir->GetListOfKeys()) {
-    TKey *key = static_cast<TKey*>(k);
-    TClass *cl = gROOT->GetClass(key->GetClassName());
-    if (cl->InheritsFrom("TH1F")){
-      TH1F* hEvent=(TH1F*)key->ReadObj();
-      hEvent->Write();
-    } else if (cl->InheritsFrom("TH2F")){
-      TH2F* hNorm=(TH2F*)key->ReadObj();
-      hNorm->Write();
-    }
-  }
+  //TH1F* hEvent = 0;
+  //TH2F* hNorm = 0;
+  //for(auto k : *dir->GetListOfKeys()) {
+  //  TKey *key = static_cast<TKey*>(k);
+  //  TClass *cl = gROOT->GetClass(key->GetClassName());
+  //  if (cl->InheritsFrom("TH1F")){
+  //    TH1F* hEvent=(TH1F*)key->ReadObj();
+  //    hEvent->Write();
+  //  } else if (cl->InheritsFrom("TH2F")){
+  //    TH2F* hNorm=(TH2F*)key->ReadObj();
+  //    hNorm->Write();
+  //  }
+  //}
 
   TTree* fTreeEventCharML = new TTree("fTreeEventChar","fTreeEventChar");
   TTree* fTreeDsML = new TTree("fTreeDsFlagged","fTreeDsFlagged");
@@ -50,20 +52,19 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   float centrality_ML, z_vtx_reco_ML, z_vtx_gen_ML;
   int n_vtx_contributors_ML, n_tracks_ML, is_ev_rej_ML, run_number_ML;
 
-  fTreeEventCharML->Branch("centrality_ML",&centrality_ML,"centrality_ML/F");
+  //fTreeEventCharML->Branch("centrality_ML",&centrality_ML,"centrality_ML/F");
   fTreeEventCharML->Branch("z_vtx_reco_ML",&z_vtx_reco_ML,"z_vtx_reco_ML/F");
-  fTreeEventCharML->Branch("n_vtx_contributors_ML",&n_vtx_contributors_ML,"n_vtx_contributors_ML/I");
-  fTreeEventCharML->Branch("n_tracks_ML",&n_tracks_ML,"n_tracks_ML/I");
+  //fTreeEventCharML->Branch("n_vtx_contributors_ML",&n_vtx_contributors_ML,"n_vtx_contributors_ML/I");
+  //fTreeEventCharML->Branch("n_tracks_ML",&n_tracks_ML,"n_tracks_ML/I");
   fTreeEventCharML->Branch("is_ev_rej_ML",&is_ev_rej_ML,"is_ev_rej_ML/I");
-  fTreeEventCharML->Branch("run_number_ML",&run_number_ML,"run_number_ML/I");
-  if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
+  //fTreeEventCharML->Branch("run_number_ML",&run_number_ML,"run_number_ML/I");
+  //if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
 
   float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, sig_vert_ML, mass_KK_ML, cos_PiDs_ML, cos_PiKPhi_3_ML, max_norm_d0d0exp_ML;
   float cand_type_ML, y_cand_ML, eta_cand_ML, phi_cand_ML;
   float imp_par_prong0_ML, imp_par_prong1_ML, imp_par_prong2_ML, p_prong0_ML, p_prong1_ML, p_prong2_ML, pt_prong0_ML, pt_prong1_ML, pt_prong2_ML, eta_prong0_ML, eta_prong1_ML, eta_prong2_ML, phi_prong0_ML, phi_prong1_ML, phi_prong2_ML;
   float nTPCcls_prong0_ML, nTPCclspid_prong0_ML, nTPCcrossrow_prong0_ML, chi2perndf_prong0_ML, nITScls_prong0_ML, ITSclsmap_prong0_ML, nTPCcls_prong1_ML, nTPCclspid_prong1_ML, nTPCcrossrow_prong1_ML, chi2perndf_prong1_ML, nITScls_prong1_ML, ITSclsmap_prong1_ML, nTPCcls_prong2_ML, nTPCclspid_prong2_ML, nTPCcrossrow_prong2_ML, chi2perndf_prong2_ML, nITScls_prong2_ML, ITSclsmap_prong2_ML;
   float nsigTPC_Pi_0_ML, nsigTPC_K_0_ML, nsigTOF_Pi_0_ML, nsigTOF_K_0_ML, dEdxTPC_0_ML, ToF_0_ML, pTPC_prong0_ML, pTOF_prong0_ML, trlen_prong0_ML, start_time_res_prong0_ML, nsigTPC_Pi_1_ML, nsigTPC_K_1_ML, nsigTOF_Pi_1_ML, nsigTOF_K_1_ML, dEdxTPC_1_ML, ToF_1_ML, pTPC_prong1_ML, pTOF_prong1_ML, trlen_prong1_ML, start_time_res_prong1_ML, nsigTPC_Pi_2_ML, nsigTPC_K_2_ML, nsigTOF_Pi_2_ML, nsigTOF_K_2_ML, dEdxTPC_2_ML, ToF_2_ML, pTPC_prong2_ML, pTOF_prong2_ML, trlen_prong2_ML, start_time_res_prong2_ML;
-  int event_ID_ML;
 
   fTreeDsML->Branch("inv_mass_ML",&inv_mass_ML,"inv_mass_ML/F");
   fTreeDsML->Branch("pt_cand_ML",&pt_cand_ML,"pt_cand_ML/F");
@@ -152,21 +153,18 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeDsML->Branch("pTOF_prong2_ML",&pTOF_prong2_ML,"pTOF_prong2_ML/F");
   fTreeDsML->Branch("trlen_prong2_ML",&trlen_prong2_ML,"trlen_prong2_ML/F");
   fTreeDsML->Branch("start_time_res_prong2_ML",&start_time_res_prong2_ML,"start_time_res_prong2_ML/F");
-
-  fTreeDsML->Branch("event_ID_ML",&event_ID_ML,"event_ID_ML/I");
   
-  float cand_type_gen_ML, pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML;
+  float cand_type_gen_ML, pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML, forCand_z_vtx_gen_ML;
   bool dau_in_acc_gen_ML;
-  int event_ID_gen_ML;
 
   if(isMC && tree_gen){
     fTreeDsGenML->Branch("cand_type_gen_ML",&cand_type_gen_ML,"cand_type_gen_ML/F");
     fTreeDsGenML->Branch("pt_cand_gen_ML",&pt_cand_gen_ML,"pt_cand_gen_ML/F");
     fTreeDsGenML->Branch("y_cand_gen_ML",&y_cand_gen_ML,"y_cand_gen_ML/F");
-    fTreeDsGenML->Branch("eta_cand_gen_ML",&eta_cand_gen_ML,"eta_cand_gen_ML/F");
-    fTreeDsGenML->Branch("phi_cand_gen_ML",&phi_cand_gen_ML,"phi_cand_gen_ML/F");
+    //fTreeDsGenML->Branch("eta_cand_gen_ML",&eta_cand_gen_ML,"eta_cand_gen_ML/F");
+    //fTreeDsGenML->Branch("phi_cand_gen_ML",&phi_cand_gen_ML,"phi_cand_gen_ML/F");
     fTreeDsGenML->Branch("dau_in_acc_gen_ML",&dau_in_acc_gen_ML,"dau_in_acc_gen_ML/O");
-    fTreeDsGenML->Branch("event_ID_gen_ML",&event_ID_gen_ML,"event_ID_gen_ML/I");
+    fTreeDsGenML->Branch("z_vtx_gen_ML",&forCand_z_vtx_gen_ML,"z_vtx_gen_ML/F");
   }
   
   std::cout<<"nevents (Ds) "<<nevt<<std::endl;
@@ -176,13 +174,13 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
     t_gen.GetEntry(jentry);
     if(jentry%25000==0) cout<<jentry<<endl;
       
-    centrality_ML = t_ev.centrality;
+    //centrality_ML = t_ev.centrality;
     z_vtx_reco_ML = t_ev.z_vtx_reco;
-    n_vtx_contributors_ML = t_ev.n_vtx_contributors;
-    n_tracks_ML = t_ev.n_tracks;
+    //n_vtx_contributors_ML = t_ev.n_vtx_contributors;
+    //n_tracks_ML = t_ev.n_tracks;
     is_ev_rej_ML = t_ev.is_ev_rej;
-    run_number_ML = t_ev.run_number;
-    if(isMC) z_vtx_gen_ML = t_ev.z_vtx_gen;
+    //run_number_ML = t_ev.run_number;
+    //if(isMC) z_vtx_gen_ML = t_ev.z_vtx_gen;
     fTreeEventCharML->Fill();
     
     for(int icand = 0; icand < t.n_cand; icand++){ 
@@ -194,9 +192,6 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
       cos_p_ML=t.cos_p -> at(icand);
       cos_p_xy_ML=t.cos_p_xy -> at(icand);
       imp_par_xy_ML=t.imp_par_xy -> at(icand);
-      pt_prong0_ML=t.pt_prong0 -> at(icand);
-      pt_prong1_ML=t.pt_prong1 -> at(icand);
-      pt_prong2_ML=t.pt_prong2 -> at(icand);
       sig_vert_ML=t.sig_vert -> at(icand);
       mass_KK_ML=t.mass_KK -> at(icand);
       cos_PiDs_ML=t.cos_PiDs -> at(icand);
@@ -274,22 +269,21 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
       trlen_prong2_ML=t.trlen_prong2 -> at(icand);
       start_time_res_prong2_ML=t.start_time_res_prong2 -> at(icand);
 
-      event_ID_ML=jentry;
-
       fTreeDsML->Fill();
     }
 
     int ncandgen = 0;
-    if(isMC && tree_gen) ncandgen = t_gen.n_cand;
+    if(isMC && tree_gen){
+      ncandgen = t_gen.n_cand;
+      forCand_z_vtx_gen_ML = t_ev.z_vtx_gen;
+    }
     for(int icand = 0; icand < ncandgen; icand++){
       cand_type_gen_ML=t_gen.cand_type -> at(icand);
       pt_cand_gen_ML=t_gen.pt_cand -> at(icand);
       y_cand_gen_ML=t_gen.y_cand -> at(icand);
-      eta_cand_gen_ML=t_gen.eta_cand -> at(icand);
-      phi_cand_gen_ML=t_gen.phi_cand -> at(icand);
+      //eta_cand_gen_ML=t_gen.eta_cand -> at(icand);
+      //phi_cand_gen_ML=t_gen.phi_cand -> at(icand);
       dau_in_acc_gen_ML=t_gen.dau_in_acc -> at(icand);
-
-      event_ID_gen_ML=jentry;
 
       fTreeDsGenML->Fill();
     }
