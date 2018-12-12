@@ -64,20 +64,20 @@ public :
    vector<int>     *nITScls_prong1;
    vector<int>     *ITSclsmap_prong1;
 
-   vector<int>     *nsigTPC_Pi_0;
-   vector<int>     *nsigTPC_K_0;
-   vector<int>     *nsigTOF_Pi_0;
-   vector<int>     *nsigTOF_K_0;
+   vector<float>   *nsigTPC_Pi_0;
+   vector<float>   *nsigTPC_K_0;
+   vector<float>   *nsigTOF_Pi_0;
+   vector<float>   *nsigTOF_K_0;
    vector<float>   *dEdxTPC_0;
    vector<float>   *ToF_0;
    vector<float>   *pTPC_prong0;
    vector<float>   *pTOF_prong0;
    vector<float>   *trlen_prong0;
    vector<float>   *start_time_res_prong0;
-   vector<int>     *nsigTPC_Pi_1;
-   vector<int>     *nsigTPC_K_1;
-   vector<int>     *nsigTOF_Pi_1;
-   vector<int>     *nsigTOF_K_1;
+   vector<float>   *nsigTPC_Pi_1;
+   vector<float>   *nsigTPC_K_1;
+   vector<float>   *nsigTOF_Pi_1;
+   vector<float>   *nsigTOF_K_1;
    vector<float>   *dEdxTPC_1;
    vector<float>   *ToF_1;
    vector<float>   *pTPC_prong1;
