@@ -54,29 +54,68 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     cuts->AddTrackCuts(esdTrackCuts);
     //cuts->SetMinPtCandidate(1.);
     
-    // PID not added for now, to do
-//    if(whichCuts==0 ){
-    cuts->SetUsePID(kFALSE);
-//    }
-//    else if(whichCuts==1){
-//      // PID
-//      cuts->SetUsePID(kTRUE);
-//      AliAODPidHF* pidObjp=new AliAODPidHF();
-//      AliAODPidHF* pidObjK=new AliAODPidHF();
-//      AliAODPidHF* pidObjpi=new AliAODPidHF();
-//      pidObjp->SetTPC(kTRUE);
-//      pidObjK->SetTPC(kTRUE);
-//      pidObjpi->SetTPC(kTRUE);
-//      pidObjp->SetTOF(kTRUE);
-//      pidObjK->SetTOF(kTRUE);
-//      pidObjpi->SetTOF(kTRUE);
-//      cuts->SetPidprot(pidObjp);
-//      cuts->SetPidHF(pidObjK);
-//      cuts->SetPidpion(pidObjpi);
-//
-//      SetupCombinedPID(cuts,0.);
-//      cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
-//    }
+    AliAODPidHF* pidObjp=new AliAODPidHF();
+    AliAODPidHF* pidObjK=new AliAODPidHF();
+    AliAODPidHF* pidObjpi=new AliAODPidHF();
+    if(whichCuts==0 ){
+      // PID
+      // Set here since no default PIDHF object created in RDHF
+      // 1. kaon
+      Double_t sigmasK[5]={3.,1.,1.,3.,2.};
+      pidObjK->SetSigma(sigmasK);
+      pidObjK->SetAsym(kTRUE);
+      pidObjK->SetMatch(1);
+      pidObjK->SetTPC(kTRUE);
+      pidObjK->SetTOF(kTRUE);
+      Double_t plimK[2]={0.5,0.8};
+      pidObjK->SetPLimit(plimK,2);
+      pidObjK->SetTOFdecide(kTRUE);
+
+      //2. pion 
+      AliAODPidHF* pidObjpi=new AliAODPidHF();
+      pidObjpi->SetTPC(kTRUE);
+      Double_t sigmaspi[5]={3.,0.,0.,0.,0.};
+      pidObjpi->SetSigma(sigmaspi);
+      //  pidObjpi->SetTOFdecide(kTRUE);
+
+      // 3. proton
+      AliAODPidHF* pidObjp=new AliAODPidHF();
+      Double_t sigmasp[5]={3.,1.,1.,3.,2.};
+      pidObjp->SetSigma(sigmasp);
+      pidObjp->SetAsym(kTRUE);
+      pidObjp->SetMatch(1);
+      pidObjp->SetTPC(kTRUE);
+      pidObjp->SetTOF(kTRUE);
+      Double_t plimp[2]={1.,2.};
+      pidObjp->SetPLimit(plimp,2);
+      pidObjp->SetTOFdecide(kTRUE);
+
+      cuts->SetPidprot(pidObjp);
+      cuts->SetPidHF(pidObjK);
+      cuts->SetPidpion(pidObjpi);
+
+      cuts->SetUsePID(kFALSE);
+    }
+    else if(whichCuts==1){
+      // PID
+      cuts->SetUsePID(kTRUE);
+      AliAODPidHF* pidObjp=new AliAODPidHF();
+      AliAODPidHF* pidObjK=new AliAODPidHF();
+      AliAODPidHF* pidObjpi=new AliAODPidHF();
+      pidObjp->SetTPC(kTRUE);
+      pidObjK->SetTPC(kTRUE);
+      pidObjpi->SetTPC(kTRUE);
+      pidObjp->SetTOF(kTRUE);
+      pidObjK->SetTOF(kTRUE);
+      pidObjpi->SetTOF(kTRUE);
+      cuts->SetPidprot(pidObjp);
+      cuts->SetPidHF(pidObjK);
+      cuts->SetPidpion(pidObjpi);
+
+      SetupCombinedPID(cuts,0.);
+      cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
+    }
+
     //event selection
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7);
