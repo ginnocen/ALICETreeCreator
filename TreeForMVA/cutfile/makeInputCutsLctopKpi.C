@@ -54,29 +54,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->AddTrackCuts(esdTrackCuts);
     //cuts->SetMinPtCandidate(1.);
     
-    // PID not added for now, to do
-//    if(whichCuts==0 ){
-    cuts->SetUsePID(kFALSE);
-//    }
-//    else if(whichCuts==1){
-//      // PID
-//      cuts->SetUsePID(kTRUE);
-//      AliAODPidHF* pidObjp=new AliAODPidHF();
-//      AliAODPidHF* pidObjK=new AliAODPidHF();
-//      AliAODPidHF* pidObjpi=new AliAODPidHF();
-//      pidObjp->SetTPC(kTRUE);
-//      pidObjK->SetTPC(kTRUE);
-//      pidObjpi->SetTPC(kTRUE);
-//      pidObjp->SetTOF(kTRUE);
-//      pidObjK->SetTOF(kTRUE);
-//      pidObjpi->SetTOF(kTRUE);
-//      cuts->SetPidprot(pidObjp);
-//      cuts->SetPidHF(pidObjK);
-//      cuts->SetPidpion(pidObjpi);
-//
-//      SetupCombinedPID(cuts,0.);
-//      cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
-//    }
+
+
+
     //event selection
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7);
@@ -85,7 +65,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetMaxVtxZ(10.);
     cuts->SetCutOnzVertexSPD(2);
     cuts->SetKinkRejection(kTRUE);
-    
+
     cout<<"This is the object I'm going to save:"<<endl;
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
