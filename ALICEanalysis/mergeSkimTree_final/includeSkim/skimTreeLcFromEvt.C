@@ -103,7 +103,7 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeLcML->Branch("nTPCcls_prong0_ML",&nTPCcls_prong0_ML,"nTPCcls_prong0_ML/F");
   fTreeLcML->Branch("nTPCclspid_prong0_ML",&nTPCclspid_prong0_ML,"nTPCclspid_prong0_ML/F");
   fTreeLcML->Branch("nTPCcrossrow_prong0_ML",&nTPCcrossrow_prong0_ML,"nTPCcrossrow_prong0_ML/F");
-  fTreeLcML->Branch("chi2perndf_prong0_ML",&chi2perndf_prong0_ML,"nTPCcrossrow_prong0_ML/F");
+  fTreeLcML->Branch("chi2perndf_prong0_ML",&chi2perndf_prong0_ML,"chi2perndf_prong0_ML/F");
   fTreeLcML->Branch("nITScls_prong0_ML",&nITScls_prong0_ML,"nITScls_prong0_ML/F");
   fTreeLcML->Branch("ITSclsmap_prong0_ML",&ITSclsmap_prong0_ML,"ITSclsmap_prong0_ML/F");
   fTreeLcML->Branch("nTPCcls_prong1_ML",&nTPCcls_prong1_ML,"nTPCcls_prong1_ML/F");

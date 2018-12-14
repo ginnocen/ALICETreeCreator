@@ -380,7 +380,7 @@ void tree_Dplus::Init(TTree *tree)
    fChain->SetBranchAddress("nTPCcls_prong0", &nTPCcls_prong0, &b_nTPCcls_prong0);
    fChain->SetBranchAddress("nTPCclspid_prong0", &nTPCclspid_prong0, &b_nTPCclspid_prong0);
    fChain->SetBranchAddress("nTPCcrossrow_prong0", &nTPCcrossrow_prong0, &b_nTPCcrossrow_prong0);
-   fChain->SetBranchAddress("chi2perndf_prong0", &chi2perndf_prong0, &b_nTPCcrossrow_prong0);
+   fChain->SetBranchAddress("chi2perndf_prong0", &chi2perndf_prong0, &b_chi2perndf_prong0);
    fChain->SetBranchAddress("nITScls_prong0", &nITScls_prong0, &b_nITScls_prong0);
    fChain->SetBranchAddress("ITSclsmap_prong0", &ITSclsmap_prong0, &b_ITSclsmap_prong0);
    fChain->SetBranchAddress("nTPCcls_prong1", &nTPCcls_prong1, &b_nTPCcls_prong1);
