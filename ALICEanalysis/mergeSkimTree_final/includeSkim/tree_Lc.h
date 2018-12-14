@@ -56,36 +56,62 @@ public :
    vector<float>   *eta_prong2;
    vector<float>   *imp_par_prong2;
    vector<float>   *phi_prong2;
-    
-/*TODO, add singletrack and PID variables. Below some remaining from a previous version of Ds
-   vector<float>   *pTPC_prong0;
+
    vector<int>     *nTPCcls_prong0;
    vector<int>     *nTPCclspid_prong0;
    vector<float>   *nTPCcrossrow_prong0;
    vector<float>   *chi2perndf_prong0;
    vector<int>     *nITScls_prong0;
    vector<int>     *ITSclsmap_prong0;
-   vector<float>   *pTPC_prong1;
    vector<int>     *nTPCcls_prong1;
    vector<int>     *nTPCclspid_prong1;
    vector<float>   *nTPCcrossrow_prong1;
    vector<float>   *chi2perndf_prong1;
    vector<int>     *nITScls_prong1;
    vector<int>     *ITSclsmap_prong1;
-   vector<float>   *pTPC_prong2;
    vector<int>     *nTPCcls_prong2;
    vector<int>     *nTPCclspid_prong2;
    vector<float>   *nTPCcrossrow_prong2;
    vector<float>   *chi2perndf_prong2;
    vector<int>     *nITScls_prong2;
    vector<int>     *ITSclsmap_prong2;
+
+   vector<float>   *nsigTPC_Pi_0;
+   vector<float>   *nsigTPC_K_0;
+   vector<float>   *nsigTPC_Pr_0;
+   vector<float>   *nsigTOF_Pi_0;
+   vector<float>   *nsigTOF_K_0;
+   vector<float>   *nsigTOF_Pr_0;
    vector<float>   *dEdxTPC_0;
    vector<float>   *ToF_0;
+   vector<float>   *pTPC_prong0;
+   vector<float>   *pTOF_prong0;
+   vector<float>   *trlen_prong0;
+   vector<float>   *start_time_res_prong0;
+   vector<float>   *nsigTPC_Pi_1;
+   vector<float>   *nsigTPC_K_1;
+   vector<float>   *nsigTPC_Pr_1;
+   vector<float>   *nsigTOF_Pi_1;
+   vector<float>   *nsigTOF_K_1;
+   vector<float>   *nsigTOF_Pr_1;
    vector<float>   *dEdxTPC_1;
    vector<float>   *ToF_1;
+   vector<float>   *pTPC_prong1;
+   vector<float>   *pTOF_prong1;
+   vector<float>   *trlen_prong1;
+   vector<float>   *start_time_res_prong1;
+   vector<float>   *nsigTPC_Pi_2;
+   vector<float>   *nsigTPC_K_2;
+   vector<float>   *nsigTPC_Pr_2;
+   vector<float>   *nsigTOF_Pi_2;
+   vector<float>   *nsigTOF_K_2;
+   vector<float>   *nsigTOF_Pr_2;
    vector<float>   *dEdxTPC_2;
    vector<float>   *ToF_2;
-*/
+   vector<float>   *pTPC_prong2;
+   vector<float>   *pTOF_prong2;
+   vector<float>   *trlen_prong2;
+   vector<float>   *start_time_res_prong2;
     
    // List of branches
    TBranch        *b_n_cand;   //!
@@ -119,35 +145,61 @@ public :
    TBranch        *b_imp_par_prong2;   //!
    TBranch        *b_phi_prong2;   //!
 
-/*TODO, add singletrack and PID variables. Below some remaining from a previous version of Ds
-   TBranch        *b_pTPC_prong0;   //!
    TBranch        *b_nTPCcls_prong0;   //!
    TBranch        *b_nTPCclspid_prong0;   //!
    TBranch        *b_nTPCcrossrow_prong0;   //!
    TBranch        *b_chi2perndf_prong0;   //!
    TBranch        *b_nITScls_prong0;   //!
    TBranch        *b_ITSclsmap_prong0;   //!
-   TBranch        *b_pTPC_prong1;   //!
    TBranch        *b_nTPCcls_prong1;   //!
    TBranch        *b_nTPCclspid_prong1;   //!
    TBranch        *b_nTPCcrossrow_prong1;   //!
    TBranch        *b_chi2perndf_prong1;   //!
    TBranch        *b_nITScls_prong1;   //!
    TBranch        *b_ITSclsmap_prong1;   //!
-   TBranch        *b_pTPC_prong2;   //!
    TBranch        *b_nTPCcls_prong2;   //!
    TBranch        *b_nTPCclspid_prong2;   //!
    TBranch        *b_nTPCcrossrow_prong2;   //!
    TBranch        *b_chi2perndf_prong2;   //!
    TBranch        *b_nITScls_prong2;   //!
    TBranch        *b_ITSclsmap_prong2;   //!
+
+   TBranch        *b_nsigTPC_Pi_0;   //!
+   TBranch        *b_nsigTPC_K_0;   //!
+   TBranch        *b_nsigTPC_Pr_0;   //!
+   TBranch        *b_nsigTOF_Pi_0;   //!
+   TBranch        *b_nsigTOF_K_0;   //!
+   TBranch        *b_nsigTOF_Pr_0;   //!
    TBranch        *b_dEdxTPC_0;   //!
    TBranch        *b_ToF_0;   //!
+   TBranch        *b_pTPC_prong0;   //!
+   TBranch        *b_pTOF_prong0;   //!
+   TBranch        *b_trlen_prong0;   //!
+   TBranch        *b_start_time_res_prong0;   //!
+   TBranch        *b_nsigTPC_Pi_1;   //!
+   TBranch        *b_nsigTPC_K_1;   //!
+   TBranch        *b_nsigTPC_Pr_1;   //!
+   TBranch        *b_nsigTOF_Pi_1;   //!
+   TBranch        *b_nsigTOF_K_1;   //!
+   TBranch        *b_nsigTOF_Pr_1;   //!
    TBranch        *b_dEdxTPC_1;   //!
    TBranch        *b_ToF_1;   //!
+   TBranch        *b_pTPC_prong1;   //!
+   TBranch        *b_pTOF_prong1;   //!
+   TBranch        *b_trlen_prong1;   //!
+   TBranch        *b_start_time_res_prong1;   //!
+   TBranch        *b_nsigTPC_Pi_2;   //!
+   TBranch        *b_nsigTPC_K_2;   //!
+   TBranch        *b_nsigTPC_Pr_2;   //!
+   TBranch        *b_nsigTOF_Pi_2;   //!
+   TBranch        *b_nsigTOF_K_2;   //!
+   TBranch        *b_nsigTOF_Pr_2;   //!
    TBranch        *b_dEdxTPC_2;   //!
    TBranch        *b_ToF_2;   //!
-*/
+   TBranch        *b_pTPC_prong2;   //!
+   TBranch        *b_pTOF_prong2;   //!
+   TBranch        *b_trlen_prong2;   //!
+   TBranch        *b_start_time_res_prong2;   //!
 
    tree_Lc(TTree *tree=0);
    virtual ~tree_Lc();
@@ -239,45 +291,72 @@ void tree_Lc::Init(TTree *tree)
    eta_prong0 = 0;
    imp_par_prong0 = 0;
    phi_prong0 = 0;
-   p_prong2 = 0;
-   pt_prong2 = 0;
-   eta_prong2 = 0;
-   imp_par_prong2 = 0;
-   phi_prong2 = 0;
    p_prong1 = 0;
    pt_prong1 = 0;
    eta_prong1 = 0;
    imp_par_prong1 = 0;
    phi_prong1 = 0;
-/*TODO, add singletrack and PID variables. Below some remaining from a previous version of Ds
-   pTPC_prong0 = 0;
+   p_prong2 = 0;
+   pt_prong2 = 0;
+   eta_prong2 = 0;
+   imp_par_prong2 = 0;
+   phi_prong2 = 0;
+
    nTPCcls_prong0 = 0;
    nTPCclspid_prong0 = 0;
    nTPCcrossrow_prong0 = 0;
    chi2perndf_prong0 = 0;
    nITScls_prong0 = 0;
    ITSclsmap_prong0 = 0;
-   pTPC_prong1 = 0;
    nTPCcls_prong1 = 0;
    nTPCclspid_prong1 = 0;
    nTPCcrossrow_prong1 = 0;
    chi2perndf_prong1 = 0;
    nITScls_prong1 = 0;
    ITSclsmap_prong1 = 0;
-   pTPC_prong2 = 0;
    nTPCcls_prong2 = 0;
    nTPCclspid_prong2 = 0;
    nTPCcrossrow_prong2 = 0;
    chi2perndf_prong2 = 0;
    nITScls_prong2 = 0;
    ITSclsmap_prong2 = 0;
+
+   nsigTPC_Pi_0 = 0;
+   nsigTPC_K_0 = 0;
+   nsigTPC_Pr_0 = 0;
+   nsigTOF_Pi_0 = 0;
+   nsigTOF_K_0 = 0;
+   nsigTOF_Pr_0 = 0;
    dEdxTPC_0 = 0;
    ToF_0 = 0;
+   pTPC_prong0 = 0;
+   pTOF_prong0 = 0;
+   trlen_prong0 = 0;
+   start_time_res_prong0 = 0;
+   nsigTPC_Pi_1 = 0;
+   nsigTPC_K_1 = 0;
+   nsigTPC_Pr_1 = 0;
+   nsigTOF_Pi_1 = 0;
+   nsigTOF_K_1 = 0;
+   nsigTOF_Pr_1 = 0;
    dEdxTPC_1 = 0;
    ToF_1 = 0;
+   pTPC_prong1 = 0;
+   pTOF_prong1 = 0;
+   trlen_prong1 = 0;
+   start_time_res_prong1 = 0;
+   nsigTPC_Pi_2 = 0;
+   nsigTPC_K_2 = 0;
+   nsigTPC_Pr_2 = 0;
+   nsigTOF_Pi_2 = 0;
+   nsigTOF_K_2 = 0;
+   nsigTOF_Pr_2 = 0;
    dEdxTPC_2 = 0;
    ToF_2 = 0;
-*/
+   pTPC_prong2 = 0;
+   pTOF_prong2 = 0;
+   trlen_prong2 = 0;
+   start_time_res_prong2 = 0;
     
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -315,35 +394,63 @@ void tree_Lc::Init(TTree *tree)
    fChain->SetBranchAddress("eta_prong2", &eta_prong2, &b_eta_prong2);
    fChain->SetBranchAddress("imp_par_prong2", &imp_par_prong2, &b_imp_par_prong2);
    fChain->SetBranchAddress("phi_prong2", &phi_prong2, &b_phi_prong2);
-/*
-   fChain->SetBranchAddress("pTPC_prong0", &pTPC_prong0, &b_pTPC_prong0);
+    
    fChain->SetBranchAddress("nTPCcls_prong0", &nTPCcls_prong0, &b_nTPCcls_prong0);
    fChain->SetBranchAddress("nTPCclspid_prong0", &nTPCclspid_prong0, &b_nTPCclspid_prong0);
    fChain->SetBranchAddress("nTPCcrossrow_prong0", &nTPCcrossrow_prong0, &b_nTPCcrossrow_prong0);
    fChain->SetBranchAddress("chi2perndf_prong0", &chi2perndf_prong0, &b_chi2perndf_prong0);
    fChain->SetBranchAddress("nITScls_prong0", &nITScls_prong0, &b_nITScls_prong0);
    fChain->SetBranchAddress("ITSclsmap_prong0", &ITSclsmap_prong0, &b_ITSclsmap_prong0);
-   fChain->SetBranchAddress("pTPC_prong1", &pTPC_prong1, &b_pTPC_prong1);
    fChain->SetBranchAddress("nTPCcls_prong1", &nTPCcls_prong1, &b_nTPCcls_prong1);
    fChain->SetBranchAddress("nTPCclspid_prong1", &nTPCclspid_prong1, &b_nTPCclspid_prong1);
    fChain->SetBranchAddress("nTPCcrossrow_prong1", &nTPCcrossrow_prong1, &b_nTPCcrossrow_prong1);
    fChain->SetBranchAddress("chi2perndf_prong1", &chi2perndf_prong1, &b_chi2perndf_prong1);
    fChain->SetBranchAddress("nITScls_prong1", &nITScls_prong1, &b_nITScls_prong1);
    fChain->SetBranchAddress("ITSclsmap_prong1", &ITSclsmap_prong1, &b_ITSclsmap_prong1);
-   fChain->SetBranchAddress("pTPC_prong2", &pTPC_prong2, &b_pTPC_prong2);
    fChain->SetBranchAddress("nTPCcls_prong2", &nTPCcls_prong2, &b_nTPCcls_prong2);
    fChain->SetBranchAddress("nTPCclspid_prong2", &nTPCclspid_prong2, &b_nTPCclspid_prong2);
    fChain->SetBranchAddress("nTPCcrossrow_prong2", &nTPCcrossrow_prong2, &b_nTPCcrossrow_prong2);
    fChain->SetBranchAddress("chi2perndf_prong2", &chi2perndf_prong2, &b_chi2perndf_prong2);
    fChain->SetBranchAddress("nITScls_prong2", &nITScls_prong2, &b_nITScls_prong2);
    fChain->SetBranchAddress("ITSclsmap_prong2", &ITSclsmap_prong2, &b_ITSclsmap_prong2);
+
+   fChain->SetBranchAddress("nsigTPC_Pi_0", &nsigTPC_Pi_0, &b_nsigTPC_Pi_0);
+   fChain->SetBranchAddress("nsigTPC_K_0", &nsigTPC_K_0, &b_nsigTPC_K_0);
+   fChain->SetBranchAddress("nsigTPC_Pr_0", &nsigTPC_Pr_0, &b_nsigTPC_Pr_0);
+   fChain->SetBranchAddress("nsigTOF_Pi_0", &nsigTOF_Pi_0, &b_nsigTOF_Pi_0);
+   fChain->SetBranchAddress("nsigTOF_K_0", &nsigTOF_K_0, &b_nsigTOF_K_0);
+   fChain->SetBranchAddress("nsigTOF_Pr_0", &nsigTOF_Pr_0, &b_nsigTOF_Pr_0);
    fChain->SetBranchAddress("dEdxTPC_0", &dEdxTPC_0, &b_dEdxTPC_0);
    fChain->SetBranchAddress("ToF_0", &ToF_0, &b_ToF_0);
+   fChain->SetBranchAddress("pTPC_prong0", &pTPC_prong0, &b_pTPC_prong0);
+   fChain->SetBranchAddress("pTOF_prong0", &pTOF_prong0, &b_pTOF_prong0);
+   fChain->SetBranchAddress("trlen_prong0", &trlen_prong0, &b_trlen_prong0);
+   fChain->SetBranchAddress("start_time_res_prong0", &start_time_res_prong0, &b_start_time_res_prong0);
+   fChain->SetBranchAddress("nsigTPC_Pi_1", &nsigTPC_Pi_1, &b_nsigTPC_Pi_1);
+   fChain->SetBranchAddress("nsigTPC_K_1", &nsigTPC_K_1, &b_nsigTPC_K_1);
+   fChain->SetBranchAddress("nsigTPC_Pr_1", &nsigTPC_Pr_1, &b_nsigTPC_Pr_1);
+   fChain->SetBranchAddress("nsigTOF_Pi_1", &nsigTOF_Pi_1, &b_nsigTOF_Pi_1);
+   fChain->SetBranchAddress("nsigTOF_K_1", &nsigTOF_K_1, &b_nsigTOF_K_1);
+   fChain->SetBranchAddress("nsigTOF_Pr_1", &nsigTOF_Pr_1, &b_nsigTOF_Pr_1);
    fChain->SetBranchAddress("dEdxTPC_1", &dEdxTPC_1, &b_dEdxTPC_1);
    fChain->SetBranchAddress("ToF_1", &ToF_1, &b_ToF_1);
+   fChain->SetBranchAddress("pTPC_prong1", &pTPC_prong1, &b_pTPC_prong1);
+   fChain->SetBranchAddress("pTOF_prong1", &pTOF_prong1, &b_pTOF_prong1);
+   fChain->SetBranchAddress("trlen_prong1", &trlen_prong1, &b_trlen_prong1);
+   fChain->SetBranchAddress("start_time_res_prong1", &start_time_res_prong1, &b_start_time_res_prong1);
+   fChain->SetBranchAddress("nsigTPC_Pi_2", &nsigTPC_Pi_2, &b_nsigTPC_Pi_2);
+   fChain->SetBranchAddress("nsigTPC_K_2", &nsigTPC_K_2, &b_nsigTPC_K_2);
+   fChain->SetBranchAddress("nsigTPC_Pr_2", &nsigTPC_Pr_2, &b_nsigTPC_Pr_2);
+   fChain->SetBranchAddress("nsigTOF_Pi_2", &nsigTOF_Pi_2, &b_nsigTOF_Pi_2);
+   fChain->SetBranchAddress("nsigTOF_K_2", &nsigTOF_K_2, &b_nsigTOF_K_2);
+   fChain->SetBranchAddress("nsigTOF_Pr_2", &nsigTOF_Pr_2, &b_nsigTOF_Pr_2);
    fChain->SetBranchAddress("dEdxTPC_2", &dEdxTPC_2, &b_dEdxTPC_2);
    fChain->SetBranchAddress("ToF_2", &ToF_2, &b_ToF_2);
-*/
+   fChain->SetBranchAddress("pTPC_prong2", &pTPC_prong2, &b_pTPC_prong2);
+   fChain->SetBranchAddress("pTOF_prong2", &pTOF_prong2, &b_pTOF_prong2);
+   fChain->SetBranchAddress("trlen_prong2", &trlen_prong2, &b_trlen_prong2);
+   fChain->SetBranchAddress("start_time_res_prong2", &start_time_res_prong2, &b_start_time_res_prong2);
+
    Notify();
 }
 
