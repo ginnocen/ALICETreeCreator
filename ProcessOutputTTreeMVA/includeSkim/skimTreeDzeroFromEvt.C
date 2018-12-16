@@ -8,6 +8,8 @@
 
 using namespace std;
 
+//Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
+
 void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Dzero", Bool_t isMC = kFALSE){
 
   TFile *f = TFile::Open(input.Data());

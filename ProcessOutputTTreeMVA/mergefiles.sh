@@ -1,8 +1,8 @@
 #!/bin/bash
 #Arguments to this bash:
 #   $1 is trainname (e.g. 297_20181120-2315_child_1)
-#   $2 is path to place to save output (e.g. "" or ../MLproductions/)
-#   $3 is GRID merging Stage_X (e.g. "" or Stage_1)
+#   $2 is path where input is saved (e.g. "" or ../ALICEanalysis/MLproductions/ -> Should be the as used for downloadOutputTrain.sh)
+#   $3 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
 #   $4 is how many files to merge into one
 
 BASEDIR=$2

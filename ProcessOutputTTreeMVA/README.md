@@ -1,49 +1,73 @@
-# Getting and processing TTreeHandler output
+# Getting and processing TTreeCreator output
 
 Instructions to download the output from the LEGO train, merge the files, and skim for specific mesons.
 
-## 1) Download
+## 1) Setup
 
-The following script works out of the box on lxplus, using
+The following scripts works out of the box on lxplus, but with the disadvantage that one has to download them another time when the output is needed on local system/server. 
+
+To be able to run the processing scripts on a local system one has to use the following instead (assuming aliBuild is installed. If this is not the case, follow: https://alice-doc.github.io/alice-analysis-tutorial/building/build.html):
+```
+aliBuild build AliPhysics --defaults user-root6 -z aliroot6
+aliBuild build AliPhysics --defaults jalien-root6 -z jalienroot6
+```
+
+## 2) Download train output
+
+One needs to enter the jAliEn environment to download the output. On lxplus, use
 ```
 /cvmfs/alice.cern.ch/bin/alienv enter JAliEn
+```
+On a local system:
+```
+alienv enter AliPhysics/latest-jalienroot6-jalien-root6
+```
+The first time of a session, one needs to "login" to the GRID, so the download script can access the files on the GRID:
+```
 jalien
 #Enter Grid Certificate password
 exit
+```
+Now it is only a matter of waiting till everything is downloaded using the following script:
+```
 ./downloadOutputTrain.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGE
 ```
-where $TRAINNAME = 297_20181120-2315_child_1 (for example) and $PLACETOSAVEOUTPUT = ../MLproductions or can be omitted to save train output in current directory. $STAGE = "Stage_#" or "" if all GRID merging failed.
+where 
+* $TRAINNAME = 297_20181120-2315_child_1 (example for pp@5TeV containing D0, D+ and Ds candidates)
+* $PLACETOSAVEOUTPUT = "" for the current directory or ../ALICEanalysis/MLproductions for example
+* $STAGE = "" or "Stage_1" to specify when the merging on the GRID was succesful.
 
-On a local system one should build AliPhysics enabling jalien
+Four train-specific variables can be set in the script (highlighted with "#toset"):
+* OUTPUTPATH       (output of train, default is pp@5TeV for the Devel_2 LEGO train)
+* NFILES       (number of files to download, default is /&#42;/, for tests one can use /000&#42;/ to download only 10 files, /00&#42;/ for 100 files, etc)
+* OUTPUTFILE       (name of file to download, default is AnalysisResults.root)
+
+## 3) Merging
+
+Exit jAliEn environment (if needed), and load normal AliPhysics. For lxplus one uses:
 ```
-aliBuild build AliPhysics --defaults jalien-root6
+/cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@AliPhysics::vAN-20181208-1 #Change to recent date
 ```
-and follow the same instructions as above (entering the alienv in the correct way).
-
-Four train-specific variables have to be set in the script:
-* OUTPUTPATH       (output of train)
-* NFILES       (/&#42;/ = download all files, /000&#42;/ is 10 files, /00&#42;/ is 100 files, etc)
-* OUTPUTFILE       (name of file to download)
-
-## 2) Merging
-
-Exit jAliEn environment, and load normal AliPhysics. For lxplus one uses:
+Locally one should enter:
 ```
-/cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@AliPhysics::vAN-20181208-1
+alienv enter AliPhysics/latest-aliroot6-user-root6
 ```
 Run the merging script
 ```
 ./mergefiles.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGE $NFILESFORMERGING
 ```
-where $TRAINNAME = 297_20181120-2315_child_1 (for example) and $PLACETOSAVEOUTPUT = ../MLproductions or can be omitted to save train output in current directory. $STAGE = "Stage_#" or "" if all GRID merging failed, and $NFILESFORMERGING is the amount of files to be merged using hadd, with default value 4.
+where $TRAINNAME, $PLACETOSAVEOUTPUT, and $STAGE = "Stage_#" should be the same as for the downloadOutputTrain script. In addition one has
+* $NFILESFORMERGING   (the amount of files to be merged using hadd, default is 4)
 
-## 3) Skimming
+## 4) Skimming
 
 Enable the mesons you want to skim in the macro, and run:
 ```
-./submitjobs.sh $path-to/lsOutputMergedList_$TRAINNAME$STAGE.txt
+./submitSkimJobs.sh /path/to/outputdir/mergeSkimOutputDir_$NFILESFORMERGING/lsOutputMergedList_$TRAINNAME$STAGE.txt
 ```
-where the mergefiles.sh saved the lsOutputMergedList_$TRAINNAME$STAGE.txt file. If no merging was applied, one has to tweak a bit the output of the downloading stage.
+The txt file is saved by the mergefiles.sh script. The variables should therefore be the same as used before. 
+
+If no merging was applied, one has to tweak a bit the output of the downloading stage.
 
 ## In case of problems:
 

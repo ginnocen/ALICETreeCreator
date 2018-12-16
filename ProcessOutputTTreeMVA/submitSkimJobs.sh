@@ -1,6 +1,6 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is path to lsOutputMergedList_$TRAINNAME$STAGE.txt
+#   $1 is /path/to/outputdir/lsOutputMergedList_$TRAINNAME$STAGE.txt
 
 START=$(date +%s)
 
@@ -9,7 +9,7 @@ doDplusFromEvt=1
 doDsFromEvt=1
 doDzeroFromEvt=1
 doBplusFromEvt=0 #Classes not yet ready + not tested
-doLcFromEvt=0 #Classes not yet ready + not tested
+doLcFromEvt=0
 #doPID=0 #to be added
 
 myfile=$1
