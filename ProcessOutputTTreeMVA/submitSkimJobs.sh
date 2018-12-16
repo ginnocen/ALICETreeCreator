@@ -4,13 +4,13 @@
 
 START=$(date +%s)
 
-isMC=1
-doDplusFromEvt=1
-doDsFromEvt=1
-doDzeroFromEvt=1
-doBplusFromEvt=0 #Classes not yet ready + not tested
-doLcFromEvt=0
-#doPID=0 #to be added
+isMC=1                 #toset
+doDplusFromEvt=1       #toset
+doDsFromEvt=1          #toset
+doDzeroFromEvt=1       #toset
+doBplusFromEvt=0       #Classes not yet ready + not tested
+doLcFromEvt=0          #toset
+#doPID=0               #to be added
 
 myfile=$1
 
