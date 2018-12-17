@@ -26,7 +26,7 @@ from utilitiesOptimisation import studysignificance
 pd.options.mode.chained_assignment = None  # default='warn'
 
 ############### choose your ML method ################
-nevents=10
+nevents=100
 MLtype="BinaryClassification" #other options are "Regression", "BinaryClassification"
 MLsubtype="HFmeson" #other options are "PID","HFmeson","test","jettagging","nuclei"
 optionanalysis="Ds" #other options are "Ds,Dplus, Bplus,Lc,PIDKaon,PIDPion,testregression,lightquarkjet,hypertritium
@@ -247,9 +247,9 @@ if(doOptimisation==1):
 
 if (doBoundary==1):
   classifiersScikit2var,names2var=getclassifiers(MLtype)
-  classifiersDNN2var,namesDNN2var=getclassifiersDNN(MLtype,2)
-  classifiers2var=classifiersScikit2var+classifiersDNN2var
-  names2var=names2var+namesDNN2var
+  #classifiersDNN2var,namesDNN2var=getclassifiersDNN(MLtype,2)
+  classifiers2var=classifiersScikit2var#+classifiersDNN2var
+  names2var=names2var#+namesDNN2var
   X_train_boundary=train_set[getvariablesBoundaries(optionanalysis)]
   trainedmodels2var=fit(names2var,classifiers2var,X_train_boundary,y_train)
   mydecisionboundaries=decisionboundaries(names2var,trainedmodels2var,suffix+"2var",X_train_boundary,y_train,plotdir)
@@ -260,10 +260,11 @@ if (doBoundary==1):
 if (doBinarySearch==1):
   print("=== Doing binary search for algorithms ...")
   namesCV,classifiersCV,param_gridCV,changeparameter,keys=getgridsearchparameters(optionanalysis)
+  
   grid_search_models,grid_search_bests,dfscore=do_gridsearch(namesCV,classifiersCV,mylistvariables,param_gridCV,X_train,y_train,3,ncores)
   savemodels(namesCV,grid_search_models,mylistvariables,myvariablesy,output,"GridSearchCV"+suffix)
   #plot_gridsearch(namesCV,changeparameter,grid_search_models,plotdir,suffix)
-  perform_plot_gridsearch(namesCV,dfscore,keys,changeparameter,plotdir,suffix)
+  perform_plot_gridsearch(namesCV,dfscore,keys,changeparameter,plotdir,suffix,0.1)  # last argument: alpha for scoring error
 
 
 if (doimportance==1):

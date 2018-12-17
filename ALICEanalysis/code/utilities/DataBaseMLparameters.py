@@ -154,7 +154,14 @@ def getgridsearchparameters(case):
   if (case=="Ds" or case=="Dplus" or case=="Lc"):
     namesCV=["AdaBoost","RandomForest","GradientBoostingClassifier"]
     classifiersCV=[AdaBoostClassifier(),RandomForestClassifier(),GradientBoostingClassifier()]
-    param_gridCV = [[{'n_estimators':[100,200,300],'learning_rate':[0.1,0.5,0.9]}],[{'n_estimators':[100,200,300], 'max_features':[1,5,8],'max_depth':[1,2,3]}],[{'learning_rate':[0.01,0.05,0.1], 'n_estimators':[1000,2000,3000],'max_depth' :[5,10,15]}]]
+
+    ###########################################################################################################################
+    # NB: even if you want to study the dependence on just 1 parameter, add anyway another parameter, even with one value     #
+    # example (AdaBoost): {'n_estimators':[100,200,300],'learning_rate':[0.1]} ---> learning_rate fixed, n_estimators varying #
+    ###########################################################################################################################
+    #param_gridCV = [[{'n_estimators':[100,200,300],'learning_rate':[0.1,0.5,0.9]}],[{'n_estimators':[100,200,300], 'max_features':[1,5,8],'max_depth':[1,2,3]}],[{'learning_rate':[0.01,0.05,0.1], 'n_estimators':[1000,2000,3000],'max_depth' :[5,10,15]}]]
+    param_gridCV = [[{'n_estimators':list(range(3,5005,500)),'learning_rate':[0.1,0.5,0.9]}],[{'n_estimators':list(range(3,5005,500)), 'max_features':[1,5,8],'max_depth':[1,2,3]}],[{'learning_rate':[0.01,0.05,0.1], 'n_estimators':list(range(3,5005,500)),'max_depth' :[5,10,15]}]]
+    
     keys = [['param_n_estimators','param_learning_rate'],["param_n_estimators","param_max_features", "param_max_depth"], ["param_learning_rate","param_n_estimators","param_max_depth"]]
     changeparameter=["param_n_estimators","param_n_estimators","param_n_estimators"]
   return namesCV,classifiersCV,param_gridCV,changeparameter,keys

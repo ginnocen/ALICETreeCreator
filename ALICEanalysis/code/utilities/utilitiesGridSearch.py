@@ -22,7 +22,7 @@ def do_gridsearch(namesCV_,classifiersCV_,mylistvariables_,param_gridCV_,X_train
   grid_search_bests_=[]
   list_scores=[]    # new part for info storing
   for nameCV, clfCV, gridCV in zip(namesCV_, classifiersCV_,param_gridCV_):
-    print("--- Looking at ",nameCV)
+    print("\n--- Looking at ",nameCV)
     grid_search = GridSearchCV(clfCV, gridCV, cv=cv_,scoring='neg_mean_squared_error',n_jobs=ncores)
     grid_search_model=grid_search.fit(X_train_, y_train_)
     cvres = grid_search.cv_results_
@@ -50,14 +50,14 @@ def plot_gridsearch(namesCV_,change_,grid_search_models_,output_,suffix_):
     plotname=output_+"/GridSearchResults"+nameCV+suffix_+".png"
     plt.savefig(plotname)
 
-def perform_plot_gridsearch(names,scores,keys,changeparameter,output_,suffix_):
+def perform_plot_gridsearch(names,scores,keys,changeparameter,output_,suffix_,alpha):
   '''
   Function for grid scores plotting
   '''
   fig = plt.figure(figsize=(35,15))
   for name,score_obj,key,change in zip(names,scores,keys,changeparameter):
     if len(key)==1:
-      print("### ADD AT LEAST 1 PARAMETER ###")
+      print("### ADD AT LEAST 1 PARAMETER (even just 1 value) ###")
       continue
     # get list of unique values for each variable 
     how_many_pars=len(key)
@@ -85,7 +85,13 @@ def perform_plot_gridsearch(names,scores,keys,changeparameter,output_,suffix_):
       for i_case,i_key in zip(case,key):
         df_case = df_case.loc[df_case[i_key]==float(i_case)]
         lab = lab+"{0}: {1} \n".format(i_key,i_case)   
-      df_case.plot(x=change,y='mean_test_score',ax=pad,label=lab,marker='o')
+      df_case.plot(x=change,y='mean_test_score',ax=pad,label=lab,marker='o',style="-")
+      sample_x          = list(df_case[change])
+      sample_score_mean = list(df_case["mean_test_score"])
+      sample_score_std  = list(df_case["std_test_score"])
+      lst_up   = [mean+std for mean,std in zip(sample_score_mean,sample_score_std)]
+      lst_down = [mean-std for mean,std in zip(sample_score_mean,sample_score_std)]
+      plt.fill_between(sample_x, lst_down, lst_up, alpha=alpha)
     pad.legend(fontsize=10)
   plotname=output_+"/GridSearchResults"+name+suffix_+".png"
   #plt.show()
