@@ -52,7 +52,17 @@ void makeCutsTreeCreator_pp()
     Printf("\n\n");
     Printf("Bplus analysis cuts");
     AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi_pp(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
-    TFile* fout=new TFile("D0DsDplusLcBplusCuts_pp.root","recreate");
+    Printf("\n\n");
+    Printf("*************************************************************");
+    Printf("Dstar filtering cuts");
+    AliRDHFCutsDstartoKpipi  *looseCutsDstartoKpipi    = makeInputCutsDstartoKpipi(0,"DstartoKpipiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("Dstar analysis cuts");
+    AliRDHFCutsDstartoKpipi  *analysisCutsDstartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent);
+    Printf("\n\n");
+
+    TFile* fout=new TFile("D0DsDplusLcBplusDstarCuts_pp.root","recreate");
+
     fout->cd();
     looseCutsD0toKpi->Write();
     analysisCutsD0toKpi->Write();
@@ -64,6 +74,8 @@ void makeCutsTreeCreator_pp()
     analysisCutsLctopKpi->Write();
     looseCutsBplustoD0pi->Write();
     analysisCutsBplustoD0pi->Write();
+    looseCutsDstartoKpipi->Write();
+    analysisCutsDstartoKpipi->Write();
     fout->Close();
     
 }

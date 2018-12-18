@@ -24,8 +24,8 @@ enum system {kpp, kpPb, kPbPb};
 //SETTINGS
 //************************************
 
-Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
-TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
+Bool_t runLocal=kTRUE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
+TString pathToLocalAODfiles="../AODfilesForMVA";               // path to find AOD files when running locally
 Bool_t runGridTest=kFALSE;                               // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE
 
 // Alien output directory
@@ -33,7 +33,7 @@ TString gridWorkingDir="testNtupleCreator_LHC16i2a";
 TString gridOutputDir="output";
 
 //Task configuration
-TString cutFile="./cutfile/D0DsDplusLcBplusCuts.root"; // file containing the cuts for the different mesons
+TString cutFile="./cutfile/D0DsDplusLcBplusDstarCuts.root"; // file containing the cuts for the different mesons
   														  // to generate the cut file: 1) move to cutfile directory
   														  //                           2) .L makeCutsTreeCreator.C
   														  //                           3) makeCutsTreeCreator();
@@ -93,6 +93,7 @@ void runAnalysis(TString configfilename, TString runMode)
     gInterpreter->LoadMacro("AliHFTreeHandlerD0toKpi_dev.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDplustoKpipi_dev.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerDstoKKpi_dev.cxx++g");
+    gInterpreter->LoadMacro("AliHFTreeHandlerDstartoKpipi.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerLctopKpi_dev.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerBplustoD0pi_dev.cxx++g");
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
@@ -120,6 +121,7 @@ void runAnalysis(TString configfilename, TString runMode)
     gROOT->LoadMacro("AliHFTreeHandlerD0toKpi_dev.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDplustoKpipi_dev.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerDstoKKpi_dev.cxx++g");
+    gROOT->LoadMacro("AliHFTreeHandlerDstartoKpipi.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerLctopKpi_dev.cxx++g");
     gROOT->LoadMacro("AliHFTreeHandlerBplustoD0pi_dev.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
@@ -163,8 +165,8 @@ void runAnalysis(TString configfilename, TString runMode)
         alienHandler->AddIncludePath("-I. -I$ROOTSYS/include -I$ALICE_ROOT -I$ALICE_ROOT/include -I$ALICE_PHYSICS/include");
 
         // make sure your source files get copied to grid
-        alienHandler->SetAdditionalLibs("AliHFTreeHandler_dev.cxx AliHFTreeHandler_dev.h AliHFTreeHandlerD0toKpi_dev.cxx AliHFTreeHandlerD0toKpi_dev.h AliHFTreeHandlerDplustoKpipi_dev.cxx AliHFTreeHandlerDplustoKpipi_dev.h AliHFTreeHandlerDstoKKpi_dev.cxx AliHFTreeHandlerDstoKKpi_dev.h AliHFTreeHandlerBplustoD0pi_dev.cxx AliHFTreeHandlerBplustoD0pi_dev.h AliHFTreeHandlerLctopKpi_dev.cxx AliHFTreeHandlerLctopKpi_dev.h AliAnalysisTaskSEHFTreeCreator_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.h AliAnalysisTaskSEHFTreeCreator_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.h");
-        alienHandler->SetAnalysisSource("AliHFTreeHandler_dev.cxx AliHFTreeHandlerD0toKpi_dev.cxx AliHFTreeHandlerDplustoKpipi_dev.cxx AliHFTreeHandlerDstoKKpi_dev.cxx AliHFTreeHandlerBplustoD0pi_dev.cxx AliHFTreeHandlerLctopKpi_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.cxx");
+        alienHandler->SetAdditionalLibs("AliHFTreeHandler_dev.cxx AliHFTreeHandler_dev.h AliHFTreeHandlerD0toKpi_dev.cxx AliHFTreeHandlerD0toKpi_dev.h AliHFTreeHandlerDplustoKpipi_dev.cxx AliHFTreeHandlerDplustoKpipi_dev.h AliHFTreeHandlerDstoKKpi_dev.cxx AliHFTreeHandlerDstoKKpi_dev.h AliHFTreeHandlerDstartoKpipi.cxx AliHFTreeHandlerDstartoKpipi.h AliHFTreeHandlerBplustoD0pi_dev.cxx AliHFTreeHandlerBplustoD0pi_dev.h AliHFTreeHandlerLctopKpi_dev.cxx AliHFTreeHandlerLctopKpi_dev.h AliAnalysisTaskSEHFTreeCreator_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.h AliAnalysisTaskSEHFTreeCreator_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.h");
+        alienHandler->SetAnalysisSource("AliHFTreeHandler_dev.cxx AliHFTreeHandlerD0toKpi_dev.cxx AliHFTreeHandlerDplustoKpipi_dev.cxx AliHFTreeHandlerDstoKKpi_dev.cxx AliHFTreeHandlerDstartoKpipi.cxx AliHFTreeHandlerBplustoD0pi_dev.cxx AliHFTreeHandlerLctopKpi_dev.cxx AliAnalysisTaskSEHFTreeCreator_dev.cxx");
 
         // select the aliphysics version. all other packages
         // are LOADED AUTOMATICALLY!

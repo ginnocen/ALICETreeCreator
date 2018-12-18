@@ -4,6 +4,7 @@
 #include <AliRDHFCutsDstoKKpi.h>
 #include <AliRDHFCutsDplustoKpipi.h>
 #include <AliRDHFCutsBPlustoD0Pi.h>
+#include <AliRDHFCutsDstartoKpipi.h>
 #include <TClonesArray.h>
 #include <TParameter.h>
 
@@ -12,6 +13,7 @@
 #include "makeInputCutsDplustoKpipi.C"
 #include "makeInputCutsBplustoD0pi.C"
 #include "makeInputCutsLctopKpi.C"
+#include "makeInputCutsDstartoKpipi.C"
 
 Float_t minCent=0.;
 Float_t maxCent=100.;
@@ -51,8 +53,15 @@ void makeCutsTreeCreator()
     Printf("\n\n");
     Printf("Lc analysis cuts");
     AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
+    Printf("*************************************************************");
+    Printf("Dstar filtering cuts");
+    AliRDHFCutsDstartoKpipi  *looseCutsDstartoKpipi    = makeInputCutsDstartoKpipi(0,"DstartoKpipiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("Dstar analysis cuts");
+    AliRDHFCutsDstartoKpipi  *analysisCutsDstartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent);
+    Printf("\n\n");
 
-    TFile* fout=new TFile("D0DsDplusLcBplusCuts.root","recreate");
+    TFile* fout=new TFile("D0DsDplusLcBplusDstarCuts.root","recreate");
     fout->cd();
     looseCutsD0toKpi->Write();
     analysisCutsD0toKpi->Write();
@@ -64,6 +73,9 @@ void makeCutsTreeCreator()
     analysisCutsBplustoD0pi->Write();
     looseCutsLctopKpi->Write();
     analysisCutsLctopKpi->Write();
+    looseCutsDstartoKpipi->Write();
+    analysisCutsDstartoKpipi->Write();
+
     fout->Close();
     
 }
