@@ -43,7 +43,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
     if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(80);
+    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
@@ -177,14 +177,13 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     }
     
     //event selection
-    cutsDstartoKpipi->SetTriggerClass("");
-    cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7);
-    cutsDstartoKpipi->SetMinCentrality(minc);
-    cutsDstartoKpipi->SetMaxCentrality(maxc);
-    cutsDstartoKpipi->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
-    cutsDstartoKpipi->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
-    cutsDstartoKpipi->SetMaxVtxZ(10.);
-    cutsDstartoKpipi->SetCutOnzVertexSPD(2);
+    cuts->SetTriggerClass("");
+    cuts->SetTriggerMask(AliVEvent::kINT7);
+    cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
+    cuts->ConfigurePileupCuts(5,0.8);
+    cuts->SetMaxVtxZ(10.);
+    cuts->SetCutOnzVertexSPD(3);
+    cuts->SetMinVtxContr(1);
     
     cout<<"This is the object I'm going to save:"<<endl;
     cutsDstartoKpipi->SetName(nameCuts.Data());
