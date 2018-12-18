@@ -61,7 +61,7 @@ where $TRAINNAME, $PLACETOSAVEOUTPUT, and $STAGE should be the same as for the d
 
 ## 4) Skimming
 
-Enable the mesons you want to skim in the submitSkimJobs.sh macro, specify if the output is Data or MC, and run:
+Enable the mesons you want to skim in the submitSkimJobs.sh macro, specify if the output is Data or MC, pp or pPb/PbPb, and run:
 ```
 ./submitSkimJobs.sh /path/to/mergeSkimOutputDir_$NFILESFORMERGING/lsOutputMergedList_$TRAINNAME$STAGE.txt
 ```
