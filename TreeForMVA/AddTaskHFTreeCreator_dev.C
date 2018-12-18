@@ -10,13 +10,13 @@ AliAnalysisTaskSEHFTreeCreator_dev *AddTaskHFTreeCreator_dev(Bool_t readMC=kTRUE
                                                      Int_t fillTreeDplus=1,
                                                      Int_t fillTreeLctopKpi=1,
                                                      Int_t fillTreeBplus=1,
-						     Int_t fillTreeDstar=1,
+                                                     Int_t fillTreeDstar=1,
                                                      Int_t pidOptD0=AliHFTreeHandler_dev::kRawAndNsigmaPID,
                                                      Int_t pidOptDs=AliHFTreeHandler_dev::kRawAndNsigmaPID,
                                                      Int_t pidOptDplus=AliHFTreeHandler_dev::kRawAndNsigmaPID,
                                                      Int_t pidOptLctopKpi=AliHFTreeHandler_dev::kRawAndNsigmaPID,
-						     Int_t pidOptBplus=AliHFTreeHandler_dev::kRawAndNsigmaPID,
-						     Int_t pidOptDstar=AliHFTreeHandler::kRawAndNsigmaPID)
+                                                     Int_t pidOptBplus=AliHFTreeHandler_dev::kRawAndNsigmaPID,
+                                                     Int_t pidOptDstar=AliHFTreeHandler::kRawAndNsigmaPID)
 {
     //
     //
