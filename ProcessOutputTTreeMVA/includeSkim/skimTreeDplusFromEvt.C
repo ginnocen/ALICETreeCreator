@@ -10,7 +10,7 @@ using namespace std;
 
 //Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point (using //). Including different possibilities (using ///) to match event_tree to cand_tree
 
-void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Dplus", Bool_t isMC = kFALSE){
+void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Dplus", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE){
 
   TFile *f = TFile::Open(input.Data());
   TDirectory * dir = (TDirectory*)f->Get("PWGHF_TreeCreator");
@@ -53,7 +53,7 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
   int n_vtx_contributors_ML, n_tracks_ML, is_ev_rej_ML, run_number_ML;
   int ev_has_reco_cand_ML, ev_has_gen_cand_ML, n_reco_cand_ML, n_gen_cand_ML;
 
-  //fTreeEventCharML->Branch("centrality_ML",&centrality_ML,"centrality_ML/F");
+  if(!ispp) fTreeEventCharML->Branch("centrality_ML",&centrality_ML,"centrality_ML/F");
   fTreeEventCharML->Branch("z_vtx_reco_ML",&z_vtx_reco_ML,"z_vtx_reco_ML/F");
   //fTreeEventCharML->Branch("n_vtx_contributors_ML",&n_vtx_contributors_ML,"n_vtx_contributors_ML/I");
   //fTreeEventCharML->Branch("n_tracks_ML",&n_tracks_ML,"n_tracks_ML/I");
@@ -177,7 +177,7 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
     t_gen.GetEntry(jentry);
     if(jentry%25000==0) cout<<jentry<<endl;
       
-    //centrality_ML = t_ev.centrality;
+    if(!ispp) centrality_ML = t_ev.centrality;
     z_vtx_reco_ML = t_ev.z_vtx_reco;
     //n_vtx_contributors_ML = t_ev.n_vtx_contributors;
     //n_tracks_ML = t_ev.n_tracks;
@@ -308,13 +308,13 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
 
 int main(int argc, char *argv[])
 {
-  if((argc != 5))
+  if((argc != 6))
   {
     std::cout << "Wrong number of inputs" << std::endl;
     return 1;
   }
   
-  if(argc == 5)
-    skimTreeDplusFromEvt(argv[1],argv[2],argv[3],atoi(argv[4]));
+  if(argc == 6)
+    skimTreeDplusFromEvt(argv[1],argv[2],argv[3],atoi(argv[4]),atoi(argv[5]));
   return 0;
 }

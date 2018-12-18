@@ -1,16 +1,17 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is path to lsOutputMergedList_$TRAINNAME$STAGE.txt
+#   $1 is /path/to/outputdir/lsOutputMergedList_$TRAINNAME$STAGE.txt
 
 START=$(date +%s)
 
-isMC=1
-doDplusFromEvt=1
-doDsFromEvt=1
-doDzeroFromEvt=1
-doBplusFromEvt=0 #Classes not yet ready + not tested
-doLcFromEvt=0 #Classes not yet ready + not tested
-#doPID=0 #to be added
+isMC=1                 #toset
+ispp=1                 #toset
+doDplusFromEvt=1       #toset
+doDsFromEvt=1          #toset
+doDzeroFromEvt=1       #toset
+doBplusFromEvt=0       #Classes not yet ready + not tested
+doLcFromEvt=0          #toset
+#doPID=0               #to be added
 
 myfile=$1
 
@@ -21,7 +22,7 @@ DataTree="tree_Dplus"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 g++ includeSkim/skimTreeDplusFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDplusFromEvt.exe
-./skimTreeDplusFromEvt.exe "${line}.root" "${line}_Dplus_skimmed.root" "$DataTree" "$isMC"
+./skimTreeDplusFromEvt.exe "${line}.root" "${line}_Dplus_skimmed.root" "$DataTree" "$isMC" "$ispp"
 done < "$myfile"
 
 ## would wait until those are completed
@@ -41,7 +42,7 @@ DataTree="tree_Ds"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 g++ includeSkim/skimTreeDsFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDsFromEvt.exe
-./skimTreeDsFromEvt.exe "${line}.root" "${line}_Ds_skimmed.root" "$DataTree" "$isMC"
+./skimTreeDsFromEvt.exe "${line}.root" "${line}_Ds_skimmed.root" "$DataTree" "$isMC" "$ispp"
 done < "$myfile"
 
 ## would wait until those are completed
@@ -61,7 +62,7 @@ DataTree="tree_D0"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 g++ includeSkim/skimTreeDzeroFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDzeroFromEvt.exe
-./skimTreeDzeroFromEvt.exe "${line}.root" "${line}_Dzero_skimmed.root" "$DataTree" "$isMC"
+./skimTreeDzeroFromEvt.exe "${line}.root" "${line}_Dzero_skimmed.root" "$DataTree" "$isMC" "$ispp"
 done < "$myfile"
 
 ## would wait until those are completed
@@ -101,7 +102,7 @@ DataTree="tree_Lc"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 g++ includeSkim/skimTreeLcFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLcFromEvt.exe
-./skimTreeLcFromEvt.exe "${line}.root" "${line}_Lc_skimmed.root" "$DataTree"
+./skimTreeLcFromEvt.exe "${line}.root" "${line}_Lc_skimmed.root" "$DataTree" "$isMC" "$ispp"
 done < "$myfile"
 
 ## would wait until those are completed
