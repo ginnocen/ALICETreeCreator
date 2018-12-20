@@ -72,6 +72,8 @@ void makeCutsTreeCreator_pp()
     analysisCutsLctopKpi->Write();
     looseCutsBplustoD0pi->Write();
     analysisCutsBplustoD0pi->Write();
+    looseCutsDstartoKpipi->Write();
+    analysisCutsDstartoKpipi->Write();
     fout->Close();
     
 }
