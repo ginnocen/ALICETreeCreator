@@ -4,7 +4,7 @@ Instructions to download the output from the LEGO train, merge the files, and sk
 
 ## 1) Setup
 
-The following scripts works out of the box on lxplus, but with the disadvantage that one has a storage limitation and the files needs to be downloaded another time when the output is needed on local system/server. 
+The following scripts works out of the box on lxplus (if you have copied your GRID certificates to ~/.globus/), but with the disadvantage that one has a storage limitation and the files needs to be downloaded another time when the output is needed on local system/server. 
 
 To be able to run the processing scripts on a local system instead, one has to setup the following (assuming aliBuild is installed. If this is not the case, follow https://alice-doc.github.io/alice-analysis-tutorial/building/build.html first):
 ```
@@ -28,6 +28,8 @@ jalien
 #Enter Grid Certificate password
 exit
 ```
+> If you get: **JBox isn't running, so we won't start JSh.** on lxplus, your grid certificates probably don't have the right permissions. Correct them using: "chmod 0440 usercert.pem" and "chmod 0400 userkey.pem"
+
 Now it is only a matter of waiting till everything is downloaded using the following script:
 ```
 ./downloadOutputTrain.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGE
