@@ -64,16 +64,11 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     if(whichCuts==0){
         const Int_t nptbinsDstar=1;
         Float_t ptlimitsDstar[nptbinsDstar+1]={0.,1000000.};
-        Float_t** cutsArrayDstartoKpipi;
-        cutsArrayDstartoKpipi=new Float_t*[16];
-        for(Int_t iv=0;iv<16;iv++){
-            cutsArrayDstartoKpipi[iv]=new Float_t[nptbinsDstar];
-        }
-        cutsArrayDstartoKpipi[16]={0.3,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,0.3, 0.1, 0.05, 100000000000.0, 0.5,-1.,0.}; // first 9 for D0 from D*, next 5 for D*, last 2 for D0 again
+        Float_t cutsArrayDstartoKpipi[16]={0.3,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,0.3, 0.1, 0.05, 100000000000.0, 0.5,-1.,0.}; // first 9 for D0 from D*, next 5 for D*, last 2 for D0 again
 	
         cutsDstartoKpipi->SetMinPtCandidate(0.);
         cutsDstartoKpipi->SetUsePID(kFALSE);
-	    cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
+        cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
         cutsDstartoKpipi->SetPtBins(nptbinsDstar+1,ptlimitsDstar);
         cutsDstartoKpipi->SetCuts(16,cutsArrayDstartoKpipi);
     }
