@@ -96,7 +96,7 @@ void runAnalysis(TString configfilename, TString runMode)
     gInterpreter->LoadMacro("AliHFTreeHandlerLctopKpi_dev.cxx++g");
     gInterpreter->LoadMacro("AliHFTreeHandlerBplustoD0pi_dev.cxx++g");
     gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
-    AliAnalysisTaskSEHFTreeCreator_dev *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_dev*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_dev.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,1,1)));
+    AliAnalysisTaskSEHFTreeCreator_dev *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator_dev*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("AddTaskHFTreeCreator_dev.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,kFALSE,isRunOnMC,1,1,1,1,0)));
 
     if(System==kPbPb) {
         AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
@@ -124,7 +124,7 @@ void runAnalysis(TString configfilename, TString runMode)
     gROOT->LoadMacro("AliHFTreeHandlerBplustoD0pi_dev.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator_dev.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator_dev.C");
-    AliAnalysisTaskSEHFTreeCreator_dev *task = AddTaskHFTreeCreator_dev(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,isRunOnMC,isRunOnMC,1,1,1,1,1);
+    AliAnalysisTaskSEHFTreeCreator_dev *task = AddTaskHFTreeCreator_dev(isRunOnMC, 0, "HFTreeCreator", cutFile.Data(),1,kFALSE,isRunOnMC,1,1,1,1,0);
 
     if(System==kPbPb) {
         gROOT->LoadMacro("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C");
@@ -203,7 +203,7 @@ void runAnalysis(TString configfilename, TString runMode)
         // (see below) mode, set SetMergeViaJDL(kFALSE)
         // to collect final results
         alienHandler->SetMaxMergeStages(3); //2, 3
-        alienHandler->SetMergeViaJDL(kFALSE);
+        alienHandler->SetMergeViaJDL(kTRUE);
 
         // define the output folders
         alienHandler->SetGridWorkingDir(gridWorkingDir.Data());

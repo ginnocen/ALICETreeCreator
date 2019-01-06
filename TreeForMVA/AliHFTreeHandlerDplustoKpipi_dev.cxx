@@ -92,7 +92,7 @@ TTree* AliHFTreeHandlerDplustoKpipi_dev::BuildTree(TString name, TString title)
 }
 
 //________________________________________________________________
-bool AliHFTreeHandlerDplustoKpipi_dev::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliAODPidHF* pidHF) 
+bool AliHFTreeHandlerDplustoKpipi_dev::SetVariables(AliAODRecoDecayHF* cand, float bfield, int /*masshypo*/, AliPIDResponse* pidrespo)
 {
   if(!cand) return false;
   if(fFillOnlySignal) { //if fill only signal and not signal candidate, do not store
@@ -133,7 +133,7 @@ bool AliHFTreeHandlerDplustoKpipi_dev::SetVariables(AliAODRecoDecayHF* cand, flo
   //pid variables
   if(fPidOpt==kNoPID) return true;
 
-  bool setpid = SetPidVars(prongtracks,pidHF,true,true,false,true,true);
+  bool setpid = SetPidVars(prongtracks,pidrespo,true,true,false,true,true);
   if(!setpid) return false;
 
   return true;

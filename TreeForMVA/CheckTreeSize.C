@@ -52,7 +52,7 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
   gNbytesVsVar->SetMarkerColor(kBlack);
   gNbytesVsVar->SetLineColor(kBlack);
   gNbytesVsVar->GetXaxis()->SetTitle(varname.Data());
-  gNbytesVsVar->GetYaxis()->SetTitle("number of bytes");
+  gNbytesVsVar->GetYaxis()->SetTitle("number of bytes / event");
   gNbytesVsVar->SetTitle("");
   gNbytesRatioVsVar->SetName("gNbytesRatioVsVar");
   gNbytesRatioVsVar->SetMarkerStyle(kFullCircle);
@@ -107,6 +107,9 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
   if(!infile || !infile->IsOpen()) return;
   TTree* treetot = (TTree*)infile->Get(treename.Data());
   if(!treetot) return;
+  TTree* treeev = (TTree*)infile->Get("fTreeEventChar");
+  if(!treeev) return;
+  Long64_t nev = treeev->GetEntriesFast();
   cout << Form("\nGetting tree for candidates with %.5f < pt_cand_ML < %.5f",pTmin,pTmax) << endl;
   TFile cuttedfile("cuttedttree.root","recreate");
   TTree* treecutted = treetot->CopyTree(Form("pt_cand_ML>%f && pt_cand_ML<%f",pTmin,pTmax));
@@ -153,7 +156,7 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
     }
     TFile *file = TFile::Open("cuttedttree.root");
     TTree* tree = (TTree*)file->Get(treename.Data());
-    gNbytesVsVar->SetPoint(iCut,x,GetTotalSize(tree));
+    gNbytesVsVar->SetPoint(iCut,x,static_cast<double>(GetTotalSize(tree))/nev);
     gNbytesRatioVsVar->SetPoint(iCut,x,static_cast<double>(GetTotalSize(tree))/ntotbyte);
     gNcandRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntriesFast())/ntotentries);
     gPromptEffRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntries("cand_type_ML==10"))/ntotprompt);

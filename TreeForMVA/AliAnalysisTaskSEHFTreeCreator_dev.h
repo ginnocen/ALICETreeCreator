@@ -29,6 +29,7 @@
 #include <TH3F.h>
 
 #include "AliAnalysisTaskSE.h"
+#include "AliPIDResponse.h"
 #include "AliRDHFCutsD0toKpi.h"
 #include "AliRDHFCutsDstoKKpi.h"
 #include "AliRDHFCutsDplustoKpipi.h"
@@ -155,6 +156,7 @@ private:
     AliHFTreeHandlerDplustoKpipi_dev   *fTreeHandlerGenDplus;          //!<! handler object for the tree with topological variables
     AliHFTreeHandlerLctopKpi_dev       *fTreeHandlerGenLctopKpi;       //!<! handler object for the tree with topological variables
     AliHFTreeHandlerBplustoD0pi_dev    *fTreeHandlerGenBplus;          //!<! handler object for the tree with topological variables
+    AliPIDResponse          *fPIDresp;
     int                     fPIDoptD0;
     int                     fPIDoptDs;
     int                     fPIDoptDplus;
