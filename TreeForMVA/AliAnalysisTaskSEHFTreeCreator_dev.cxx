@@ -59,10 +59,10 @@
 #include "AliAODRecoDecayHF2Prong.h"
 #include "AliAODRecoDecayHF3Prong.h"
 #include "AliAODRecoCascadeHF.h"
-#include "AliAODPidHF.h"
 #include "AliAnalysisVertexingHF.h"
 #include "AliNormalizationCounter.h"
 #include "AliAnalysisTaskSE.h"
+#include "AliInputEventHandler.h"
 #include "AliHFTreeHandler_dev.h"
 #include "AliHFTreeHandlerD0toKpi_dev.h"
 #include "AliHFTreeHandlerDplustoKpipi_dev.h"
@@ -127,6 +127,7 @@ fTreeHandlerGenDs(0x0),
 fTreeHandlerGenDplus(0x0),
 fTreeHandlerGenLctopKpi(0x0),
 fTreeHandlerGenBplus(0x0),
+fPIDresp(0x0),
 fPIDoptD0(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fPIDoptDs(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fPIDoptDplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
@@ -194,6 +195,7 @@ fTreeHandlerGenDs(0x0),
 fTreeHandlerGenDplus(0x0),
 fTreeHandlerGenLctopKpi(0x0),
 fTreeHandlerGenBplus(0x0),
+fPIDresp(0x0),
 fPIDoptD0(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fPIDoptDs(AliHFTreeHandler_dev::kRawAndNsigmaPID),
 fPIDoptDplus(AliHFTreeHandler_dev::kRawAndNsigmaPID),
@@ -665,13 +667,20 @@ void AliAnalysisTaskSEHFTreeCreator_dev::UserExec(Option_t */*option*/)
     if(!aod->GetPrimaryVertex() || TMath::Abs(aod->GetMagneticField())<0.001) return;
     
     fNentries->Fill(3); // count events
-    
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToTrigger())fNentries->Fill(5);
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToNotRecoVertex())fNentries->Fill(6);
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToVertexContributors())fNentries->Fill(7);
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToZVertexOutsideFiducialRegion())fNentries->Fill(8);
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToPileup())fNentries->Fill(9);
-    if(fFiltCutsD0toKpi->IsEventRejectedDueToCentrality())fNentries->Fill(10);
+  
+    AliRDHFCuts* evCuts = 0x0;
+    if(fWriteVariableTreeD0) evCuts = (AliRDHFCuts*)fFiltCutsD0toKpi->Clone();
+    else if(fWriteVariableTreeDplus) evCuts = (AliRDHFCuts*)fFiltCutsDplustoKpipi->Clone();
+    else if(fWriteVariableTreeDs) evCuts = (AliRDHFCuts*)fFiltCutsDstoKKpi->Clone();
+    else if(fWriteVariableTreeLctopKpi) evCuts = (AliRDHFCuts*)fFiltCutsLctopKpi->Clone();
+    else if(fWriteVariableTreeBplus) evCuts = (AliRDHFCuts*)fFiltCutsBplustoD0pi->Clone();
+
+    if(evCuts->IsEventRejectedDueToTrigger())fNentries->Fill(5);
+    if(evCuts->IsEventRejectedDueToNotRecoVertex())fNentries->Fill(6);
+    if(evCuts->IsEventRejectedDueToVertexContributors())fNentries->Fill(7);
+    if(evCuts->IsEventRejectedDueToZVertexOutsideFiducialRegion())fNentries->Fill(8);
+    if(evCuts->IsEventRejectedDueToPileup())fNentries->Fill(9);
+    if(evCuts->IsEventRejectedDueToCentrality())fNentries->Fill(10);
     
     TClonesArray *mcArray = 0;
     AliAODMCHeader *mcHeader = 0;
@@ -721,41 +730,41 @@ void AliAnalysisTaskSEHFTreeCreator_dev::UserExec(Option_t */*option*/)
       Printf("AliAnalysisTaskSEHFTreeCreator_dev::UserExec: differences in the event selection cuts different meson");
       return;
     }
-    
-    fCounter->StoreEvent(aod,fFiltCutsD0toKpi,fReadMC);
-    Bool_t isEvSel=fFiltCutsD0toKpi->IsEventSelected(aod);
-    fCentrality = fFiltCutsD0toKpi->GetCentrality(aod);
+  
+    fCounter->StoreEvent(aod,evCuts,fReadMC);
+    Bool_t isEvSel=evCuts->IsEventSelected(aod);
+    fCentrality = evCuts->GetCentrality(aod);
     if(fCentrality<0) fCentrality=-1.;
     //normalisation counter
-    if(!fFiltCutsD0toKpi->IsEventRejectedDuePhysicsSelection()){
+    if(!evCuts->IsEventRejectedDuePhysicsSelection()){
       if(isEvSel){
       //selected events with primary vertex
       fHistoNormCounter->Fill(0.,fCentrality);
       }
       else{
-      	if(fFiltCutsD0toKpi->GetWhyRejection()==0){
+      	if(evCuts->GetWhyRejection()==0){
       	//rejected events bc no primary vertex
       	fHistoNormCounter->Fill(1.,fCentrality);
       	}
       	//rejected events bc good primary vertex but >10cm
-        if(fFiltCutsD0toKpi->GetWhyRejection()==6){
+        if(evCuts->GetWhyRejection()==6){
         //nPrimaryV++;
         fHistoNormCounter->Fill(0.,fCentrality);
         //nzVtxGT10++;
         fHistoNormCounter->Fill(2.,fCentrality);
         }
-        if(fFiltCutsD0toKpi->GetWhyRejection()==1){
+        if(evCuts->GetWhyRejection()==1){
         //nPileup++;
         fHistoNormCounter->Fill(4.,fCentrality);
         }
       }
-      if(fFiltCutsD0toKpi->CountEventForNormalization()){
+      if(evCuts->CountEventForNormalization()){
         //nCountForNorm++;
         fHistoNormCounter->Fill(3.,fCentrality);
       }
     }
     
-    Bool_t isEvRejCent  = fFiltCutsD0toKpi->IsEventRejectedDueToCentrality();
+    Bool_t isEvRejCent  = evCuts->IsEventRejectedDueToCentrality();
 
     if(!isEvSel && isEvRejCent) return; //cut only centrality, else tag only
     if(isEvSel) fNentries->Fill(4);
@@ -764,10 +773,13 @@ void AliAnalysisTaskSEHFTreeCreator_dev::UserExec(Option_t */*option*/)
     fNcontributors = vtx->GetNContributors();
     fzVtxReco = vtx->GetZ();
     fNtracks = aod->GetNumberOfTracks();
-    fIsEvRej = fFiltCutsD0toKpi->GetEventRejectionBitMap();
+    fIsEvRej = evCuts->GetEventRejectionBitMap();
     fRunNumber=aod->GetRunNumber();
     fTreeEvChar->Fill();
-    
+  
+    //get PID response
+    if(!fPIDresp) fPIDresp = ((AliInputEventHandler*)(AliAnalysisManager::GetAnalysisManager()->GetInputEventHandler()))->GetPIDResponse();
+
     if(fWriteVariableTreeD0 || fWriteVariableTreeBplus) Process2Prong(array2prong,aod,mcArray,aod->GetMagneticField());
     if(fWriteVariableTreeDs || fWriteVariableTreeDplus || fWriteVariableTreeLctopKpi) Process3Prong(array3Prong,aod,mcArray,aod->GetMagneticField());
     if(fFillMCGenTrees && fReadMC) ProcessMCGen(mcArray);
@@ -798,6 +810,8 @@ void AliAnalysisTaskSEHFTreeCreator_dev::UserExec(Option_t */*option*/)
         if(fFillMCGenTrees && fReadMC) PostData(15,fGenTreeBplus);
     }
 
+    delete evCuts;
+    evCuts = 0x0;
     return;
 }
 //________________________________________________________________________
@@ -848,11 +862,6 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process2Prong(TClonesArray *array2prong
     Int_t pdgDgBplustoD0piInt[2] = {211,421};
     Int_t nSelectedBplus = 0;
     Int_t nFilteredBplus = 0;
-
-    AliAODPidHF* pidHFD0 = fCutsD0toKpi->GetPidHF();
-    if(!pidHFD0) pidHFD0=0x0;
-    AliAODPidHF* pidHFBplus = fCutsBplustoD0pi->GetPidHF();
-    if (!pidHFBplus) pidHFBplus = 0x0;
 
     // vHF object is needed to call the method that refills the missing info of the candidates
     // if they have been deleted in dAOD reconstruction phase
@@ -940,7 +949,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process2Prong(TClonesArray *array2prong
                             fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                         }//end read MC
                         fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0);
-                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHFD0);
+                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,fPIDresp);
                     }//end D0
                     if (isSelectedFilt>1){//D0bar
                         issignal = kFALSE;
@@ -966,7 +975,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process2Prong(TClonesArray *array2prong
                             fTreeHandlerD0->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                         }//end readMC
                         fTreeHandlerD0->SetIsSelectedStd(isSelAnCutsD0bar);
-                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,pidHFD0);
+                        fTreeHandlerD0->SetVariables(d,bfield,masshypo,fPIDresp);
                     }//end D0bar
                     if(recVtx)fFiltCutsD0toKpi->CleanOwnPrimaryVtx(d,aod,origownvtx);
                     if(unsetvtx) d->UnsetOwnPrimaryVtx();
@@ -1098,10 +1107,10 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process2Prong(TClonesArray *array2prong
                               if (fReadMC) {
                                 fTreeHandlerBplus->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                                 fTreeHandlerBplus->SetIsSelectedStd(isSelAnCutsBplus);
-                                fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, pidHFBplus);
+                                fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, fPIDresp);
                               } else {
                                 fTreeHandlerBplus->SetIsSelectedStd(isSelAnCutsBplus);
-                                fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, pidHFBplus);
+                                fTreeHandlerBplus->SetVariables(&trackBPlus, bfield, masshypo, fPIDresp);
                               }
 
                             } // end Bplus is selected filt
@@ -1138,14 +1147,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
     Int_t pdgDstoKKpi[3]={321,321,211};
     Int_t nSelectedDs=0;
     Int_t nFilteredDs=0;
-    
-    AliAODPidHF* pidHFDs = fFiltCutsDstoKKpi->GetPidHF();
-    if(!pidHFDs) pidHFDs=0x0;
-    AliAODPidHF* pidHFDplus = fFiltCutsDplustoKpipi->GetPidHF();
-    if(!pidHFDplus) pidHFDplus=0x0;
-    AliAODPidHF* pidHFLctopKpi = fFiltCutsLctopKpi->GetPidHF();
-    if(!pidHFLctopKpi) pidHFLctopKpi=0x0;
-    
+  
     Int_t pdgDgDplustoKpipi[3]={321,211,211};
     Int_t nSelectedDplus=0;
     Int_t nFilteredDplus=0;
@@ -1270,7 +1272,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
                                 fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                               }
                               fTreeHandlerDs->SetIsSelectedStd(isSelAnCutsKKpi);
-                              fTreeHandlerDs->SetVariables(ds,bfield,0,pidHFDs);
+                              fTreeHandlerDs->SetVariables(ds,bfield,0,fPIDresp);
                             }
                           issignal = kFALSE;
                           isbkg = kFALSE;
@@ -1293,7 +1295,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
                                 fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                               }
                             fTreeHandlerDs->SetIsSelectedStd(isSelAnCutspiKK);
-                            fTreeHandlerDs->SetVariables(ds,bfield,1,pidHFDs);
+                            fTreeHandlerDs->SetVariables(ds,bfield,1,fPIDresp);
                           }
                         }//end fill tree
                         if(recVtx)fFiltCutsDstoKKpi->CleanOwnPrimaryVtx(ds,aod,origownvtx);
@@ -1368,7 +1370,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
                    
                    // fill tree
                     fTreeHandlerDplus->SetIsSelectedStd(isSelAnCuts);
-                    fTreeHandlerDplus->SetVariables(dplus,bfield,0,pidHFDplus);
+                    fTreeHandlerDplus->SetVariables(dplus,bfield,0,fPIDresp);
                   //end fill tree
                
                 if(recVtx)fFiltCutsDplustoKpipi->CleanOwnPrimaryVtx(dplus,aod,origownvtx);
@@ -1461,7 +1463,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
 
                     // fill tree
                     fTreeHandlerLctopKpi->SetIsSelectedStd(isSelAnCuts);
-                    fTreeHandlerLctopKpi->SetVariables(lctopkpi,bfield,1,pidHFLctopKpi);
+                    fTreeHandlerLctopKpi->SetVariables(lctopkpi,bfield,1,fPIDresp);
                   } // end pKpi
                   isPrimary=kFALSE;
                   isFeeddown=kFALSE;
@@ -1504,7 +1506,7 @@ void AliAnalysisTaskSEHFTreeCreator_dev::Process3Prong(TClonesArray *array3Prong
 
                     // fill tree
                     fTreeHandlerLctopKpi->SetIsSelectedStd(isSelAnCuts);
-                    fTreeHandlerLctopKpi->SetVariables(lctopkpi,bfield,2,pidHFLctopKpi);
+                    fTreeHandlerLctopKpi->SetVariables(lctopkpi,bfield,2,fPIDresp);
                   } // end fill piKpi
 
                 if(recVtx)fFiltCutsLctopKpi->CleanOwnPrimaryVtx(lctopkpi,aod,origownvtx);
