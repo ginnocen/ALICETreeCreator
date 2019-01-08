@@ -14,7 +14,7 @@ aliBuild build AliPhysics --defaults jalien-root6 -z jalienroot6
 > **NB1** jAliEn doesn't work (for the moment) within alidock, so one should still use the custom alibuild installation!
 
 > **NB2** At the time of writing (08/01/19) there are three small bugs in alidist, causing the build of jalien-root6 to fail. Experts are notified. For the moment one can tweak a bit your local folder by:
-> * Delete the **-lXrdSec** and **-lXrdOfs** flags in the makefiles of https://github.com/alisw/xalienfs. A dirty fix is by looking for (and deleting) these flags in *client/gclientlib/Makefile.am*, *client/gclientlib/Makefile.in*, *server/Makefile.am, server/Makefile.in* in xalienfs.sh in your local alidist folder by doing for example: *"sed  -i 's/-lXrdSec //g' client/gclientlib/Makefile.am"*
+> * Delete the **-lXrdSec** and **-lXrdOfs** flags in the makefiles of https://github.com/alisw/xalienfs. A dirty fix is by looking for (and deleting) these flags in *client/gclientlib/Makefile.am*, *client/gclientlib/Makefile.in*, *server/Makefile.am, server/Makefile.in* in xalienfs.sh in your local alidist folder by doing for example: *"sed  -i 's/-lXrdSec //g' client/gclientlib/Makefile.am"* before the " ./bootstrap.sh"-line
 > * (only needed on macOS) Add **.git** at the end of line https://github.com/alisw/alidist/blob/a5d9bce7e19203aa6fb74276138ba88027c413b4/jalien-root.sh#L4
 
 ## 2) Download train output
