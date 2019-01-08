@@ -6,14 +6,14 @@ Instructions to download the output from the LEGO train, merge the files, and sk
 
 The following scripts works out of the box on lxplus (if you have copied your GRID certificates to ~/.globus/), but with the disadvantage that one has a storage limitation and the files needs to be downloaded another time when the output is needed on local system/server. 
 
-To be able to run the processing scripts on a local system instead, one has to setup the following (assuming aliBuild is installed. If this is not the case, follow https://alice-doc.github.io/alice-analysis-tutorial/building/build.html first):
+To be able to run the processing scripts on a local system instead, one has to setup the following (assuming aliBuild is installed. If this is not the case, follow https://alice-doc.github.io/alice-analysis-tutorial/building/custom.html first):
 ```
 aliBuild build AliPhysics --defaults jalien -z jalienroot6
 ```
 > **NB1:** jAliEn doesn't work (for the moment) within alidock, so one should still use the custom alibuild installation!
 
 > **NB2:** At the time of writing (08/01/19) there are three small bugs in alidist, causing the build of jalien-root6 to fail. Experts are notified. For the moment one can tweak a bit your local folder by:
-> * Delete the **-lXrdSec** and **-lXrdOfs** flags in the makefiles of https://github.com/alisw/xalienfs. A dirty fix is by looking for (and deleting) these flags in *client/gclientlib/Makefile.am*, *client/gclientlib/Makefile.in*, *server/Makefile.am, server/Makefile.in* in xalienfs.sh in your local alidist folder by doing for example: *"sed  -i 's/-lXrdSec //g' client/gclientlib/Makefile.am"* before the " ./bootstrap.sh"-line
+> * Delete the **-lXrdSec** and **-lXrdOfs** flags in the makefiles of https://github.com/alisw/xalienfs. A dirty fix is by looking for (and deleting) these flags in *client/gclientlib/Makefile.am*, *client/gclientlib/Makefile.in*, *server/Makefile.am, server/Makefile.in* in xalienfs.sh in your local alidist folder by doing for example: *"sed  -i 's/-lXrdSec //g' client/gclientlib/Makefile.am"* before the *"./bootstrap.sh"*-line
 > * (only needed on macOS) Add **.git** at the end of line https://github.com/alisw/alidist/blob/a5d9bce7e19203aa6fb74276138ba88027c413b4/jalien-root.sh#L4
 
 ## 2) Download train output
@@ -35,7 +35,7 @@ jalien    #./jalien for local system
 #Enter Grid Certificate password
 exit
 ```
-> **NB:** If you get: **JBox isn't running, so we won't start JSh.** on lxplus, your grid certificates probably don't have the right permissions. Correct them in *~/.globus/* using: *"chmod 0440 usercert.pem"* and *"chmod 0400 userkey.pem"*
+> **NB:** If you get the error: "**JBox isn't running, so we won't start JSh.**" on lxplus, your grid certificates probably don't have the right permissions. Correct them in *~/.globus/* using: *"chmod 0440 usercert.pem"* and *"chmod 0400 userkey.pem"*
 
 Go back to the local folder where this README is saved. Now it is only a matter of waiting till everything is downloaded using the following script:
 ```
@@ -50,7 +50,7 @@ Three train-specific variables can be set in the script (highlighted in the code
 * OUTPUTPATH       (output of train, default is pp@5TeV for the Devel_2 LEGO train)
 * NFILES       (number of files to download, default is /&#42;/. For tests one can use /000&#42;/ to download only 10 files, /00&#42;/ for 100 files, etc)
 * OUTPUTFILE       (name of file to download, default is AnalysisResults.root)
-> **NB:** The "jalien" command used in downloadOutputTrain.sh is only defined on lxplus, one should change it to ". ~/alice/jalien/jalien" (or other path to jalien repository) for local runs. **TO BE FIXED**
+> **NB:** The "jalien" command used in the script is only defined on lxplus, one should change it to: *". ~/alice/jalien/jalien"* (or other path to jalien repository) for local runs. **TO BE FIXED**
 
 ## 3) Merging
 
@@ -74,8 +74,7 @@ Enable the mesons you want to skim in the submitSkimJobs.sh macro, specify if th
 ./submitSkimJobs.sh /path/to/mergeSkimOutputDir_$NFILESFORMERGING/lsOutputMergedList_$TRAINNAME$STAGE.txt
 ```
 The txt file is saved by the mergefiles.sh script. The variables should therefore be the same as used before. 
-
-If no merging was applied (not recommended), one has to tweak a bit the listfilesMerging_%s%s.txt output of the downloading stage.
+> **NB:** If no merging was applied (not recommended), one has to tweak a bit the listfilesMerging_%s%s.txt output of the downloading stage.
 
 ## In case of problems:
 
