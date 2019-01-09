@@ -9,6 +9,7 @@ ispp=1                 #toset
 doDplusFromEvt=1       #toset
 doDsFromEvt=1          #toset
 doDzeroFromEvt=1       #toset
+doDstarFromEvt=1       #toset
 doBplusFromEvt=0       #Classes not yet ready + not tested
 doLcFromEvt=0          #toset
 #doPID=0               #to be added
@@ -73,6 +74,24 @@ rm -rf skimTreeDzeroFromEvt.exe skimTreeDzeroFromEvt.exe.dSYM
 
 fi
 
+
+if [ $doDstarFromEvt -eq 1 ]
+then
+
+DataTree="tree_Dstar"
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+g++ includeSkim/skimTreeDstarFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDstarFromEvt.exe
+./skimTreeDstarFromEvt.exe "${line}.root" "${line}_Dstar_skimmed.root" "$DataTree" "$isMC" "$ispp"
+done < "$myfile"
+
+## would wait until those are completed
+## before displaying all done message
+wait
+echo "Dstar = All done"
+rm -rf skimTreeDstarFromEvt.exe skimTreeDstarFromEvt.exe.dSYM
+
+fi
 
 
 if [ $doBplusFromEvt -eq 1 ]
