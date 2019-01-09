@@ -98,7 +98,7 @@ fi
 if [ $doLcFromEvt -eq 1 ]
 then
 
-DataTree="tree_Lc"
+DataTree="tree_LctopKpi"
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
 g++ includeSkim/skimTreeLcFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLcFromEvt.exe
