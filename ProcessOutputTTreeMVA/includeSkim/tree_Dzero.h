@@ -39,6 +39,8 @@ public :
    vector<float>   *cos_p;
    vector<float>   *cos_p_xy;
    vector<float>   *imp_par_xy;
+   vector<float>   *cos_t_star;
+   vector<float>   *imp_par_prod;
    vector<float>   *max_norm_d0d0exp;
    vector<float>   *p_prong0;
    vector<float>   *pt_prong0;
@@ -99,6 +101,8 @@ public :
    TBranch        *b_cos_p;   //!
    TBranch        *b_cos_p_xy;   //!
    TBranch        *b_imp_par_xy;   //!
+   TBranch        *b_cos_t_star;   //!
+   TBranch        *b_imp_par_prod;   //!
    TBranch        *b_max_norm_d0d0exp;   //!
    TBranch        *b_p_prong0;   //!
    TBranch        *b_pt_prong0;   //!
@@ -228,6 +232,8 @@ void tree_Dzero::Init(TTree *tree)
    cos_p = 0;
    cos_p_xy = 0;
    imp_par_xy = 0;
+   cos_t_star = 0;
+   imp_par_prod = 0;
    max_norm_d0d0exp = 0;
    p_prong0 = 0;
    pt_prong0 = 0;
@@ -293,6 +299,8 @@ void tree_Dzero::Init(TTree *tree)
    fChain->SetBranchAddress("cos_p", &cos_p, &b_cos_p);
    fChain->SetBranchAddress("cos_p_xy", &cos_p_xy, &b_cos_p_xy);
    fChain->SetBranchAddress("imp_par_xy", &imp_par_xy, &b_imp_par_xy);
+   fChain->SetBranchAddress("cos_t_star", &cos_t_star, &b_cos_t_star);
+   fChain->SetBranchAddress("imp_par_prod", &imp_par_prod, &b_imp_par_prod);
    fChain->SetBranchAddress("max_norm_d0d0exp", &max_norm_d0d0exp, &b_max_norm_d0d0exp);
    fChain->SetBranchAddress("p_prong0", &p_prong0, &b_p_prong0);
    fChain->SetBranchAddress("pt_prong0", &pt_prong0, &b_pt_prong0);

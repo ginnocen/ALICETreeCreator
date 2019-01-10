@@ -60,7 +60,7 @@ void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="t
   //fTreeEventCharML->Branch("run_number_ML",&run_number_ML,"run_number_ML/I");
   //if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
   
-  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, max_norm_d0d0exp_ML;
+  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, cos_t_star_ML, imp_par_prod_ML, max_norm_d0d0exp_ML;
   float cand_type_ML, y_cand_ML, eta_cand_ML, phi_cand_ML;
   float imp_par_prong0_ML, imp_par_prong1_ML, p_prong0_ML, p_prong1_ML, pt_prong0_ML, pt_prong1_ML, eta_prong0_ML, eta_prong1_ML, phi_prong0_ML, phi_prong1_ML;
   float nTPCcls_prong0_ML, nTPCclspid_prong0_ML, nTPCcrossrow_prong0_ML, chi2perndf_prong0_ML, nITScls_prong0_ML, ITSclsmap_prong0_ML, nTPCcls_prong1_ML, nTPCclspid_prong1_ML, nTPCcrossrow_prong1_ML, chi2perndf_prong1_ML, nITScls_prong1_ML, ITSclsmap_prong1_ML;
@@ -74,6 +74,8 @@ void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="t
   fTreeDzeroML->Branch("cos_p_ML",&cos_p_ML,"cos_p_ML/F");
   fTreeDzeroML->Branch("cos_p_xy_ML",&cos_p_xy_ML,"cos_p_xy_ML/F");
   fTreeDzeroML->Branch("imp_par_xy_ML",&imp_par_xy_ML,"imp_par_xy_ML/F");
+  fTreeDzeroML->Branch("cos_t_star_ML",&cos_t_star_ML,"cos_t_star_ML/F");
+  fTreeDzeroML->Branch("imp_par_prod_ML",&imp_par_prod_ML,"imp_par_prod_ML/F");
   fTreeDzeroML->Branch("max_norm_d0d0exp_ML",&max_norm_d0d0exp_ML,"max_norm_d0d0exp_ML/F");
 
   fTreeDzeroML->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/F");
@@ -164,6 +166,8 @@ void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="t
       cos_p_ML=t.cos_p -> at(icand);
       cos_p_xy_ML=t.cos_p_xy -> at(icand);
       imp_par_xy_ML=t.imp_par_xy -> at(icand);
+      cos_t_star_ML=t.cos_t_star -> at(icand);
+      imp_par_prod_ML=t.imp_par_prod -> at(icand);
       max_norm_d0d0exp_ML=t.max_norm_d0d0exp -> at(icand);
         
       cand_type_ML=t.cand_type -> at(icand);
