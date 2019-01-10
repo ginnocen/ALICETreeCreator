@@ -10,7 +10,7 @@ using namespace std;
 
 //Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
 
-void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Ds", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE){
+void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Ds", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE, Bool_t computedeltaMKK = kTRUE){
 
   TFile *f = TFile::Open(input.Data());
   TDirectory * dir = (TDirectory*)f->Get("PWGHF_TreeCreator");
@@ -193,7 +193,8 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
       cos_p_xy_ML=t.cos_p_xy -> at(icand);
       imp_par_xy_ML=t.imp_par_xy -> at(icand);
       sig_vert_ML=t.sig_vert -> at(icand);
-      mass_KK_ML=t.mass_KK -> at(icand);
+      if(computedeltaMKK) mass_KK_ML=TMath::Abs(1.019455-t.mass_KK -> at(icand));
+      else mass_KK_ML=t.mass_KK -> at(icand);
       cos_PiDs_ML=t.cos_PiDs -> at(icand);
       cos_PiKPhi_3_ML=t.cos_PiKPhi_3 -> at(icand);
       max_norm_d0d0exp_ML=t.max_norm_d0d0exp -> at(icand);

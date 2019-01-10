@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstddef>
+#include <limits>
 #include "TTree.h"
 #include "TBranch.h"
 #include "Riostream.h"
@@ -23,17 +24,17 @@ using namespace std;
 /////////////////////////////////////////////////////////////
 
 enum cutopt {kLowerLimit,kUpperLimit,kUpperLimitAbsValue};
-enum particle {kDzero,kDplus,kDs,kLctopKpi,kBplus};
+enum particle {kDzero,kDplus,kDs,kDstar,kLctopKpi,kBplus};
 
 //____________________________________________________________
-void CheckTreeSize(int part=kDs, float pTmin=0, float pTmax=50, TString infilename="skimmedDs.root", TString varname="d_len_ML",float startvalue=0., float stopvalue=0.1, float step=0.01, int opt=kLowerLimit, TString outfilename="d_len_scan.root");
+void CheckTreeSize(Long64_t nentriesmax = 10000000, int part=kDs, float pTmin=0, float pTmax=50, TString infilename="skimmedDs.root", TString varname="d_len_ML",float startvalue=0., float stopvalue=0.1, float step=0.01, int opt=kLowerLimit, TString outfilename="d_len_scan.root");
 bool CutTree(TString infilename, TString treename, TString varname, float lowlimit, float highlimit);
 Long64_t GetBasketSize(TBranch * b, bool inclusive);
 Long64_t GetBasketSize(TObjArray * branches, bool inclusive);
 Long64_t GetTotalSize(TTree *t);
 
 //____________________________________________________________
-void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TString varname, float startvalue, float stopvalue, float step, int opt, TString outfilename) {
+void CheckTreeSize(Long64_t nentriesmax, int part, float pTmin, float pTmax, TString infilename, TString varname, float startvalue, float stopvalue, float step, int opt, TString outfilename) {
 
   gSystem->Unlink("cuttedttree.root");
   gStyle->SetPadTickX(1);
@@ -95,9 +96,12 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
       treename="fTreeDsFlagged";
       break;
     case 3:
-      treename="fTreeLcFlagged";
+      treename="fTreeDstarFlagged";
       break;
     case 4:
+      treename="fTreeLcFlagged";
+      break;
+    case 5:
       treename="fTreeBplusFlagged";
       break;
   }
@@ -112,7 +116,7 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
   Long64_t nev = treeev->GetEntriesFast();
   cout << Form("\nGetting tree for candidates with %.5f < pt_cand_ML < %.5f",pTmin,pTmax) << endl;
   TFile cuttedfile("cuttedttree.root","recreate");
-  TTree* treecutted = treetot->CopyTree(Form("pt_cand_ML>%f && pt_cand_ML<%f",pTmin,pTmax));
+  TTree* treecutted = treetot->CopyTree(Form("pt_cand_ML>%f && pt_cand_ML<%f",pTmin,pTmax),"",nentriesmax);
   treecutted->Write();
   Long64_t ntotbyte = GetTotalSize(treecutted);
   Long64_t ntotentries = treecutted->GetEntriesFast();
@@ -180,9 +184,10 @@ void CheckTreeSize(int part, float pTmin, float pTmax, TString infilename, TStri
   float xmax = (startvalue>stopvalue) ? startvalue+step : stopvalue+step;
 
   c->Divide(2,2);
+  c->cd(1)->DrawFrame(xmin,static_cast<double>(ntotbyte)/(nev*100),xmax,static_cast<double>(ntotbyte)/(nev)*2,Form(";%s;number of bytes / event",varname.Data()));
   c->cd(1)->SetLogy();
   c->cd(1)->SetGrid(1,1);
-  gNbytesVsVar->Draw("APL");
+  gNbytesVsVar->Draw("PL");
   c->cd(2)->DrawFrame(xmin,0.1,xmax,2.,Form(";%s;number of bytes (selected / all)",varname.Data()));
   c->cd(2)->SetLogy();
   c->cd(2)->SetGrid(1,1);
