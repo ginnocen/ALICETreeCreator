@@ -183,6 +183,8 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
     //if(isMC) z_vtx_gen_ML = t_ev.z_vtx_gen;
     fTreeEventCharML->Fill();
     
+    if(is_ev_rej_ML!=0) continue;
+
     for(int icand = 0; icand < t.n_cand; icand++){ 
       inv_mass_ML=t.inv_mass -> at(icand);
       pt_cand_ML=t.pt_cand -> at(icand);
