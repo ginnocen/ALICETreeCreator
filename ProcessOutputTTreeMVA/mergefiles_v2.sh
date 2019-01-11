@@ -19,25 +19,27 @@ inputfile=$(printf "%s/%s/%s/listfilesMerging_%s%s.txt" $BASEDIR $TRAINNAME $STA
 if [ -z "$STAGE" ]; then
   inputfile=$(printf "%s/%s/listfilesMerging_%s.txt" $BASEDIR $TRAINNAME $TRAINNAME)
 fi
-echo "\nReading $inputfile for files to merge\n"
+printf "\nReading $inputfile for files to merge\n"
 
 nfilesformerging=$4
 if [ -z "$nfilesformerging" ]; then
   nfilesformerging=4
 fi
-echo "\nMerging with $nfilesformerging inputfiles\n"
+printf "\nMerging with $nfilesformerging inputfiles\n"
 
 PARTICLE=$5
-echo "\nMerging output for particle: $PARTICLE \n"
+printf "\nMerging output for particle: $PARTICLE \n"
 
-nameoutput=$BASEDIR/$TRAINNAME/$STAGE/mergeSkimOutputDir_$PARTICLE_$nfilesformerging
-echo "\nSaving merged output in directory: $nameoutput\n"
+nameoutput=$(printf "%s/%s/%s/mergeSkimOutputDir_%s" $BASEDIR $TRAINNAME "$STAGE" $PARTICLE)
+nameoutput=${nameoutput}_${nfilesformerging}
+printf "\nSaving merged output in directory: $nameoutput\n"
 nameoutputlist=$(printf "lsOutputMergedList_%s%s.txt" $TRAINNAME $STAGE)
-echo "\nWriting merged output in: $nameoutputlist\n"
+printf "\nWriting merged output in: $nameoutputlist\n"
 
 rm -rf $nameoutput
 mkdir $nameoutput
 split -l $nfilesformerging $inputfile $nameoutput/merged-file
+sed -i -e "s|.root|_${PARTICLE}_skimmed.root|g" $nameoutput/merged-file
 ls $nameoutput/merged-file*> $nameoutputlist
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
