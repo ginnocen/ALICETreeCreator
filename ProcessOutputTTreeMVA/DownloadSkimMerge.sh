@@ -66,18 +66,24 @@ fi
 
 mkdir -p -m 777 $placetosave/$trainname
 if [ $? -ne 0 ]; then
-  printf "Could not create output directory. Is $placetosave writable? "
+  printf "Could not create output directory. Is $placetosave writable? Returning... \n\n"
+  exit
+else
+   printf "Created directory: $placetosave/$trainname \n"
 fi
 mkdir -p -m 777 $placetosave/$trainname/$stage
 if [ $? -ne 0 ]; then
-  printf "Could not create output directory. Is $placetosave writable? "
+  printf "Could not create output directory. Is $placetosave writable? Returning... \n\n"
+  exit
+else
+  printf "Created $placetosave/$trainname/$stage \n\n"
 fi
 
 
 #----RUNNING THE DOWNLOADER----#
 if [ $ninput -eq 4 ]; then
-  sh ./downloader.sh $inputpath1 1 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpath2 2 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpath3 3 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpath4 4 $nfiles $outputfile $placetosave $trainname $stage
+  sh ./downloader.sh $inputpathchild1 1 $nfiles $outputfile $placetosave $trainname $stage
+  sh ./downloader.sh $inputpathchild2 2 $nfiles $outputfile $placetosave $trainname $stage
+  sh ./downloader.sh $inputpathchild3 3 $nfiles $outputfile $placetosave $trainname $stage
+  sh ./downloader.sh $inputpathchild4 4 $nfiles $outputfile $placetosave $trainname $stage
 fi
