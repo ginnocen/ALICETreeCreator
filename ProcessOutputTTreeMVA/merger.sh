@@ -36,7 +36,10 @@ mkdir -p -m 777 $nameoutput
 
 cp "$inputfile" "$inputfileskim"
 
-sed -i "" "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
+#Ubuntu:
+sed -i -e "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
+#macOS, I don't know why.. TO CHECK
+#sed -i "" "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
 split -l $nfilesformerging $inputfileskim $nameoutput/merged_skimmedFile_
 ls $nameoutput/merged_skimmedFile_*> $nameoutputlist
 
@@ -48,5 +51,8 @@ done < "$nameoutputlist"
 ## wait till all merging jobs are finished
 wait
 
-sed -i "" "s|$|_${PARTICLE}.root|g" $nameoutputlist
+#Ubuntu:
+sed -i -e "s|$|_${PARTICLE}.root|g" $nameoutputlist
+#macOS, I don't know why.. TO CHECK
+#sed -i "" "s|$|_${PARTICLE}.root|g" $nameoutputlist
 mv $nameoutputlist $nameoutput/

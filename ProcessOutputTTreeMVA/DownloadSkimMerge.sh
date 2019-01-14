@@ -39,7 +39,7 @@ printf "\e[1mYou set the following setters in the script. Please check them care
 printf "   Number of files to download from grid: \e[1m$nfiles\e[0m\n"
 printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
 printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: average size of one skimmed file is XX for unmerged, and XX for Stage_1 merging)\e[0m\n"
-printf "   Particles that are enabled: Dzero \e[1m(%s)\e[0m, Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
 if [ -z "$4" ]; then
   printf "   You didn't provide the GRID merging stage as argument. I will download \e[1mnon-merged files\e[0m from GRID\n"
 fi
@@ -158,32 +158,18 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 
 if [ $ninput -eq 1 ]; then
   sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-#If this crashes on server, just use:
-#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
 elif [ $ninput -eq 2 ]; then
   sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-#If this crashes on server, just use:
-#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
 elif [ $ninput -eq 3 ]; then
   sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-#If this crashes on server, just use:
-#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage
 elif [ $ninput -eq 4 ]; then
   sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   sh ./run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-#If this crashes on server, just use:
-#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage
-#  sh ./downloader.sh $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage
 else
   printf "ERROR: More than 4 childs not yet supported, please implement. Returning..."
   exit
@@ -199,7 +185,7 @@ wait
 
 #----RUNNING THE SKIMMER----#
 printf "\n\n\e[1m----RUNNING THE SKIMMER----\e[0m\n\n"
-printf "Skimming for: Dzero (%s), Dplus (%s), Ds (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
 
 for ((i=1; i<=$ninput; i++))
 do
@@ -230,8 +216,6 @@ do
   cat "$skimmererrorfile" >> "$stderrorfile"
   rm "$skimmeroutputfile" "$skimmererrorfile"
 
-  #It might be that the above doesn't work on server, just comment to 11 lines above, and uncomment the one below (but note a lot of will printed in terminal)
-  #sh ./skimmer.sh $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc
 done
 
 #For safety, wait till skimming is finished
@@ -239,7 +223,7 @@ wait
 
 #----RUNNING THE MERGER----#
 printf "\n\e[1m----RUNNING THE MERGER----\e[0m\n\n"
-printf "Merging for: Dzero (%s), Dplus (%s), Ds (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "Merging for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
 
 for ((i=1; i<=$ninput; i++))
 do
@@ -252,14 +236,14 @@ do
   printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergeroutputfile"
   printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergererrorfile"
 
-  if [ "$doDzero" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
   if [ "$doDplus" == "1" ]; then
     sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doDs" == "1" ]; then
     sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+  if [ "$doDzero" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doDstar" == "1" ]; then
     sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
