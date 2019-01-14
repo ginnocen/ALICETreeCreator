@@ -1,0 +1,21 @@
+#!/bin/bash
+
+"$@" &
+
+START=$(date +%s)
+
+printf "   Running merger $7: " > /dev/tty
+while kill -0 $!; do
+  printf "." > /dev/tty
+  sleep 2
+
+  if [ "$(( $(date +%s) - $START ))" -gt "10" ]; then
+    printf "\r                                " > /dev/tty
+    printf "\r   Running merger $7: " > /dev/tty
+    START=$(date +%s)
+  fi
+
+done
+
+printf "\r                              " > /dev/tty
+printf "\r   Merger $7 finished\n" > /dev/tty

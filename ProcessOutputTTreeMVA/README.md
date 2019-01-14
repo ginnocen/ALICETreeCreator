@@ -1,80 +1,153 @@
 # Getting and processing TTreeCreator output
 
-Instructions to download the output from the LEGO train, merge the files, and skim for specific mesons.
+Instructions to download the output from the LEGO train, skim for specific mesons, and merge the files. The instructions assume you are an user of  the new aliceml server. With some small changes, the instructions are valid for each system though.
 
-## 1) Setup
+## 1) Setup your environment
 
-The following scripts works out of the box on lxplus (if you have copied your GRID certificates to ~/.globus/), but with the disadvantage that one has a storage limitation and the files needs to be downloaded another time when the output is needed on local system/server. 
+Start by logging in
+```
+ssh -X lxplus7.cern.ch
+ssh -X username@aliceml
+```
+and follow the steps in the four subsections below.
 
-To be able to run the processing scripts on a local system instead, one has to setup the following (assuming aliBuild is installed. If this is not the case, follow https://alice-doc.github.io/alice-analysis-tutorial/building/custom.html first):
+### a) Installing aliBuild
+The prerequisites of aliBuild are already installed. One should however add the following lines in ~/.bashrc
 ```
-aliBuild build AliPhysics --defaults jalien -z jalienroot6
+export PYTHONUSERBASE="$HOME/user_python"
+export PATH="$PYTHONUSERBASE/bin:$PATH"
 ```
-> **NB1:** jAliEn doesn't work (for the moment) within alidock, so one should still use the custom alibuild installation!
+and source your .bashrc
+```
+source ~/.bashrc
+```
+> One can test if it succeeded by doing: "echo $PYTHONUSERBASE". You should see /home/username/user_python
 
-> **NB2:** At the time of writing (08/01/19) there are three small bugs in alidist, causing the build of jalien-root6 to fail. Experts are notified. For the moment one can tweak a bit your local folder by:
-> * Delete the **-lXrdSec** and **-lXrdOfs** flags in the makefiles of https://github.com/alisw/xalienfs. A dirty fix is by looking for (and deleting) these flags in *client/gclientlib/Makefile.am*, *client/gclientlib/Makefile.in*, *server/Makefile.am, server/Makefile.in* in xalienfs.sh in your local alidist folder by doing for example: *"sed  -i 's/-lXrdSec //g' client/gclientlib/Makefile.am"* before the *"./bootstrap.sh"*-line
-> * (only needed on macOS) Add **.git** at the end of line https://github.com/alisw/alidist/blob/a5d9bce7e19203aa6fb74276138ba88027c413b4/jalien-root.sh#L4
+Install aliBuild
+```
+pip install alibuild --upgrade --user
+```
+> One can test if it succeeded by doing: "type aliBuild". You should see "aliBuild is /home/username/user_python/bin/aliBuild"
 
-## 2) Download train output
+Add the following in your ~/.bashrc
+```
+export ALIBUILD_WORK_DIR="$HOME/alice/sw"
+eval "`alienv shell-helper`"
+```
+and source it
+```
+source ~/.bashrc
+```
 
-One needs to enter the jAliEn environment to download the output. On lxplus, use
+### b) Building JAliEn
+
+Instructions to build JAliEn. One should have followed a) first.
 ```
-/cvmfs/alice.cern.ch/bin/alienv enter JAliEn
+mkdir -p ~/alice
+cd ~/alice/
+git clone https://github.com/alisw/alidist
+aliBuild build JAliEn --defaults jalien -z jalien
 ```
-On a local system:
+
+### c) Getting these scripts
+
+Instructions to get these downloading, skimming, and merging scripts
 ```
-alienv enter AliPhysics/latest-jalienroot6-jalien
-cd ~/alice/    #Change folder name if needed
-git clone https://gitlab.cern.ch/jalien/jalien.git
-cd jalien
+cd ~/alice/
+git clone https://github.com/ginnocen/MachineLearningHF
+cd MachineLearningHF/ProcessOutputTTreeMVA
 ```
-The first time of a session, one needs to "login" to the GRID, so the download script can access the files:
+
+### d) Getting ROOT (optional)
+
+Before building ROOT, check if there is not already a version installed (as root). If so, just source it in your ~/.bashrc using
 ```
-jalien    #./jalien for local system
+source path-to-general-root-build/bin/thisroot.sh
+```
+if this is not yet the case, please follow the instructions below. **Please note that these instructions don't build against a specific python version, which you might need for ML studies.**
+```
+git clone http://github.com/root-project/root.git
+cd root
+git checkout -b v6-14-04 v6-14-04    #Or any other version listed by 'git tag -l'
+mkdir -p ../rootbuild
+cd ../rootbuild
+cmake ../root
+```
+Please check before building ROOT with the **top** command if the server is empty. If so, build with 40 cores (building ROOT should take less than 10 minutes in that case).
+```
+cmake --build . -- -j40
+```
+When ready, source ROOT in your ~/.bashrc again
+```
+source $HOME/alice/rootbuild/bin/thisroot.sh    #change directory if needed
+```
+and source your .bashrc
+```
+source ~/.bashrc
+```
+
+## 2) Download, Skim, and Merge the train output
+
+One needs to enter the jAliEn environment to download the output.
+```
+alienv enter JAliEn/latest-jalien-jalien
+jalien
 #Enter Grid Certificate password
 exit
 ```
-> **NB:** If you get the error: "**JBox isn't running, so we won't start JSh.**" on lxplus, your grid certificates probably don't have the right permissions. Correct them in *~/.globus/* using: *"chmod 0440 usercert.pem"* and *"chmod 0400 userkey.pem"*
+> **NB:** If you get the error: "**JBox isn't running, so we won't start JSh.**" on lxplus, your grid certificates probably don't have the right permissions. Correct them in *~/.globus/* using: *"chmod 0440 usercert.pem"* and *"chmod 0400 userkey.pem"*. It seems that JALiEn needs slightly different permissions than usual.
 
-Go back to the local folder where this README is saved. Now it is only a matter of waiting till everything is downloaded using the following script:
-```
-./downloadOutputTrain.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGE
-```
-where 
-* $TRAINNAME = 297_20181120-2315_child_1 (example for pp@5TeV containing D0, D+ and Ds candidates, change accordingly)
-* $PLACETOSAVEOUTPUT = "" for the current directory or ../ALICEanalysis/MLproductions for example
-* $STAGE = can be specified when the merging on the GRID was succesful (e.g. "Stage_1").
 
-Three train-specific variables can be set in the script (highlighted in the code by "#toset"):
-* OUTPUTPATH       (output of train, default is pp@5TeV for the Devel_2 LEGO train)
-* NFILES       (number of files to download, default is /&#42;/. For tests one can use /000&#42;/ to download only 10 files, /00&#42;/ for 100 files, etc)
-* OUTPUTFILE       (name of file to download, default is AnalysisResults.root)
-> **NB:** The "jalien" command used in the script is only defined on lxplus, one should change it to: *". ~/alice/jalien/jalien"* (or other path to jalien repository) for local runs. **TO BE FIXED**
+The scripts are saved in *~/alice/MachineLearningHF/ProcessOutputTTreeMVA*. There are two ways to run the DownloadSkimMerge.sh script:
+1) Run ./DownloadSkimMerge.sh without arguments. The script will ask you for the required input.
+2) Run ./DownloadSkimMerge.sh with arguments: *./DownloadSkimMerge.sh trainname dataset outputdirectory gridmergingstage*
 
-## 3) Merging
 
-To decrease the AliPhysics related warnings on lxplus, one can enter:
-```
-/cvmfs/alice.cern.ch/bin/alienv enter VO_ALICE@AliPhysics::vAN-20181208-1    #Change to recent date
-```
-This is however not mandatory. The merging is also successful in the jAliEn environment.
+The first argument is the trainname, which has the format: *trainnumber_date-time*. Secondly the dataset should be given, for now only *LHC17pq* (pp@5TeV data) and *LHC18a4a2* (HF-enriched MC for pp@5TeV) are implemented. The outputdirectory for aliceml is */data/HeavyFlavour/DmesonsLambdac_pp_2017_5TeV/\**, although for testing one can better use your local folder. The last argument is the GRID merging stage, which should be in the format Stage_#. If this argument is empty, JAliEn will download the unmerged files from GRID. 
+> For now downloading the unmerged files is the preferred way, as it is not yet possible to distinguish between processed and unprocessed (in case of Stage_1 merging failure) jobs.
 
-Run the merging script
-```
-./mergefiles.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGE $NFILESFORMERGING
-```
-where $TRAINNAME, $PLACETOSAVEOUTPUT, and $STAGE should be the same as for the downloadOutputTrain script. In addition one has
-* $NFILESFORMERGING   (the amount of files to be merged using hadd, default is 4)
 
-## 4) Skimming
+If (some of the) arguments are empty, the script will ask for your input:
+1) The script will always ask for confirmation of the hardcoded variables (see below). Please read them carefully when submitting a job over full statistics.
+2) You will be asked to fill in the trainname (if not provided).
+3) You will be asked to fill in the dataset (if not provided).
+4) Confirmation will be asked to save output in "./" (if no outputdirectory was provided). Output path can be changed if one doesn't answer 'y' or 'Y'
+5) A warning will be shown that the script will download unmerged GRID files if the fourth argument was empty. This was however already checked in 1).
 
-Enable the mesons you want to skim in the submitSkimJobs.sh macro, specify if the output is Data or MC, pp or pPb/PbPb, and run:
+
+**Finally, note that the skimming and merging part of this script will be performed in sequential. So it will fill up the/your system. So please use with care!**
+
+### a) Hardcoded values
+
+A few variables are hardcoded in *DownloadSkimMerge.sh*:
+1) The number of files to download from GRID. By default all files will be downloaded: **nfiles="/*/"**. For test runs, one can add some zeros ("/000*/", assuming 1000 < jobs < 9999) to download less files.
+2) The file to be downloaded is by default: **AnalysisResults.root**.
+3) The different particles can be turned on/off. By default all (D+, Ds, D0, D*, and Lc) are turned **on**.
+4) The number of skimmed files to merge is set to **150**, which will give merged files of ~8GB. This number is based on the output of train 308, and should be reconsidered for different trains.
+
+### b) The screen program
+
+If one will download and process the full statistics, the *screen* program can be very usefull. This program allows you to keep programs running on the remote computer even if you disconnect from it. To use it, one should do:
 ```
-./submitSkimJobs.sh /path/to/mergeSkimOutputDir_$NFILESFORMERGING/lsOutputMergedList_$TRAINNAME$STAGE.txt
+ssh -X lxplus7.cern.ch
+screen    #A empty terminal will pop up
+#Do everything till the DownloadSkimMerge.sh is running
 ```
-The txt file is saved by the mergefiles.sh script. The variables should therefore be the same as used before. 
-> **NB:** If no merging was applied (not recommended), one has to tweak a bit the listfilesMerging_%s%s.txt output of the downloading stage.
+When the script is running, you can detach from it by pressing **Ctrl-a d**. You will find yourself back in the previous terminal. Before quiting, there is some information you should remember:
+```
+screen -list     #Should print something like: "There is a screen on: 32693.pts-30.lxplus008    (Detached)"
+hostname         #Should print something like: "lxplus008.cern.ch"
+```
+Save this information somewhere, disconnect from lxplus, and start doing something else.
+
+When the script is ready, or you want to check the progress, just do:
+```
+ssh lxplus008.cern.ch                   #Change to your situation
+screen -list
+screen -rD 32693.pts-30.lxplus008       #Change to your situation
+```
+Is the script ready? Exit the *screen* program with **Ctrl-d**. Is the script still running, detach again with **Ctrl-a d**.
+
 
 ## In case of problems:
 
