@@ -4,34 +4,55 @@
 #    jalien
 #    <Enter Grid certificate password>
 #    exit
-#    ./downloadOutputTrain.sh $TRAINNAME $PLACETOSAVEOUTPUT $STAGEGRIDMERGING
-
+#
 #Arguments to this bash:
 #   $1 is trainname (e.g. 297_20181120-2315_child_1)
-#   $2 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
-#   $3 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
+#   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
+#   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
+#   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
 #
 #To set in script (find with "#toset"):
-#   OUTPUTPATH (output directory of train)
 #   NFILES     (/*/ = download all files, /000*/ is 10 files, /00*/ is 100 files, etc)
 #   OUTPUTFILE (name of file to download)
+#   What mesons to skim
 
-nfiles="/000*/" #toset Options: "0* "00*" "000*" #Assumed 1000 < jobs < 9999, if different, change number of zeros
-outputfile=AnalysisResults #toset
+printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
 
+
+
+#----THINGS TO SET----#
+nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+outputfile="AnalysisResults" #toset
+
+doDplus=0       #toset (skimmers)
+doDs=0          #toset (skimmers)
+doDzero=0       #toset (skimmers)
+doDstar=1       #toset (skimmers)
+doLc=0          #toset (skimmers)
+#doBplus=0      #to be added
+#doPID=0        #to be added
+
+filestomerge=4
+
+
+#----INITIALIZING----#
 if [ -z "$1" ]; then
   printf "Please enter train name: "
   read trainname
-  printf "\n"
+  printf "  Will download \e[1m$outputfile.root\e[0m output from train: \e[1m$trainname\e[0m \n"
 else
   trainname=$1
+  printf "Will download \e[1m$outputfile.root\e[0m output from train: \e[1m$trainname\e[0m \n"
 fi
 
-dataset=$2
 if [ -z "$2" ]; then
-  printf "Please enter dataset name (LHC17pq, LHC18a4a2, ...): "
+  printf "\nPlease enter dataset name (LHC17pq, LHC18a4a2, ...): "
   read dataset
-  printf "Warning: For now only the Devel_2 LEGO train is implemented. Please change the paths when needed\n\n"
+  printf "  Chosen dataset: \e[1m$dataset\e[0m\n"
+#  printf "  \e[0;31mWarning: For now only the Devel_2 LEGO train is implemented.\e[0m\n"
+else
+  dataset=$2
+  printf "\nChosen dataset: \e[1m$dataset\e[0m\n"
 fi
 
 if [ "$dataset" == "LHC17pq" ]; then
@@ -40,50 +61,191 @@ if [ "$dataset" == "LHC17pq" ]; then
   inputpathchild3=/alice/data/2017/LHC17q/000282366/pass1_FAST/PWGZZ/Devel_2
   inputpathchild4=/alice/data/2017/LHC17q/000282366/pass1_CENT_wSDD/PWGZZ/Devel_2
   ninput=4
+  isMC=0
+  ispp=1
 elif [ "$dataset" == "LHC18a4a2" ]; then
   inputpathchild1=/alice/sim/2018/LHC18a4a2_fast/282341/PWGZZ/Devel_2
   inputpathchild2=/alice/sim/2018/LHC18a4a2_fast/282366/PWGZZ/Devel_2
   inputpathchild3=/alice/sim/2018/LHC18a4a2_cent/282341/PWGZZ/Devel_2
   inputpathchild4=/alice/sim/2018/LHC18a4a2_cent/282366/PWGZZ/Devel_2
   ninput=4
+  isMC=1
+  ispp=1
 else
-  printf "Error: Dataset not yet implemented. Returning...\n\n"
+  printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
 fi
 
-placetosave=$3
 if [ -z "$3" ]; then
-  printf "Warning: No output directory was entered, files will be saved in ./\n\n"
-  placetosave=$(pwd)
+printf "\n\e[0;31mWarning: No output directory was given as argument. Files will be saved in \"./\".\e[0m\n  \e[1mWas this intended? [y/n]:\e[0m "
+  read answer
+  if [ "$answer" == "y" ]; then
+    placetosave=$(pwd)
+  elif [ "$answer" == "Y" ]; then
+    placetosave=$(pwd)
+  else
+    printf "  Please enter output directory: "
+    read placetosave
+  fi
+  printf "  Output will be saved in: \e[1m$placetosave\e[0m \n"
 else
-  printf "Output will be saved in: $placetosave \n\n"
+  placetosave=$3
+  printf "\nOutput will be saved in: \e[1m$placetosave\e[0m \n"
 fi
 
-stage=$4
 if [ -z "$4" ]; then
-  printf "Warning: No GRID merging stage was entered. Will download all files\n\n"
+  printf "\n\e[0;31mWarning: No GRID merging stage was entered. I will download non-merged files\e[0m\n"
+else
+  stage=$4
+  printf "\nI will download files from GRID merging: \e[1m$stage\e[0m    (if not in format Stage_#, download will fail)\n"
 fi
 
 mkdir -p -m 777 $placetosave/$trainname
 if [ $? -ne 0 ]; then
-  printf "Could not create output directory. Is $placetosave writable? Returning... \n\n"
+  printf "\n\e[1;31mError: Could not create output directory. Is $placetosave writable? Returning... \e[0m\n\n"
   exit
 else
-   printf "Created directory: $placetosave/$trainname \n"
+   printf "\nCreated directory: \e[1m$placetosave/$trainname\e[0m \n"
 fi
-mkdir -p -m 777 $placetosave/$trainname/$stage
-if [ $? -ne 0 ]; then
-  printf "Could not create output directory. Is $placetosave writable? Returning... \n\n"
-  exit
+
+timestamp="$(date +"%H-%M-%S")"
+if [ -z "$4" ]; then
+  stdoutputfile=$(printf "%s_stdout_%s.txt" $trainname $timestamp)
+  stderrorfile=$(printf "%s_stderr_%s.txt" $trainname $timestamp)
 else
-  printf "Created $placetosave/$trainname/$stage \n\n"
+  stdoutputfile=$(printf "%s_%s_stdout_%s.txt" $trainname $stage $timestamp)
+  stderrorfile=$(printf "%s_%s_stderr_%s.txt" $trainname $stage $timestamp)
 fi
+
 
 
 #----RUNNING THE DOWNLOADER----#
-if [ $ninput -eq 4 ]; then
-  sh ./downloader.sh $inputpathchild1 1 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpathchild2 2 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpathchild3 3 $nfiles $outputfile $placetosave $trainname $stage
-  sh ./downloader.sh $inputpathchild4 4 $nfiles $outputfile $placetosave $trainname $stage
+printf "\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
+printf "  Output of downloaders stored in:            \e[1m%s\e[0m\n  Warnings/Errors of downloader stored in:    \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
+rundownloader="sh ./downloader.sh"
+
+printf "\n\n\n\nOutput downloading starts here\n\n" > "$stdoutputfile"
+printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
+
+if [ $ninput -eq 1 ]; then
+  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+#If this crashes on server, just use:
+#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
+elif [ $ninput -eq 2 ]; then
+  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+#If this crashes on server, just use:
+#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
+elif [ $ninput -eq 3 ]; then
+  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+#If this crashes on server, just use:
+#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage
+elif [ $ninput -eq 4 ]; then
+  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+#If this crashes on server, just use:
+#  sh ./downloader.sh $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage
+#  sh ./downloader.sh $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage
+else
+  printf "ERROR: More than 4 childs not yet supported, please implement. Returning..."
+  exit
 fi
+
+if grep -q "jalien\|command not found" "$stderrorfile"
+then
+  printf "\e[1;31m  Warning: The 'jalien' command was not found, so no new files where downloaded. Did you already connect to JAliEn? Check log if this was not intended!\e[0m\n\n"
+fi
+
+
+
+#----RUNNING THE SKIMMER----#
+printf "\n\n\e[1m----RUNNING THE SKIMMER----\e[0m\n\n"
+printf "Skimming for: Dzero (%s), Dplus (%s), Ds (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+
+for ((i=1; i<=$ninput; i++))
+do
+  if [ -z "$stage" ]; then
+    outputlist=$(printf "%s/%s/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
+  else
+    outputlist=$(printf "%s/%s/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
+  fi
+
+  skimmeroutputfile="skimmer_stdout.txt"
+  skimmererrorfile="skimmer_stderr.txt"
+  printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
+  runskimmer="sh ./skimmer.sh"
+
+  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
+  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
+
+  sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+
+  if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault" "$skimmererrorfile"
+  then
+    printf "\e[1;31mwith errors, check log!\e[0m\n\n"
+  else
+    printf "\e[1;32mwithout errors\e[0m\n\n"
+  fi
+
+  cat "$skimmeroutputfile" >> "$stdoutputfile"
+  cat "$skimmererrorfile" >> "$stderrorfile"
+  rm "$skimmeroutputfile" "$skimmererrorfile"
+
+  #It might be that the above doesn't work on server, just comment to 11 lines above, and uncomment the one below (but note a lot of will printed in terminal)
+  #sh ./skimmer.sh $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc
+done
+
+
+
+#----RUNNING THE MERGER----#
+printf "\n\e[1m----RUNNING THE MERGER----\e[0m\n\n"
+printf "Merging for: Dzero (%s), Dplus (%s), Ds (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+
+for ((i=1; i<=$ninput; i++))
+do
+
+  mergeroutputfile="merger_stdout.txt"
+  mergererrorfile="merger_stderr.txt"
+  printf "  Output of merger (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of merger stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
+  runmerger="sh ./merger.sh"
+
+  printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergeroutputfile"
+  printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergererrorfile"
+
+  if [ "$doDzero" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+  if [ "$doDplus" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+  if [ "$doDs" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+  if [ "$doDstar" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+  if [ "$doLc" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Lc" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+
+  cat "$mergeroutputfile" >> "$stdoutputfile"
+  cat "$mergererrorfile" >> "$stderrorfile"
+  rm "$mergeroutputfile" "$mergererrorfile"
+
+done
+
+
+mv $stdoutputfile $placetosave/$trainname/
+mv $stderrorfile $placetosave/$trainname/
+
+printf "\n\e[1mMoved log files to $placetosave/$trainname/\e[0m\n"
+printf "\n\e[1m----DOWNLOADER-SKIMMER-MERGER FINISHED----\e[0m\n\n"

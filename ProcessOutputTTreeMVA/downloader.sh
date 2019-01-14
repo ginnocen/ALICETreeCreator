@@ -1,27 +1,54 @@
 #!/bin/bash
 
-OUTPUTPATH=$1
+DWNLDOUTPUTPATH=$1
 CHILD=$2
 NFILES=$3
-OUTPUTFILE=$4
+DWNLDOUTPUTFILE=$4
 BASEDIR=$5
 TRAINNAME=$6
 STAGE=$7
 
-SAVEDIR=$(printf "%s/%s/%s/child_%s" $BASEDIR $TRAINNAME $STAGE $CHILD)
+SAVEDIR=$(printf "%s/%s/child_%s" $BASEDIR $TRAINNAME $CHILD)
 mkdir -p -m 777 $SAVEDIR
+if [ $? -ne 0 ]; then
+  printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"
+  exit
+else
+  printf "Created directory: $SAVEDIR \n"
+fi
 
-OUTPUTPATH=$(printf "%s/%s_child_%s/%s" $OUTPUTPATH $TRAINNAME $CHILD $STAGE)
-echo "Downloading LEGO train files from: $OUTPUTPATH\n"
+if [ -z "$7" ]; then
+  #do nothing, if-statement to be reversed
+  dummy=1
+else
+  SAVEDIR=$(printf "%s/%s/child_%s/%s/" $BASEDIR $TRAINNAME $CHILD $STAGE)
+  mkdir -p -m 777 $SAVEDIR
+  if [ $? -ne 0 ]; then
+    printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"
+    exit
+  else
+    printf "Created directory: $SAVEDIR \n"
+  fi
+fi
 
-cmd=$(printf "cp -T 32 %s/%s/%s.root file:%s/\n" $OUTPUTPATH "$NFILES" $OUTPUTFILE $SAVEDIR)
+DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $CHILD $STAGE)
+printf "Downloading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
+
+cmd=$(printf "cp -T 32 %s/%s/%s.root file:%s/\n" $DWNLDOUTPUTPATH "$NFILES" $DWNLDOUTPUTFILE $SAVEDIR)
 
 jalien << EOF
 $cmd
 exit
 EOF
 
-nameoutputlist=$(printf "listfilesMerging_%s%s.txt" $TRAINNAME $STAGE)
-find $BASEDIR/$TRAINNAME/$STAGE/*/ -maxdepth 1 -not -type d> $nameoutputlist
+nameoutputlist=$(printf "listfiles_%s_child_%s%s.txt" $TRAINNAME $CHILD $STAGE)
+find $SAVEDIR/*/$DWNLDOUTPUTFILE.root -maxdepth 1 -not -type d> $nameoutputlist
+if [ $? -ne 0 ]; then
+  printf "\r                         \e[1;31mWarning: No files where downloaded. Did you enter JAliEn environment before? Are you connected to internet? Did you set the correct path?\e[0m" > /dev/tty
+  printf "$SAVEDIR/printing-line-to-give-a-warning-as-no-files-where-downloaded/$DWNLDOUTPUTFILE.root" >> $nameoutputlist
+else
+  NDWNLFILES=$(wc -l < "$nameoutputlist")
+  printf "\r                         \e[1;32mSuccessfully. %s files downloaded.\e[0m" $NDWNLFILES > /dev/tty
+fi
 
-mv $nameoutputlist $BASEDIR/$TRAINNAME/$STAGE/
+mv $nameoutputlist $SAVEDIR
