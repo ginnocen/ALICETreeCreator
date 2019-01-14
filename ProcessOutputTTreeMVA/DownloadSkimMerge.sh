@@ -35,6 +35,23 @@ doLc=0          #toset (skimmers)
 filestomerge=4
 
 
+printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
+printf "   Number of files to download from grid: \e[1m$nfiles\e[0m\n"
+printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
+printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: average size of one skimmed file is XX for unmerged, and XX for Stage_1 merging)\e[0m\n"
+printf "   Particles that are enabled: Dzero \e[1m(%s)\e[0m, Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
+
+printf "\n\e[1m   Are you okay with these settings [y/n]: \e[0m"
+read answer
+if [ "$answer" == "y" ]; then
+  printf "   Thanks for confirming. Continuing...\n\n"
+elif [ "$answer" == "Y" ]; then
+  printf "   Thanks for confirming. Continuing...\n\n"
+else
+  printf "  \e[1;31mERROR: Please correct in script. \e[0m\n\n"
+  exit
+fi
+
 #----INITIALIZING----#
 if [ -z "$1" ]; then
   printf "Please enter train name: "
