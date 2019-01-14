@@ -45,5 +45,8 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   hadd "${line}_${PARTICLE}.root" @"$line" &
 done < "$nameoutputlist"
 
+## wait till all merging jobs are finished
+wait
+
 sed -i "" "s|$|_${PARTICLE}.root|g" $nameoutputlist
 mv $nameoutputlist $nameoutput/
