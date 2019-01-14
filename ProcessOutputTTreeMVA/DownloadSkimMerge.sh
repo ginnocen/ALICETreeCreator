@@ -24,15 +24,15 @@ printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
 nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
 
-doDplus=0       #toset (skimmers)
-doDs=0          #toset (skimmers)
-doDzero=0       #toset (skimmers)
+doDplus=1       #toset (skimmers)
+doDs=1          #toset (skimmers)
+doDzero=1       #toset (skimmers)
 doDstar=1       #toset (skimmers)
-doLc=0          #toset (skimmers)
+doLc=1          #toset (skimmers)
 #doBplus=0      #to be added
 #doPID=0        #to be added
 
-filestomerge=4
+filestomerge=150
 
 
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
