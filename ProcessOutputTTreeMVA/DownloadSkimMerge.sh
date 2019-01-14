@@ -40,6 +40,9 @@ printf "   Number of files to download from grid: \e[1m$nfiles\e[0m\n"
 printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
 printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: average size of one skimmed file is XX for unmerged, and XX for Stage_1 merging)\e[0m\n"
 printf "   Particles that are enabled: Dzero \e[1m(%s)\e[0m, Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
+if [ -z "$4" ]; then
+  printf "   You didn't provide the GRID merging stage as argument. I will download \e[1mnon-merged files\e[0m from GRID\n"
+fi
 
 printf "\n\e[1m   Are you okay with these settings [y/n]: \e[0m"
 read answer
@@ -48,7 +51,7 @@ if [ "$answer" == "y" ]; then
 elif [ "$answer" == "Y" ]; then
   printf "   Thanks for confirming. Continuing...\n\n"
 else
-  printf "  \e[1;31mERROR: Please correct in script. \e[0m\n\n"
+  printf "   \e[1;31mERROR: Please correct in script. \e[0m\n\n"
   exit
 fi
 
@@ -117,12 +120,21 @@ else
   printf "\nI will download files from GRID merging: \e[1m$stage\e[0m    (if not in format Stage_#, download will fail)\n"
 fi
 
+datestamp="$(date +"%d-%m-%Y")"
+mkdir -p -m 777 $placetosave/$datestamp
+  if [ $? -ne 0 ]; then
+    printf "\n\e[1;31mError: Could not create output directory. Is $placetosave writable? Returning... \e[0m\n\n"
+  exit
+else
+  printf "\nCreated directory: \e[1m$placetosave/$datestamp\e[0m \n"
+fi
+placetosave=$placetosave/$datestamp
 mkdir -p -m 777 $placetosave/$trainname
 if [ $? -ne 0 ]; then
   printf "\n\e[1;31mError: Could not create output directory. Is $placetosave writable? Returning... \e[0m\n\n"
   exit
 else
-   printf "\nCreated directory: \e[1m$placetosave/$trainname\e[0m \n"
+   printf "Created directory: \e[1m$placetosave/$trainname\e[0m \n"
 fi
 
 timestamp="$(date +"%H-%M-%S")"
