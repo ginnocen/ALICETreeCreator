@@ -16,13 +16,13 @@ STAGE=$6
 
 inputfile=$(printf "%s/%s/child_%s/%s/listfiles_%s_child_%s%s.txt" $BASEDIR $TRAINNAME $CHILD $STAGE $TRAINNAME $CHILD $STAGE)
 inputfileskim=$(printf "%s/%s/child_%s/%s/listfiles_Skimmed%s_%s_child_%s%s.txt" $BASEDIR $TRAINNAME $CHILD $STAGE $PARTICLE $TRAINNAME $CHILD $STAGE)
-nameoutput=$(printf "%s/%s/child_%s/%s/mergeSkimOutputDir_%s_%s" $BASEDIR $TRAINNAME $CHILD $STAGE $PARTICLE "$nfilesformerging")
-nameoutputlist=$(printf "listfiles_Merged%s_%s_child_%s%s.txt" $PARTICLE $TRAINNAME $CHILD $STAGE)
+nameoutput=$(printf "%s/%s/child_%s/%s/MergeDir_%s_%sfiles" $BASEDIR $TRAINNAME $CHILD $STAGE $PARTICLE "$nfilesformerging")
+nameoutputlist=$(printf "listfiles_Skimmed%s_%s_child_%s%s.txt" $PARTICLE $TRAINNAME $CHILD $STAGE)
 if [ -z "$STAGE" ]; then
   inputfile=$(printf "%s/%s/child_%s/listfiles_%s_child_%s.txt" $BASEDIR $TRAINNAME $CHILD $TRAINNAME $CHILD)
   inputfileskim=$(printf "%s/%s/child_%s/listfiles_Skimmed%s_%s_child_%s.txt" $BASEDIR $TRAINNAME $CHILD $PARTICLE $TRAINNAME $CHILD)
-  nameoutput=$(printf "%s/%s/child_%s/mergeSkimOutputDir_%s_%s" $BASEDIR $TRAINNAME $CHILD $PARTICLE "$nfilesformerging")
-  nameoutputlist=$(printf "listfiles_Merged%s_%s_child_%s.txt" $PARTICLE $TRAINNAME $CHILD)
+  nameoutput=$(printf "%s/%s/child_%s/MergeDir_%s_%sfiles" $BASEDIR $TRAINNAME $CHILD $PARTICLE "$nfilesformerging")
+  nameoutputlist=$(printf "listfiles_Skimmed%s_%s_child_%s.txt" $PARTICLE $TRAINNAME $CHILD)
 fi
 
 printf "\n\n\nMerging output for particle: $PARTICLE \n"
@@ -37,12 +37,12 @@ mkdir -p -m 777 $nameoutput
 cp "$inputfile" "$inputfileskim"
 
 sed -i "" "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
-split -l $nfilesformerging $inputfileskim $nameoutput/merged-file
-ls $nameoutput/merged-file*> $nameoutputlist
+split -l $nfilesformerging $inputfileskim $nameoutput/merged_skimmedFile_
+ls $nameoutput/merged_skimmedFile_*> $nameoutputlist
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
   echo $line
-  hadd "${line}_${PARTICLE}.root" @"$line"
+  hadd "${line}_${PARTICLE}.root" @"$line" &
 done < "$nameoutputlist"
 
 sed -i "" "s|$|_${PARTICLE}.root|g" $nameoutputlist

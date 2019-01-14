@@ -139,11 +139,11 @@ fi
 
 timestamp="$(date +"%H-%M-%S")"
 if [ -z "$4" ]; then
-  stdoutputfile=$(printf "%s_stdout_%s.txt" $trainname $timestamp)
-  stderrorfile=$(printf "%s_stderr_%s.txt" $trainname $timestamp)
+  stdoutputfile=$(printf "%s_stdout_%s-%s.txt" $trainname $datestamp $timestamp)
+  stderrorfile=$(printf "%s_stderr_%s-%s.txt" $trainname $datestamp $timestamp)
 else
-  stdoutputfile=$(printf "%s_%s_stdout_%s.txt" $trainname $stage $timestamp)
-  stderrorfile=$(printf "%s_%s_stderr_%s.txt" $trainname $stage $timestamp)
+  stdoutputfile=$(printf "%s_%s_stdout_%s-%s.txt" $trainname $stage $datestamp $timestamp)
+  stderrorfile=$(printf "%s_%s_stderr_%s-%s.txt" $trainname $stage $datestamp $timestamp)
 fi
 
 
@@ -194,7 +194,8 @@ then
   printf "\e[1;31m  Warning: The 'jalien' command was not found, so no new files where downloaded. Did you already connect to JAliEn? Check log if this was not intended!\e[0m\n\n"
 fi
 
-
+#For safety, wait till downloading is finished
+wait
 
 #----RUNNING THE SKIMMER----#
 printf "\n\n\e[1m----RUNNING THE SKIMMER----\e[0m\n\n"
@@ -233,7 +234,8 @@ do
   #sh ./skimmer.sh $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc
 done
 
-
+#For safety, wait till skimming is finished
+wait
 
 #----RUNNING THE MERGER----#
 printf "\n\e[1m----RUNNING THE MERGER----\e[0m\n\n"
