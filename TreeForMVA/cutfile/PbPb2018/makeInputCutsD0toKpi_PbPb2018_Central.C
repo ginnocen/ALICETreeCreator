@@ -66,8 +66,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsArrayD0toKpi[5][0]=999999.;
         cutsArrayD0toKpi[6][0]=999999.;
         cutsArrayD0toKpi[7][0]=-0.00001;  // d0xd0
-        cutsArrayD0toKpi[8][0]=0.8;
-        cutsArrayD0toKpi[9][0]=0.9;
+        cutsArrayD0toKpi[8][0]=0.7;
+        cutsArrayD0toKpi[9][0]=0.7;
         cutsArrayD0toKpi[10][0]=0.;
         //5-inf
         cutsArrayD0toKpi[0][1]=0.4;  //D0 inv mass window
