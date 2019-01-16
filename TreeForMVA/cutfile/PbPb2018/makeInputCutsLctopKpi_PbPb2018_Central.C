@@ -1,6 +1,6 @@
 #include <Riostream.h>
 #include <TFile.h>
-#include <AliRDHFCutsDplustoKpipi.h>
+#include <AliRDHFCutsLctopKpi.h>
 #include <TClonesArray.h>
 #include <TParameter.h>
 
