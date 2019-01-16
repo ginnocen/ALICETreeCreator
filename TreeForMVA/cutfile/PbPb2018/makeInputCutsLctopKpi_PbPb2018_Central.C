@@ -1,6 +1,6 @@
 #include <Riostream.h>
 #include <TFile.h>
-#include <AliRDHFCutsDplustoKpipi.h>
+#include <AliRDHFCutsLctopKpi.h>
 #include <TClonesArray.h>
 #include <TParameter.h>
 
@@ -21,7 +21,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
 {
     
     AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
@@ -33,24 +33,27 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     //default
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetMinNClustersITS(2); // default for run 2
+    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
+    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
+    if(whichCuts==1)esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
-    
+    esdTrackCuts->SetPtRange(0.5,1.e10);
+    //esdTrackCuts->SetPtRange(0.3,1.e10);
+    esdTrackCuts->SetMaxDCAToVertexXY(1.);
+    esdTrackCuts->SetMaxDCAToVertexZ(1.);
+    esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cuts->AddTrackCuts(esdTrackCuts);
 
     // cuts
     Int_t nptbins=2; Float_t ptlimits[2]={0.,1000000.};
-//    cuts->SetStandardCutsPbPb2011();
+    //cuts->SetStandardCutsPbPb2011();
     cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
-    Float_t cutsArrayLctopKpi[13]={0.18,0.3,0.3,0.,0.,0.,0.06,0.,0.,-1.,0.,0.05,0.3};
+    Float_t cutsArrayLctopKpi[13]={0.13,0.5,0.625,0.,0.,0.0125,0.045,0.00625,0.8,0.25,0.,0.0375,0.5};
     cuts->SetPtBins(nptbins,ptlimits);
     cuts->SetCuts(13,cutsArrayLctopKpi);
-    cuts->AddTrackCuts(esdTrackCuts);
-    //cuts->SetMinPtCandidate(1.);
+    cuts->SetMinPtCandidate(4.);
     
   AliAODPidHF* pidObjp=new AliAODPidHF();
   AliAODPidHF* pidObjK=new AliAODPidHF();
@@ -119,10 +122,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     //event selection
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+    cuts->SetMinCentrality(minc);
+    cuts->SetMaxCentrality(maxc);
     cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,k CentInvalid
-		cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
+	cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
     cuts->SetMaxVtxZ(10.);
-    cuts->SetCutOnzVertexSPD(2);
+    cuts->SetCutOnzVertexSPD(3);
     cuts->SetKinkRejection(kTRUE);
 
     cout<<"This is the object I'm going to save:"<<endl;
