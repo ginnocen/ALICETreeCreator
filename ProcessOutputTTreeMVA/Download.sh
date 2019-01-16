@@ -17,30 +17,18 @@
 #   What mesons to skim
 #   Number of files to merge
 
-printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
+printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
 
 
 
 #----THINGS TO SET----#
-nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
-
-doDplus=1       #toset (skimmers)
-doDs=1          #toset (skimmers)
-doDzero=1       #toset (skimmers)
-doDstar=1       #toset (skimmers)
-doLc=1          #toset (skimmers)
-#doBplus=0      #to be added
-#doPID=0        #to be added
-
-filestomerge=150
 
 
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
 printf "   Number of files to download from grid: \e[1m$nfiles\e[0m\n"
 printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
-printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: average size of one skimmed file is XX for unmerged, and XX for Stage_1 merging)\e[0m\n"
-printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
 if [ -z "$4" ]; then
   printf "   You didn't provide the GRID merging stage as argument. I will download \e[1mnon-merged files\e[0m from GRID\n"
 fi
@@ -140,11 +128,11 @@ fi
 
 timestamp="$(date +"%H-%M-%S")"
 if [ -z "$4" ]; then
-  stdoutputfile=$(printf "DSM_%s_stdout_%s-%s.txt" $trainname $datestamp $timestamp)
-  stderrorfile=$(printf "DSM_%s_stderr_%s-%s.txt" $trainname $datestamp $timestamp)
+  stdoutputfile=$(printf "D_%s_stdout_%s-%s.txt" $trainname $datestamp $timestamp)
+  stderrorfile=$(printf "D_%s_stderr_%s-%s.txt" $trainname $datestamp $timestamp)
 else
-  stdoutputfile=$(printf "DSM_%s_%s_stdout_%s-%s.txt" $trainname $stage $datestamp $timestamp)
-  stderrorfile=$(printf "DSM_%s_%s_stderr_%s-%s.txt" $trainname $stage $datestamp $timestamp)
+  stdoutputfile=$(printf "D_%s_%s_stdout_%s-%s.txt" $trainname $stage $datestamp $timestamp)
+  stderrorfile=$(printf "D_%s_%s_stderr_%s-%s.txt" $trainname $stage $datestamp $timestamp)
 fi
 
 
@@ -181,87 +169,8 @@ then
   printf "\e[1;31m  Warning: The 'jalien' command was not found, so no new files where downloaded. Did you already connect to JAliEn? Check log if this was not intended!\e[0m\n\n"
 fi
 
-#For safety, wait till downloading is finished
-wait
-
-#----RUNNING THE SKIMMER----#
-printf "\n\n\e[1m----RUNNING THE SKIMMER----\e[0m\n\n"
-printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
-
-for ((i=1; i<=$ninput; i++))
-do
-  if [ -z "$stage" ]; then
-    outputlist=$(printf "%s/%s/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
-  else
-    outputlist=$(printf "%s/%s/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
-  fi
-
-  skimmeroutputfile="skimmer_stdout.txt"
-  skimmererrorfile="skimmer_stderr.txt"
-  printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-  runskimmer="sh ./skimmer.sh"
-
-  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
-  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
-
-  sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
-
-  if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault" "$skimmererrorfile"
-  then
-    printf "\e[1;31mwith errors, check log!\e[0m\n\n"
-  else
-    printf "\e[1;32mwithout errors\e[0m\n\n"
-  fi
-
-  cat "$skimmeroutputfile" >> "$stdoutputfile"
-  cat "$skimmererrorfile" >> "$stderrorfile"
-  rm "$skimmeroutputfile" "$skimmererrorfile"
-
-done
-
-#For safety, wait till skimming is finished
-wait
-
-#----RUNNING THE MERGER----#
-printf "\n\e[1m----RUNNING THE MERGER----\e[0m\n\n"
-printf "Merging for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
-
-for ((i=1; i<=$ninput; i++))
-do
-
-  mergeroutputfile="merger_stdout.txt"
-  mergererrorfile="merger_stderr.txt"
-  printf "  Output of merger (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of merger stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-  runmerger="sh ./merger.sh"
-
-  printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergeroutputfile"
-  printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergererrorfile"
-
-  if [ "$doDplus" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
-  if [ "$doDs" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
-  if [ "$doDzero" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
-  if [ "$doDstar" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
-  if [ "$doLc" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Lc" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
-  fi
-
-  cat "$mergeroutputfile" >> "$stdoutputfile"
-  cat "$mergererrorfile" >> "$stderrorfile"
-  rm "$mergeroutputfile" "$mergererrorfile"
-
-done
-
-
 mv $stdoutputfile $placetosave/$trainname/
 mv $stderrorfile $placetosave/$trainname/
 
 printf "\n\e[1mMoved log files to $placetosave/$trainname/\e[0m\n"
-printf "\n\e[1m----DOWNLOADER-SKIMMER-MERGER FINISHED----\e[0m\n\n"
+printf "\n\e[1m----DOWNLOADER FINISHED----\e[0m\n\n"
