@@ -36,7 +36,7 @@ printf "Downloading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
 
 cmd=$(printf "cp -T 32 %s/%s/%s.root file:%s/\n" $DWNLDOUTPUTPATH "$NFILES" $DWNLDOUTPUTFILE $SAVEDIR)
 
-jalien << EOF
+/opt/jalien/src/jalien/jalien << EOF
 $cmd
 exit
 EOF

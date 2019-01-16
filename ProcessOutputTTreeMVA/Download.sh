@@ -17,12 +17,12 @@
 #   What mesons to skim
 #   Number of files to merge
 
-printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
+printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
 
 
 
 #----THINGS TO SET----#
-nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
 
 
@@ -173,4 +173,4 @@ mv $stdoutputfile $placetosave/$trainname/
 mv $stderrorfile $placetosave/$trainname/
 
 printf "\n\e[1mMoved log files to $placetosave/$trainname/\e[0m\n"
-printf "\n\e[1m----SKIMMER FINISHED----\e[0m\n\n"
+printf "\n\e[1m----DOWNLOADER FINISHED----\e[0m\n\n"
