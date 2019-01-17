@@ -31,7 +31,11 @@ else
   fi
 fi
 
-DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $CHILD $STAGE)
+if [ $CHILD -eq 0 ]; then
+  DWNLDOUTPUTPATH=$(printf "%s/%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $STAGE)
+else
+  DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $CHILD $STAGE)
+fi
 printf "Downloading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
 
 cmd=$(printf "cp -T 32 %s/%s/%s.root file:%s/\n" $DWNLDOUTPUTPATH "$NFILES" $DWNLDOUTPUTFILE $SAVEDIR)
@@ -42,7 +46,7 @@ exit
 EOF
 
 nameoutputlist=$(printf "listfiles_%s_child_%s%s.txt" $TRAINNAME $CHILD $STAGE)
-find $SAVEDIR/*/$DWNLDOUTPUTFILE.root -maxdepth 1 -not -type d> $nameoutputlist
+find $SAVEDIR/$NFILES/$DWNLDOUTPUTFILE.root -maxdepth 1 -not -type d> $nameoutputlist
 if [ $? -ne 0 ]; then
   printf "\r                         \e[1;31mWarning: No files where downloaded. Did you enter JAliEn environment before? Are you connected to internet? Did you set the correct path?\e[0m" > /dev/tty
   printf "$SAVEDIR/printing-line-to-give-a-warning-as-no-files-where-downloaded/$DWNLDOUTPUTFILE.root" >> $nameoutputlist

@@ -23,6 +23,13 @@ DataTree="tree_Dplus"
 g++ includeSkim/skimTreeDplusFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDplusFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
    ./skimTreeDplusFromEvt.exe "${line}" "${line%.*}_Dplus_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 5 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
 done < "$myfile"
 
 ## would wait until those are completed

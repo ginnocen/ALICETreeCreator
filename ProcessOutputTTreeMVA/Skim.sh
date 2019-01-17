@@ -26,7 +26,7 @@ doLc=0          #toset (skimmers)
 
 #Confirm with user if hardcoded values are what he/she wants
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
-printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
+printf "   Outputfile that was downloaded from grid: \e[1m$outputfile.root\e[0m\n"
 printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
 if [ -z "$4" ]; then
   printf "   You didn't provide the GRID merging stage as argument. I will look for \e[1mnon-merged files\e[0m from GRID\n"
@@ -105,7 +105,7 @@ if [ -z "$4" ]; then
   printf "\n\e[0;31mWarning: No GRID merging stage was entered. I will look for non-merged files\e[0m\n"
 else
   stage=$4
-  printf "\nI will download files from GRID merging: \e[1m$stage\e[0m    (if not in format Stage_#, download will fail)\n"
+  printf "\nI will look for files from GRID merging: \e[1m$stage\e[0m    (if not in format Stage_#, this will fail)\n"
 fi
 
 #User should provide the date when downloading was started (because of folder name)
