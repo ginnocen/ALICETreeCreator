@@ -58,7 +58,7 @@ fi
 
 #Checking argument 2, dataset
 if [ -z "$2" ]; then
-  printf "\nPlease enter dataset name (LHC17pq, LHC18a4a2, LHC16i2a, ...): "
+  printf "\nPlease enter dataset name (LHC17pq, LHC18a4a2, LHC16i2a, LHC18r, ...): "
   read dataset
   printf "  Chosen dataset: \e[1m$dataset\e[0m\n"
 #  printf "  \e[0;31mWarning: For now only the Devel_2 LEGO train is implemented.\e[0m\n"
@@ -129,7 +129,7 @@ fi
 datestamp="$(date +"%d-%m-%Y")"
 mkdir -p -m 777 $placetosave/$datestamp
 if [ $? -ne 0 ]; then
-    printf "\n\e[1;31mError: Could not create output directory. Is $placetosave writable? Returning... \e[0m\n\n"
+  printf "\n\e[1;31mError: Could not create output directory. Is $placetosave writable? Returning... \e[0m\n\n"
   exit
 else
   printf "\nCreated directory: \e[1m$placetosave/$datestamp\e[0m \n"
@@ -198,6 +198,11 @@ fi
 if grep -q "jalien\|command not found" "$stderrorfile"
 then
   printf "\e[1;31m  Warning: The 'jalien' command was not found, so no new files where downloaded. Did you already connect to JAliEn? Check log if this was not intended!\e[0m\n\n"
+fi
+#Check logs for the comman 'JBox agent could not be started' error. If this is the case, no files where downloaded.
+if grep -q "JBox agent\|could not be started" "$stderrorfile"
+then
+printf "\e[1;31m  Warning: The 'JBox agent' could not be started, so no new files where downloaded. Did you already connect to JAliEn? Check log if this was not intended!\e[0m\n\n"
 fi
 
 #Saving log files in output directory
