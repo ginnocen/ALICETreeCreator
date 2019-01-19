@@ -35,21 +35,17 @@ cp "$inputfile" "$inputfileskim"
 
 #Ubuntu:
 sed -i -e "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
+#macOS, I don't know why.. TO CHECK
+#sed -i "" "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
 firstline=$(head -n 1 $inputfileskim)
 skimmedname=${firstline##*/}
 skimmedname=${skimmedname/.root/_}
 mergedname="${skimmedname}Merged$nfilesformerging"
 
-#macOS, I don't know why.. TO CHECK
-#sed -i "" "s|.root|_${PARTICLE}_skimmed.root|g" $inputfileskim
-#split -l $nfilesformerging $inputfileskim $nameoutput/merged_skimmedFile_
 awk -v lines=$nfilesformerging -v outdir="$nameoutput/%04d" -v splitfile="$nameoutput/%04d/$mergedname" '{if((NR-1)%lines==0)system("mkdir -p \"" sprintf(outdir,1+int((NR-1)/lines)) "\""); print>sprintf(splitfile,1+int((NR-1)/lines))}' "$inputfileskim"
 
 rm ${nameoutput}/*/${mergedname}.root
 ls $nameoutput/*/$mergedname > $nameoutputlist
-for f in $nameoutput/*/$mergedname; do
-  mv "$f" "${f}.txt"
-done
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
   echo $line
@@ -59,8 +55,12 @@ done < "$nameoutputlist"
 ## wait till all merging jobs are finished
 wait
 
+for f in $nameoutput/*/$mergedname; do
+  mv "$f" "${f}.txt"
+done
+
 #Ubuntu:
 sed -i -e "s|$|.root|g" $nameoutputlist
 #macOS, I don't know why.. TO CHECK
-#sed -i "" "s|$|_${PARTICLE}.root|g" $nameoutputlist
+#sed -i "" "s|$|.root|g" $nameoutputlist
 mv $nameoutputlist $nameoutput/
