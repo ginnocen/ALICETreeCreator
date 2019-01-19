@@ -42,6 +42,11 @@ public :
    vector<float>   *max_norm_d0d0exp;
    vector<float>   *cos_t_star;
    vector<float>   *imp_par_prod;
+   vector<float>   *inv_mass_D0;
+   vector<float>   *pt_D0;
+   vector<float>   *y_D0;
+   vector<float>   *eta_D0;
+   vector<float>   *phi_D0;
    vector<float>   *p_prong0;
    vector<float>   *pt_prong0;
    vector<float>   *eta_prong0;
@@ -125,6 +130,11 @@ public :
    TBranch        *b_max_norm_d0d0exp;   //!
    TBranch        *b_cos_t_star;   //!
    TBranch        *b_imp_par_prod;   //!
+   TBranch        *b_inv_mass_D0;   //!
+   TBranch        *b_pt_D0;   //!
+   TBranch        *b_y_D0;   //!
+   TBranch        *b_eta_D0;   //!
+   TBranch        *b_phi_D0;   //!
    TBranch        *b_p_prong0;   //!
    TBranch        *b_pt_prong0;   //!
    TBranch        *b_eta_prong0;   //!
@@ -277,6 +287,11 @@ void tree_Dstar::Init(TTree *tree)
    max_norm_d0d0exp = 0;
    cos_t_star = 0;
    imp_par_prod = 0;
+   inv_mass_D0 = 0;
+   pt_D0 = 0;
+   y_D0 = 0;
+   eta_D0 = 0;
+   phi_D0 = 0;
    p_prong0 = 0;
    pt_prong0 = 0;
    eta_prong0 = 0;
@@ -365,6 +380,11 @@ void tree_Dstar::Init(TTree *tree)
    fChain->SetBranchAddress("max_norm_d0d0exp", &max_norm_d0d0exp, &b_max_norm_d0d0exp);
    fChain->SetBranchAddress("cos_t_star", &cos_t_star, &b_cos_t_star);
    fChain->SetBranchAddress("imp_par_prod", &imp_par_prod, &b_imp_par_prod);
+   fChain->SetBranchAddress("inv_mass_D0", &inv_mass_D0, &b_inv_mass_D0);
+   fChain->SetBranchAddress("pt_D0", &pt_D0, &b_pt_D0);
+   fChain->SetBranchAddress("y_D0", &y_D0, &b_y_D0);
+   fChain->SetBranchAddress("eta_D0", &eta_D0, &b_eta_D0);
+   fChain->SetBranchAddress("phi_D0", &phi_D0, &b_phi_D0);
    fChain->SetBranchAddress("p_prong0", &p_prong0, &b_p_prong0);
    fChain->SetBranchAddress("pt_prong0", &pt_prong0, &b_pt_prong0);
    fChain->SetBranchAddress("eta_prong0", &eta_prong0, &b_eta_prong0);
