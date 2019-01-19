@@ -137,6 +137,13 @@ if [ $? -ne 0 ]; then
 else
    printf "Created directory: \e[1m$placetosave/$trainname\e[0m \n"
 fi
+mkdir -p -m 777 $placetosave/$trainname/unmerged
+if [ $? -ne 0 ]; then
+  printf "\n\e[1;31mError: Could not create output directory. Is $placetosave/$trainname writable? Returning... \e[0m\n\n"
+  exit
+else
+   printf "Created directory: \e[1m$placetosave/$trainname/unmerged\e[0m \n"
+fi
 
 #Log filess (first letters are for macro) + date and timestamp
 timestamp="$(date +"%H-%M-%S")"

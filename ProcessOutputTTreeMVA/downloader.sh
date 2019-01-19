@@ -8,7 +8,7 @@ BASEDIR=$5
 TRAINNAME=$6
 STAGE=$7
 
-SAVEDIR=$(printf "%s/%s/child_%s" $BASEDIR $TRAINNAME $CHILD)
+SAVEDIR=$(printf "%s/%s/unmerged/child_%s" $BASEDIR $TRAINNAME $CHILD)
 mkdir -p -m 777 $SAVEDIR
 if [ $? -ne 0 ]; then
   printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"
@@ -21,7 +21,7 @@ if [ -z "$7" ]; then
   #do nothing, if-statement to be reversed
   dummy=1
 else
-  SAVEDIR=$(printf "%s/%s/child_%s/%s/" $BASEDIR $TRAINNAME $CHILD $STAGE)
+  SAVEDIR=$(printf "%s/%s/unmerged/child_%s/%s/" $BASEDIR $TRAINNAME $CHILD $STAGE)
   mkdir -p -m 777 $SAVEDIR
   if [ $? -ne 0 ]; then
     printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"

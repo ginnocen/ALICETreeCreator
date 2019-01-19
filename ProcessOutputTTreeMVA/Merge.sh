@@ -132,16 +132,40 @@ if [ ! -d "$placetosave/$trainname" ]; then
   exit
 else
   printf "Input directory exist. Processing: $placetosave/$trainname\n"
+fi
+
+if [ ! -d "$placetosave/$trainname/unmerged" ]; then
+  printf "\n\e[1;31mError: Could not find input directory: $placetosave/$trainname/unmerged. Is the data downloaded? Returning... \e[0m\n\n"
+  exit
+else
+  printf "Input directory exist. Processing: $placetosave/$trainname/unmerged\n"
+
+  mkdir -p -m 777 $placetosave/$trainname/merged
+  if [ $? -ne 0 ]; then
+    printf "\n\e[1;31mError: Could not create output directory. Is $placetosave/$trainname writable? Returning... \e[0m\n\n"
+    exit
+  else
+    printf "Created directory: \e[1m$placetosave/$trainname/merged\e[0m \n"
+  fi
 
   #Saving the existing childs in bitmap, so macro will not look for child that was not downloaded
   childs=0
   for ((i=$ninput; i>=1; i--))
   do
-    if [ ! -d "$placetosave/$trainname/child_$i" ]; then
-      printf "\e[1;31mWarning: Could not find input directory: $placetosave/$trainname/child_$i. \e[0m\n"
+    if [ ! -d "$placetosave/$trainname/unmerged/child_$i" ]; then
+      printf "\e[1;31mWarning: Could not find input directory: $placetosave/$trainname/unmerged/child_$i. \e[0m\n"
       childs=$((childs<<1))
     else
-      printf "Input directory exist. Processing: $placetosave/$trainname/child_$i\n"
+      printf "Input directory exist. Processing: $placetosave/$trainname/unmerged/child_$i\n"
+
+      mkdir -p -m 777 $placetosave/$trainname/merged/child_$i
+      if [ $? -ne 0 ]; then
+        printf "\n\e[1;31mError: Could not create output directory. Is $placetosave/$trainname/merged writable? Returning... \e[0m\n\n"
+        exit
+      else
+        printf "Created directory: \e[1m$placetosave/$trainname/merged/child_$i\e[0m \n"
+      fi
+
       childs=$((childs<<1))
       childs=$((childs+1))
     fi

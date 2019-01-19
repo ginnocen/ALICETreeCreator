@@ -70,7 +70,7 @@ fi
 
 #Hardcoded information about dataset
 if [ "$dataset" == "LHC17pq" ]; then
-  ninput=1 #LHC17pq for Devel_2 has 4 childs
+  ninput=4 #LHC17pq for Devel_2 has 4 childs
   isMC=0
   ispp=1
 elif [ "$dataset" == "LHC18a4a2" ]; then
@@ -127,16 +127,23 @@ if [ ! -d "$placetosave/$trainname" ]; then
   exit
 else
   printf "Input directory exist. Processing: $placetosave/$trainname\n"
+fi
+
+if [ ! -d "$placetosave/$trainname/unmerged" ]; then
+  printf "\n\e[1;31mError: Could not find input directory: $placetosave/$trainname/unmerged. Is the data downloaded? Returning... \e[0m\n\n"
+  exit
+else
+  printf "Input directory exist. Processing: $placetosave/$trainname/unmerged\n"
 
   #Saving the existing childs in bitmap, so macro will not look for child that was not downloaded
   childs=0
   for ((i=$ninput; i>=1; i--))
   do
-    if [ ! -d "$placetosave/$trainname/child_$i" ]; then
-      printf "\e[1;31mWarning: Could not find input directory: $placetosave/$trainname/child_$i. \e[0m\n"
+    if [ ! -d "$placetosave/$trainname/unmerged/child_$i" ]; then
+      printf "\e[1;31mWarning: Could not find input directory: $placetosave/$trainname/unmerged/child_$i. \e[0m\n"
       childs=$((childs<<1))
     else
-      printf "Input directory exist. Processing: $placetosave/$trainname/child_$i\n"
+      printf "Input directory exist. Processing: $placetosave/$trainname/unmerged/child_$i\n"
       childs=$((childs<<1))
       childs=$((childs+1))
     fi
@@ -187,9 +194,9 @@ do
   if [ "$foundchild" == "1" ]; then
     #Load the .txt in which downloader saved list of files
     if [ -z "$stage" ]; then
-      outputlist=$(printf "%s/%s/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
+      outputlist=$(printf "%s/%s/unmerged/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
     else
-      outputlist=$(printf "%s/%s/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
+      outputlist=$(printf "%s/%s/unmerged/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
     fi
 
     #First save logs in separate file, so macro can search for "error"-related words
