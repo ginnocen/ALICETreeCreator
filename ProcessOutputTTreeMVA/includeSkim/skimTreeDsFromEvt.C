@@ -74,9 +74,6 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeDsML->Branch("cos_p_ML",&cos_p_ML,"cos_p_ML/F");
   fTreeDsML->Branch("cos_p_xy_ML",&cos_p_xy_ML,"cos_p_xy_ML/F");
   fTreeDsML->Branch("imp_par_xy_ML",&imp_par_xy_ML,"imp_par_xy_ML/F");
-  fTreeDsML->Branch("pt_prong0_ML",&pt_prong0_ML,"pt_prong0_ML/F");
-  fTreeDsML->Branch("pt_prong1_ML",&pt_prong1_ML,"pt_prong1_ML/F");
-  fTreeDsML->Branch("pt_prong2_ML",&pt_prong2_ML,"pt_prong2_ML/F");
   fTreeDsML->Branch("sig_vert_ML",&sig_vert_ML,"sig_vert_ML/F");
   fTreeDsML->Branch("mass_KK_ML",&mass_KK_ML,"mass_KK_ML/F");
   fTreeDsML->Branch("cos_PiDs_ML",&cos_PiDs_ML,"cos_PiDs_ML/F");
