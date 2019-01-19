@@ -27,7 +27,7 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
   #Take job a bit further? The third one by '| head -3 | tail -1'
-  if [ $(jobs -r | wc -l) -ge 5 ]; then
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
     wait $(jobs -r -p | head -3 | tail -1)
   fi
 done < "$myfile"
@@ -50,6 +50,13 @@ DataTree="tree_Ds"
 g++ includeSkim/skimTreeDsFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDsFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
   ./skimTreeDsFromEvt.exe "${line}" "${line%.*}_Ds_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
 done < "$myfile"
 
 ## would wait until those are completed
@@ -70,6 +77,13 @@ DataTree="tree_D0"
 g++ includeSkim/skimTreeDzeroFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDzeroFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
   ./skimTreeDzeroFromEvt.exe "${line}" "${line%.*}_Dzero_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
 done < "$myfile"
 
 ## would wait until those are completed
@@ -90,6 +104,13 @@ DataTree="tree_Dstar"
 g++ includeSkim/skimTreeDstarFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDstarFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
   ./skimTreeDstarFromEvt.exe "${line}" "${line%.*}_Dstar_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
 done < "$myfile"
 
 ## would wait until those are completed
@@ -110,6 +131,13 @@ DataTree="tree_LctopKpi"
 g++ includeSkim/skimTreeLcFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLcFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
   ./skimTreeLcFromEvt.exe "${line}" "${line%.*}_Lc_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
 done < "$myfile"
 
 ## would wait until those are completed

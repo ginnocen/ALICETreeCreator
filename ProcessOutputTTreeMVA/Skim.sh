@@ -77,6 +77,14 @@ elif [ "$dataset" == "LHC18a4a2" ]; then
   ninput=4 #LHC18a4a2 for Devel_2 has 4 childs
   isMC=1
   ispp=1
+elif [ "$dataset" == "LHC16i2a" ]; then
+  ninput=1
+  isMC=1
+  ispp=0
+elif [ "$dataset" == "LHC18r" ]; then
+  ninput=1
+  isMC=0
+  ispp=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit

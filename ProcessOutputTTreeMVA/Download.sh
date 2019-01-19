@@ -89,6 +89,11 @@ elif [ "$dataset" == "LHC16i2a" ]; then
   ninput=1
   isMC=1
   ispp=0
+elif [ "$dataset" == "LHC18r" ]; then
+  inputpathchild1=/alice/data/2018/LHC18r/000296932/pass1/PWGZZ/Devel_2
+  ninput=1
+  isMC=0
+  ispp=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
@@ -167,7 +172,7 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 
 #run downloaders + progress bar. Not in parallel as writing time is the limiting factor here
 if [ $ninput -eq 1 ]; then
-  if [ "$dataset" == "LHC16i2a" ]; then
+  if [ "$dataset" == "LHC16i2a" ] || [ "$dataset" == "LHC18r" ]; then
     sh ./run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   else
     sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
