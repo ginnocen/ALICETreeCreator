@@ -47,6 +47,9 @@ awk -v lines=$nfilesformerging -v outdir="$nameoutput/%04d" -v splitfile="$nameo
 
 rm ${nameoutput}/*/${mergedname}.root
 ls $nameoutput/*/$mergedname > $nameoutputlist
+for f in $nameoutput/*/$mergedname; do
+  mv "$f" "${f}.txt"
+done
 
 while IFS='' read -r line || [[ -n "$line" ]]; do
   echo $line
