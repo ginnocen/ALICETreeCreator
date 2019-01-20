@@ -59,7 +59,7 @@ void makeCutsTreeCreator()
     Printf("Dstar analysis cuts");
     AliRDHFCutsDStartoKpipi  *analysisCutsDStartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent);
 
-    TFile* fout=new TFile("D0DsDplusLcBplusCuts_PbPb2018_Central.root","recreate");
+    TFile* fout=new TFile("D0DsDplusDstarLcBplusCuts_PbPb2018_Central.root","recreate");
     fout->cd();
     looseCutsD0toKpi->Write();
     analysisCutsD0toKpi->Write();

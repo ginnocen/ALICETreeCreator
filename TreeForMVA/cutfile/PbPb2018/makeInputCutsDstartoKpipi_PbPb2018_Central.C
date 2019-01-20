@@ -62,17 +62,86 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
     cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
     
     if(whichCuts==0){
-        const Int_t nptbinsDstar=1;
-        Float_t ptlimitsDstar[nptbinsDstar+1]={0.,1000000.};
-        Float_t cutsArrayDstartoKpipi[16]={0.3,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,0.3, 0.1, 0.05, 100000000000.0, 0.5,-1.,0.}; // first 9 for D0 from D*, next 5 for D*, last 2 for D0 again
-	
+        const Int_t nvars=16;
+        const Int_t nptbinsDstar=2;
+        Float_t* ptbins;
+        ptbins=new Float_t[nptbinsDstar+1];
+        ptbins[0]=0.;
+        ptbins[1]=6.;
+        ptbins[2]=999.;
+      
+        cutsDstartoKpipi->SetPtBins(nptbinsDstar+1,ptbins);
+      
+        Float_t** rdcutsvalmine;
+        rdcutsvalmine=new Float_t*[nvars];
+        for(Int_t iv=0;iv<nvars;iv++){
+          rdcutsvalmine[iv]=new Float_t[nptbinsDstar];
+        }
+      
+        //0-5
+        rdcutsvalmine[0][0]=0.05;     //D0 inv mass window
+        rdcutsvalmine[1][0]=0.05;     // dca
+        rdcutsvalmine[2][0]=0.9;      // thetastar
+        rdcutsvalmine[3][0]=0.6;      // pt Pion
+        rdcutsvalmine[4][0]=0.6;      // Pt Kaon
+        rdcutsvalmine[5][0]=0.1;      // d0K
+        rdcutsvalmine[6][0]=0.1;      // d0Pi
+        rdcutsvalmine[7][0]=-0.00001; // d0xd0
+        rdcutsvalmine[8][0]=0.95;     // costhetapoint
+        rdcutsvalmine[9][0]=0.07;     // Dstar inv mass window
+        rdcutsvalmine[10][0]=0.02;    // half width of (M_Kpipi-M_D0)
+        rdcutsvalmine[11][0]=0.1;     // Pt min of Pi soft
+        rdcutsvalmine[12][0]=100.;    // Pt max of pi soft
+        rdcutsvalmine[13][0]=9999.;   // theta
+        rdcutsvalmine[14][0]=0.97;    // |cosThetaPointXY|
+        rdcutsvalmine[15][0]=3.;     // NormDecayLenghtXY
+        //6-999
+        rdcutsvalmine[0][1]=0.12;   //D0 inv mass window
+        rdcutsvalmine[1][1]=0.06;   // dca
+        rdcutsvalmine[2][1]=0.9;    // thetastar
+        rdcutsvalmine[3][1]=0.5;    // pt Pion
+        rdcutsvalmine[4][1]=0.5;    // Pt Kaon
+        rdcutsvalmine[5][1]=0.1;    // d0K
+        rdcutsvalmine[6][1]=0.1;    // d0Pi
+        rdcutsvalmine[7][1]=0.0001; // d0xd0
+        rdcutsvalmine[8][1]=0.7;    // costhetapoint
+        rdcutsvalmine[9][1]=0.2;   // Dstar inv mass window
+        rdcutsvalmine[10][1]=0.02;  // half width of (M_Kpipi-M_D0)
+        rdcutsvalmine[11][1]=0.1;   // Pt min of Pi soft
+        rdcutsvalmine[12][1]=100.;  // Pt max of pi soft
+        rdcutsvalmine[13][1]=9999.; // theta
+        rdcutsvalmine[14][1]=0.8;   // |cosThetaPointXY|
+        rdcutsvalmine[15][1]=0.;    // NormDecayLenghtXY
+      
+        cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
+        cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
+      
         cutsDstartoKpipi->SetMinPtCandidate(0.);
-        cutsDstartoKpipi->SetUsePID(kFALSE);
         cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
-        cutsDstartoKpipi->SetPtBins(nptbinsDstar+1,ptlimitsDstar);
-        cutsDstartoKpipi->SetCuts(16,cutsArrayDstartoKpipi);
+        cutsDstartoKpipi->SetCuts(nvars,nptbinsDstar,rdcutsvalmine);
+      
+        Bool_t pidflag=kTRUE;
+        cutsDstartoKpipi->SetUsePID(pidflag);
+        if(pidflag) cout<<"PID is used"<<endl;
+        else cout<<"PID is not used"<<endl;
+
+        //pid settings
+        AliAODPidHF* pidObj=new AliAODPidHF();
+        // pidObj->SetName("pid4DSatr");
+        Int_t mode=1;
+        Double_t priors[5]={0.01,0.001,0.3,0.3,0.3};
+        pidObj->SetPriors(priors,5);
+        pidObj->SetMatch(mode);
+        pidObj->SetSigma(0,3); // TPC
+        pidObj->SetSigma(3,3); // TOF
+        pidObj->SetTPC(kTRUE);
+        pidObj->SetTOF(kTRUE);
+      
+        pidObj->SetOldPid(kFALSE);
+      
+        cutsDstartoKpipi->SetPidHF(pidObj);
+        cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
     }
-    
     else if(whichCuts==1){
         
         const Int_t nvars=16;
@@ -175,5 +244,4 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
     cutsDstartoKpipi->PrintAll();
     
     return cutsDstartoKpipi;
-    
 }
