@@ -10,7 +10,7 @@ using namespace std;
 
 //Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
 
-void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Ds", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE, Bool_t computedeltaMKK = kTRUE){
+void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Ds", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE /*, Bool_t computedeltaMKK = kTRUE*/){
 
   TFile *f = TFile::Open(input.Data());
   TDirectory * dir = (TDirectory*)f->Get("PWGHF_TreeCreator");
@@ -60,7 +60,7 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   //fTreeEventCharML->Branch("run_number_ML",&run_number_ML,"run_number_ML/I");
   //if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
 
-  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, sig_vert_ML, mass_KK_ML, cos_PiDs_ML, cos_PiKPhi_3_ML, max_norm_d0d0exp_ML;
+  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, sig_vert_ML, delta_mass_KK_ML, cos_PiDs_ML, cos_PiKPhi_3_ML, max_norm_d0d0exp_ML;
   float cand_type_ML, y_cand_ML, eta_cand_ML, phi_cand_ML;
   float imp_par_prong0_ML, imp_par_prong1_ML, imp_par_prong2_ML, p_prong0_ML, p_prong1_ML, p_prong2_ML, pt_prong0_ML, pt_prong1_ML, pt_prong2_ML, eta_prong0_ML, eta_prong1_ML, eta_prong2_ML, phi_prong0_ML, phi_prong1_ML, phi_prong2_ML;
   float nTPCcls_prong0_ML, nTPCclspid_prong0_ML, nTPCcrossrow_prong0_ML, chi2perndf_prong0_ML, nITScls_prong0_ML, ITSclsmap_prong0_ML, nTPCcls_prong1_ML, nTPCclspid_prong1_ML, nTPCcrossrow_prong1_ML, chi2perndf_prong1_ML, nITScls_prong1_ML, ITSclsmap_prong1_ML, nTPCcls_prong2_ML, nTPCclspid_prong2_ML, nTPCcrossrow_prong2_ML, chi2perndf_prong2_ML, nITScls_prong2_ML, ITSclsmap_prong2_ML;
@@ -75,7 +75,7 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeDsML->Branch("cos_p_xy_ML",&cos_p_xy_ML,"cos_p_xy_ML/F");
   fTreeDsML->Branch("imp_par_xy_ML",&imp_par_xy_ML,"imp_par_xy_ML/F");
   fTreeDsML->Branch("sig_vert_ML",&sig_vert_ML,"sig_vert_ML/F");
-  fTreeDsML->Branch("mass_KK_ML",&mass_KK_ML,"mass_KK_ML/F");
+  fTreeDsML->Branch("delta_mass_KK_ML",&delta_mass_KK_ML,"delta_mass_KK_ML/F");
   fTreeDsML->Branch("cos_PiDs_ML",&cos_PiDs_ML,"cos_PiDs_ML/F");
   fTreeDsML->Branch("cos_PiKPhi_3_ML",&cos_PiKPhi_3_ML,"cos_PiKPhi_3_ML/F");
   fTreeDsML->Branch("max_norm_d0d0exp_ML",&max_norm_d0d0exp_ML,"max_norm_d0d0exp_ML/F");
@@ -192,8 +192,8 @@ void skimTreeDsFromEvt(TString input="AnalysisResults.root",TString output="test
       cos_p_xy_ML=t.cos_p_xy -> at(icand);
       imp_par_xy_ML=t.imp_par_xy -> at(icand);
       sig_vert_ML=t.sig_vert -> at(icand);
-      if(computedeltaMKK) mass_KK_ML=TMath::Abs(1.019455-t.mass_KK -> at(icand));
-      else mass_KK_ML=t.mass_KK -> at(icand);
+      //if(computedeltaMKK) delta_mass_KK_ML=TMath::Abs(1.019455-t.delta_mass_KK -> at(icand));
+      delta_mass_KK_ML=t.delta_mass_KK -> at(icand);
       cos_PiDs_ML=t.cos_PiDs -> at(icand);
       cos_PiKPhi_3_ML=t.cos_PiKPhi_3 -> at(icand);
       max_norm_d0d0exp_ML=t.max_norm_d0d0exp -> at(icand);

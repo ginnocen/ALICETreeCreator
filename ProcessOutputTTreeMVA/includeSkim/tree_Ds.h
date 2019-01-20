@@ -40,7 +40,7 @@ public :
    vector<float>   *cos_p_xy;
    vector<float>   *imp_par_xy;
    vector<float>   *sig_vert;
-   vector<float>   *mass_KK;
+   vector<float>   *delta_mass_KK;
    vector<float>   *cos_PiDs;
    vector<float>   *cos_PiKPhi_3;
    vector<float>   *max_norm_d0d0exp;
@@ -126,7 +126,7 @@ public :
    TBranch        *b_imp_par_xy;   //!
    TBranch        *b_max_norm_d0d0exp;   //!
    TBranch        *b_sig_vert;   //!
-   TBranch        *b_mass_KK;   //!
+   TBranch        *b_delta_mass_KK;   //!
    TBranch        *b_cos_PiDs;   //!
    TBranch        *b_cos_PiKPhi_3;   //!
    TBranch        *b_p_prong0;   //!
@@ -280,7 +280,7 @@ void tree_Ds::Init(TTree *tree)
    imp_par_xy = 0;
    max_norm_d0d0exp = 0;
    sig_vert = 0;
-   mass_KK = 0;
+   delta_mass_KK = 0;
    cos_PiDs = 0;
    cos_PiKPhi_3 = 0;
    p_prong0 = 0;
@@ -370,7 +370,7 @@ void tree_Ds::Init(TTree *tree)
    fChain->SetBranchAddress("imp_par_xy", &imp_par_xy, &b_imp_par_xy);
    fChain->SetBranchAddress("max_norm_d0d0exp", &max_norm_d0d0exp, &b_max_norm_d0d0exp);
    fChain->SetBranchAddress("sig_vert", &sig_vert, &b_sig_vert);
-   fChain->SetBranchAddress("mass_KK", &mass_KK, &b_mass_KK);
+   fChain->SetBranchAddress("delta_mass_KK", &delta_mass_KK, &b_delta_mass_KK);
    fChain->SetBranchAddress("cos_PiDs", &cos_PiDs, &b_cos_PiDs);
    fChain->SetBranchAddress("cos_PiKPhi_3", &cos_PiKPhi_3, &b_cos_PiKPhi_3);
    fChain->SetBranchAddress("p_prong0", &p_prong0, &b_p_prong0);
