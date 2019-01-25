@@ -47,14 +47,17 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
-    esdTrackCuts->SetPtRange(0.3,1.e10); 
-    esdTrackCuts->SetMaxDCAToVertexXY(1.e6);
+    esdTrackCuts->SetPtRange(0.4,1.e10);
+    esdTrackCuts->SetMaxDCAToVertexXY(1.);
+    esdTrackCuts->SetMaxDCAToVertexZ(1.);
+    if(whichCuts==0)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
     
     //soft pion selections
     AliESDtrackCuts* esdTrackCutsSoftPi=new AliESDtrackCuts();
     esdTrackCutsSoftPi->SetRequireSigmaToVertex(kFALSE);
-    esdTrackCutsSoftPi->SetRequireTPCRefit(kFALSE);
+    if(whichCuts==0)esdTrackCutsSoftPi->SetRequireTPCRefit(kFALSE);
+    if(whichCuts==1)esdTrackCutsSoftPi->SetRequireTPCRefit(kTRUE);
     esdTrackCutsSoftPi->SetRequireITSRefit(kTRUE);
     esdTrackCutsSoftPi->SetMinNClustersITS(2);
     esdTrackCutsSoftPi->SetEtaRange(-0.8,+0.8);
@@ -77,7 +80,6 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
         for(Int_t iv=0;iv<nvars;iv++){
           rdcutsvalmine[iv]=new Float_t[nptbinsDstar];
         }
-      
         //0-5
         rdcutsvalmine[0][0]=0.05;     //D0 inv mass window
         rdcutsvalmine[1][0]=0.05;     // dca
@@ -116,7 +118,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
         cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
         cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
       
-        cutsDstartoKpipi->SetMinPtCandidate(0.);
+        cutsDstartoKpipi->SetMinPtCandidate(2.);
         cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
         cutsDstartoKpipi->SetCuts(nvars,nptbinsDstar,rdcutsvalmine);
       
@@ -145,63 +147,274 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
     else if(whichCuts==1){
         
         const Int_t nvars=16;
-        const Int_t nptbins=25;
+        const Int_t nptbins=14;//13;
+        
         Float_t* ptbins;
         ptbins=new Float_t[nptbins+1];
-        ptbins[0]=0.5;
-        ptbins[1]=1.;
-        ptbins[2]=1.5;
-        ptbins[3]=2.;
-        ptbins[4]=2.5;
-        ptbins[5]=3.;
-        ptbins[6]=3.5;
-        ptbins[7]=4.;
-        ptbins[8]=4.5;
-        ptbins[9]=5.;
-        ptbins[10]=5.5;
-        ptbins[11]=6.;
-        ptbins[12]=6.5;
-        ptbins[13]=7.;
-        ptbins[14]=7.5;
-        ptbins[15]=8.;
-        ptbins[16]=9.;
-        ptbins[17]=10.;
-        ptbins[18]=11.;
-        ptbins[19]=12.;
-        ptbins[20]=16.;
-        ptbins[21]=20.;
-        ptbins[22]=24.;
-        ptbins[23]=36.;
-        ptbins[24]=50.;
-        ptbins[25]=99999.;
+        ptbins[0]=1.;
+        ptbins[1]=2.;
+        ptbins[2]=3.;
+        ptbins[3]=4.;
+        ptbins[4]=5.;
+        ptbins[5]=6.;
+        ptbins[6]=7.;
+        ptbins[7]=8.;
+        ptbins[8]=10.;
+        ptbins[9]=12.;
+        ptbins[10]=16.;
+        ptbins[11]=20.;
+        ptbins[12]=24.;
+        ptbins[13]=36.;
+        ptbins[14]=50.;
         
-        cutsDstartoKpipi->SetGlobalIndex(nvars,nptbins);
         cutsDstartoKpipi->SetPtBins(nptbins+1,ptbins);
         
-        Float_t** fCutsRD;
-        fCutsRD=new Float_t*[nvars];
+        Float_t** rdcutsvalmine;
+        rdcutsvalmine=new Float_t*[nvars];
         for(Int_t iv=0;iv<nvars;iv++){
-            fCutsRD[iv]=new Float_t[nptbins];
+            rdcutsvalmine[iv]=new Float_t[nptbins];
         }
 
-        fCutsRD[0][0] = 0.035; fCutsRD[0][1] = 0.032; fCutsRD[0][2] = 0.032; fCutsRD[0][3] = 0.032; fCutsRD[0][4] = 0.032; fCutsRD[0][5] = 0.036; fCutsRD[0][6] = 0.036; fCutsRD[0][7] = 0.04; fCutsRD[0][8] = 0.05; fCutsRD[0][9] = 0.074; fCutsRD[0][10] = 0.074; fCutsRD[0][11] = 0.074; fCutsRD[0][12] = 0.074; fCutsRD[0][13] = 0.074; fCutsRD[0][14] = 0.074;
-        fCutsRD[1][0] = 0.05; fCutsRD[1][1] = 0.038; fCutsRD[1][2] = 0.03; fCutsRD[1][3] = 0.033; fCutsRD[1][4] = 0.042; fCutsRD[1][5] = 0.05; fCutsRD[1][6] = 0.1; fCutsRD[1][7] = 0.1; fCutsRD[1][8] = 0.1; fCutsRD[1][9] = 0.1; fCutsRD[1][10] = 0.1; fCutsRD[1][11] = 10; fCutsRD[1][12] = 10; fCutsRD[1][13] = 10; fCutsRD[1][14] = 10;
-        fCutsRD[2][0] = 0.75; fCutsRD[2][1] = 0.9; fCutsRD[2][2] = 0.8; fCutsRD[2][3] = 0.8; fCutsRD[2][4] = 0.9; fCutsRD[2][5] = 1; fCutsRD[2][6] = 1; fCutsRD[2][7] = 1; fCutsRD[2][8] = 1; fCutsRD[2][9] = 1; fCutsRD[2][10] = 1; fCutsRD[2][11] = 10; fCutsRD[2][12] = 10; fCutsRD[2][13] = 10; fCutsRD[2][14] = 10;
-        fCutsRD[3][0] = 0.45; fCutsRD[3][1] = 0.6; fCutsRD[3][2] = 0.9; fCutsRD[3][3] = 0.9; fCutsRD[3][4] = 1; fCutsRD[3][5] = 1; fCutsRD[3][6] = 1; fCutsRD[3][7] = 0.6; fCutsRD[3][8] = 0.6; fCutsRD[3][9] = 0.6; fCutsRD[3][10] = 0.5; fCutsRD[3][11] = 0.2; fCutsRD[3][12] = 0.2; fCutsRD[3][13] = 0.2; fCutsRD[3][14] = 0.2;
-        fCutsRD[4][0] = 0.45; fCutsRD[4][1] = 0.6; fCutsRD[4][2] = 0.9; fCutsRD[4][3] = 0.9; fCutsRD[4][4] = 1; fCutsRD[4][5] = 1; fCutsRD[4][6] = 1; fCutsRD[4][7] = 0.6; fCutsRD[4][8] = 0.6; fCutsRD[4][9] = 0.6; fCutsRD[4][10] = 0.5; fCutsRD[4][11] = 0.2; fCutsRD[4][12] = 0.2; fCutsRD[4][13] = 0.2; fCutsRD[4][14] = 0.2;
-        fCutsRD[5][0] = 0.1; fCutsRD[5][1] = 0.1; fCutsRD[5][2] = 0.1; fCutsRD[5][3] = 0.1; fCutsRD[5][4] = 0.1; fCutsRD[5][5] = 0.1; fCutsRD[5][6] = 0.1; fCutsRD[5][7] = 0.1; fCutsRD[5][8] = 0.1; fCutsRD[5][9] = 0.1; fCutsRD[5][10] = 0.15; fCutsRD[5][11] = 0.5; fCutsRD[5][12] = 0.5; fCutsRD[5][13] = 0.5; fCutsRD[5][14] = 0.5;
-        fCutsRD[6][0] = 0.1; fCutsRD[6][1] = 0.1; fCutsRD[6][2] = 0.1; fCutsRD[6][3] = 0.1; fCutsRD[6][4] = 0.1; fCutsRD[6][5] = 0.1; fCutsRD[6][6] = 0.1; fCutsRD[6][7] = 0.1; fCutsRD[6][8] = 0.1; fCutsRD[6][9] = 0.1; fCutsRD[6][10] = 0.15; fCutsRD[6][11] = 0.5; fCutsRD[6][12] = 0.5; fCutsRD[6][13] = 0.5; fCutsRD[6][14] = 0.5;
-        fCutsRD[7][0] = 1; fCutsRD[7][1] = -0.000135; fCutsRD[7][2] = -0.00019; fCutsRD[7][3] = -0.000144; fCutsRD[7][4] = -2.8e-05; fCutsRD[7][5] = 5.5e-05; fCutsRD[7][6] = 0.0001; fCutsRD[7][7] = 0.0001; fCutsRD[7][8] = 0.001; fCutsRD[7][9] = 0.001; fCutsRD[7][10] = 0.001; fCutsRD[7][11] = 1; fCutsRD[7][12] = 1; fCutsRD[7][13] = 1; fCutsRD[7][14] = 1;
-        fCutsRD[8][0] = 0.7; fCutsRD[8][1] = 0.8; fCutsRD[8][2] = 0.9; fCutsRD[8][3] = 0.89; fCutsRD[8][4] = 0.81; fCutsRD[8][5] = 0.79; fCutsRD[8][6] = 0.7; fCutsRD[8][7] = 0.75; fCutsRD[8][8] = 0.7; fCutsRD[8][9] = 0.7; fCutsRD[8][10] = 0.7; fCutsRD[8][11] = 0.2; fCutsRD[8][12] = 0.2; fCutsRD[8][13] = 0.2; fCutsRD[8][14] = 0.2;
-        fCutsRD[9][0] = 0.3; fCutsRD[9][1] = 0.3; fCutsRD[9][2] = 0.3; fCutsRD[9][3] = 0.3; fCutsRD[9][4] = 0.3; fCutsRD[9][5] = 0.3; fCutsRD[9][6] = 0.3; fCutsRD[9][7] = 0.3; fCutsRD[9][8] = 0.3; fCutsRD[9][9] = 0.3; fCutsRD[9][10] = 0.3; fCutsRD[9][11] = 0.3; fCutsRD[9][12] = 0.3; fCutsRD[9][13] = 0.3; fCutsRD[9][14] = 0.3;
-        fCutsRD[10][0] = 0.3; fCutsRD[10][1] = 0.3; fCutsRD[10][2] = 0.3; fCutsRD[10][3] = 0.3; fCutsRD[10][4] = 0.3; fCutsRD[10][5] = 0.3; fCutsRD[10][6] = 0.3; fCutsRD[10][7] = 0.3; fCutsRD[10][8] = 0.3; fCutsRD[10][9] = 0.3; fCutsRD[10][10] = 0.3; fCutsRD[10][11] = 0.3; fCutsRD[10][12] = 0.3; fCutsRD[10][13] = 0.3; fCutsRD[10][14] = 0.3;
-        fCutsRD[11][0] = 0.03; fCutsRD[11][1] = 0.05; fCutsRD[11][2] = 0.05; fCutsRD[11][3] = 0.05; fCutsRD[11][4] = 0.05; fCutsRD[11][5] = 0.05; fCutsRD[11][6] = 0.05; fCutsRD[11][7] = 0.05; fCutsRD[11][8] = 0.05; fCutsRD[11][9] = 0.05; fCutsRD[11][10] = 0.05; fCutsRD[11][11] = 0.05; fCutsRD[11][12] = 0.05; fCutsRD[11][13] = 0.05; fCutsRD[11][14] = 0.05;
-        fCutsRD[12][0] = 0.2; fCutsRD[12][1] = 0.3; fCutsRD[12][2] = 0.4; fCutsRD[12][3] = 0.6; fCutsRD[12][4] = 100; fCutsRD[12][5] = 100; fCutsRD[12][6] = 100; fCutsRD[12][7] = 100; fCutsRD[12][8] = 100; fCutsRD[12][9] = 100; fCutsRD[12][10] = 100; fCutsRD[12][11] = 100; fCutsRD[12][12] = 100; fCutsRD[12][13] = 100; fCutsRD[12][14] = 100;
-        fCutsRD[13][0] = 1; fCutsRD[13][1] = 1; fCutsRD[13][2] = 1; fCutsRD[13][3] = 1; fCutsRD[13][4] = 1; fCutsRD[13][5] = 1; fCutsRD[13][6] = 1; fCutsRD[13][7] = 1; fCutsRD[13][8] = 1; fCutsRD[13][9] = 1; fCutsRD[13][10] = 1; fCutsRD[13][11] = 1; fCutsRD[13][12] = 1; fCutsRD[13][13] = 1; fCutsRD[13][14] = 1;
-        fCutsRD[14][0] = 0.85; fCutsRD[14][1] = 0.88; fCutsRD[14][2] = -1; fCutsRD[14][3] = -1; fCutsRD[14][4] = -1; fCutsRD[14][5] = -1; fCutsRD[14][6] = -1; fCutsRD[14][7] = -1; fCutsRD[14][8] = -1; fCutsRD[14][9] = -1; fCutsRD[14][10] = -1; fCutsRD[14][11] = -1; fCutsRD[14][12] = -1; fCutsRD[14][13] = -1; fCutsRD[14][14] = -1;
-        fCutsRD[15][0] = 0; fCutsRD[15][1] = 2.7; fCutsRD[15][2] = 3; fCutsRD[15][3] = 0; fCutsRD[15][4] = 0; fCutsRD[15][5] = 0; fCutsRD[15][6] = 0; fCutsRD[15][7] = 0; fCutsRD[15][8] = 0; fCutsRD[15][9] = 0; fCutsRD[15][10] = 0; fCutsRD[15][11] = 0; fCutsRD[15][12] = 0; fCutsRD[15][13] = 0; fCutsRD[15][14] = 0;
+        //1-2
+        rdcutsvalmine[0][0]=0.03; //0.024;
+        rdcutsvalmine[1][0]=0.025; //0.021; // vary this
+        rdcutsvalmine[2][0]=0.8;
+        rdcutsvalmine[3][0]=0.9; //0.8;
+        rdcutsvalmine[4][0]=0.9; //0.8;
+        rdcutsvalmine[5][0]=0.1;
+        rdcutsvalmine[6][0]=0.1;
+        rdcutsvalmine[7][0]=-0.00045;
+        rdcutsvalmine[8][0]=0.99; //0.95; // vary this
+        rdcutsvalmine[9][0]=0.3;
+        rdcutsvalmine[10][0]=0.15;
+        rdcutsvalmine[11][0]=0.1; //0.05;
+        rdcutsvalmine[12][0]=0.5;
+        rdcutsvalmine[13][0]=1.;
+        rdcutsvalmine[14][0]=0.998;
+        rdcutsvalmine[15][0]=8.;
+        //2-3
+        rdcutsvalmine[0][1]=0.03; //0.024;
+        rdcutsvalmine[1][1]=0.025;  // vary this
+        rdcutsvalmine[2][1]=0.8;
+        rdcutsvalmine[3][1]=0.9;
+        rdcutsvalmine[4][1]=0.9; //1.0;
+        rdcutsvalmine[5][1]=0.1;
+        rdcutsvalmine[6][1]=0.1;
+        rdcutsvalmine[7][1]=-0.00045;
+        rdcutsvalmine[8][1]=0.99; //0.97;  // vary this
+        rdcutsvalmine[9][1]=0.3;
+        rdcutsvalmine[10][1]=0.15;
+        rdcutsvalmine[11][1]=0.1; //0.05;
+        rdcutsvalmine[12][1]=0.5;
+        rdcutsvalmine[13][1]=1.;
+        rdcutsvalmine[14][1]=0.998;
+        rdcutsvalmine[15][1]=8.;
+        //3-4
+        rdcutsvalmine[0][2]=0.03; //0.024;
+        rdcutsvalmine[1][2]=0.022;  // vary this
+        rdcutsvalmine[2][2]=0.8;
+        rdcutsvalmine[3][2]=0.9;
+        rdcutsvalmine[4][2]=0.9; //1.0;
+        rdcutsvalmine[5][2]=0.1; //0.09;
+        rdcutsvalmine[6][2]=0.1; //0.09;
+        rdcutsvalmine[7][2]=-0.00045;
+        rdcutsvalmine[8][2]=0.98; //0.99;//0.98; // vary this
+        rdcutsvalmine[9][2]=0.3;
+        rdcutsvalmine[10][2]=0.15;
+        rdcutsvalmine[11][2]=0.1; //0.05;
+        rdcutsvalmine[12][2]=0.5;
+        rdcutsvalmine[13][2]=1.;
+        rdcutsvalmine[14][2]=0.998;
+        rdcutsvalmine[15][2]=8.;
+        //4-5
+        rdcutsvalmine[0][3]=0.03;
+        rdcutsvalmine[1][3]=0.021; // vary this
+        rdcutsvalmine[2][3]=0.8;
+        rdcutsvalmine[3][3]=0.9;
+        rdcutsvalmine[4][3]=0.9; //1.0;
+        rdcutsvalmine[5][3]=0.1;
+        rdcutsvalmine[6][3]=0.1;
+        rdcutsvalmine[7][3]=-0.00035;
+        rdcutsvalmine[8][3]=0.98;
+        rdcutsvalmine[9][3]=0.3; //0.2;
+        rdcutsvalmine[10][3]=0.15;
+        rdcutsvalmine[11][3]=0.1; //0.05;
+        rdcutsvalmine[12][3]=10.;
+        rdcutsvalmine[13][3]=1.;
+        rdcutsvalmine[14][3]=0.998;
+        rdcutsvalmine[15][3]=6.5;
+        //5-6
+        rdcutsvalmine[0][4]=0.03;
+        rdcutsvalmine[1][4]=0.021;
+        rdcutsvalmine[2][4]=1.0;
+        rdcutsvalmine[3][4]=0.9;
+        rdcutsvalmine[4][4]=0.9; //1.0;
+        rdcutsvalmine[5][4]=0.1; //0.08;
+        rdcutsvalmine[6][4]=0.1; //0.08;
+        rdcutsvalmine[7][4]=-0.00023;
+        rdcutsvalmine[8][4]=0.93;
+        rdcutsvalmine[9][4]=0.3;
+        rdcutsvalmine[10][4]=0.3;
+        rdcutsvalmine[11][4]=0.2; //0.25;
+        rdcutsvalmine[12][4]=10.;
+        rdcutsvalmine[13][4]=1.;
+        rdcutsvalmine[14][4]=0.998;
+        rdcutsvalmine[15][4]=6.5; //6.;
+        //6-7
+        rdcutsvalmine[0][5]=0.034;
+        rdcutsvalmine[1][5]=0.021;
+        rdcutsvalmine[2][5]=1.0;
+        rdcutsvalmine[3][5]=0.9; //1.0;
+        rdcutsvalmine[4][5]=0.9; //1.0;
+        rdcutsvalmine[5][5]=0.1; //0.12;
+        rdcutsvalmine[6][5]=0.1; //0.12;
+        rdcutsvalmine[7][5]=-0.0002; //-0.0001;
+        rdcutsvalmine[8][5]=0.93;
+        rdcutsvalmine[9][5]=0.3;
+        rdcutsvalmine[10][5]=0.15;
+        rdcutsvalmine[11][5]=0.3;
+        rdcutsvalmine[12][5]=100;
+        rdcutsvalmine[13][5]=1.0;
+        rdcutsvalmine[14][5]=0.998;
+        rdcutsvalmine[15][5]=6.5;
+        //7-8
+        rdcutsvalmine[0][6]=0.036;
+        rdcutsvalmine[1][6]=0.021;
+        rdcutsvalmine[2][6]=1.0;
+        rdcutsvalmine[3][6]=0.9; //1.0;
+        rdcutsvalmine[4][6]=0.9; //1.0;
+        rdcutsvalmine[5][6]=0.1;
+        rdcutsvalmine[6][6]=0.1;
+        rdcutsvalmine[7][6]=-0.000127;
+        rdcutsvalmine[8][6]=0.93;
+        rdcutsvalmine[9][6]=0.3;
+        rdcutsvalmine[10][6]=0.15;
+        rdcutsvalmine[11][6]=0.3;
+        rdcutsvalmine[12][6]=100;
+        rdcutsvalmine[13][6]=1.;
+        rdcutsvalmine[14][6]=0.998;
+        rdcutsvalmine[15][6]=6.;
+        //8-10
+        rdcutsvalmine[0][7]=0.055;
+        rdcutsvalmine[1][7]=0.021;
+        rdcutsvalmine[2][7]=1.0;
+        rdcutsvalmine[3][7]=0.9;
+        rdcutsvalmine[4][7]=0.9;
+        rdcutsvalmine[5][7]=0.15;
+        rdcutsvalmine[6][7]=0.15;
+        rdcutsvalmine[7][7]=-7.5e-05;
+        rdcutsvalmine[8][7]=0.93;
+        rdcutsvalmine[9][7]=0.3;
+        rdcutsvalmine[10][7]=0.15;
+        rdcutsvalmine[11][7]=0.3;
+        rdcutsvalmine[12][7]=100;
+        rdcutsvalmine[13][7]=1.;
+        rdcutsvalmine[14][7]=0.998;
+        rdcutsvalmine[15][7]=5.;
+        //10-12
+        rdcutsvalmine[0][8]=0.055;
+        rdcutsvalmine[1][8]=0.021;
+        rdcutsvalmine[2][8]=1.0;
+        rdcutsvalmine[3][8]=0.9;
+        rdcutsvalmine[4][8]=0.9;
+        rdcutsvalmine[5][8]=0.15;
+        rdcutsvalmine[6][8]=0.15;
+        rdcutsvalmine[7][8]=-7.5e-05;
+        rdcutsvalmine[8][8]=0.93;
+        rdcutsvalmine[9][8]=0.3;
+        rdcutsvalmine[10][8]=0.15;
+        rdcutsvalmine[11][8]=0.3;
+        rdcutsvalmine[12][8]=100;
+        rdcutsvalmine[13][8]=1.;
+        rdcutsvalmine[14][8]=0.998;
+        rdcutsvalmine[15][8]=5.;
+        //12-16
+        rdcutsvalmine[0][9]=0.074;
+        rdcutsvalmine[1][9]=0.021;
+        rdcutsvalmine[2][9]=1.0;
+        rdcutsvalmine[3][9]=0.7;
+        rdcutsvalmine[4][9]=0.7;
+        rdcutsvalmine[5][9]=0.15;
+        rdcutsvalmine[6][9]=0.15;
+        rdcutsvalmine[7][9]=-7.5e-05;
+        rdcutsvalmine[8][9]=0.93;
+        rdcutsvalmine[9][9]=0.3;
+        rdcutsvalmine[10][9]=0.15;
+        rdcutsvalmine[11][9]=0.3;
+        rdcutsvalmine[12][9]=100;
+        rdcutsvalmine[13][9]=1.;
+        rdcutsvalmine[14][9]=0.99;
+        rdcutsvalmine[15][9]=3.7;
+        //16-20
+        rdcutsvalmine[0][10]=0.074;
+        rdcutsvalmine[1][10]=0.021;
+        rdcutsvalmine[2][10]=1.0;
+        rdcutsvalmine[3][10]=0.5;
+        rdcutsvalmine[4][10]=0.5;
+        rdcutsvalmine[5][10]=0.15;
+        rdcutsvalmine[6][10]=0.15;
+        rdcutsvalmine[7][10]=-5e-05;
+        rdcutsvalmine[8][10]=0.92;
+        rdcutsvalmine[9][10]=0.3;
+        rdcutsvalmine[10][10]=0.15;
+        rdcutsvalmine[11][10]=0.3;
+        rdcutsvalmine[12][10]=100;
+        rdcutsvalmine[13][10]=1.;
+        rdcutsvalmine[14][10]=0.99;
+        rdcutsvalmine[15][10]=2.;
+        //20-24
+        rdcutsvalmine[0][11]=0.074;
+        rdcutsvalmine[1][11]=0.021;
+        rdcutsvalmine[2][11]=1.0;
+        rdcutsvalmine[3][11]=0.5;
+        rdcutsvalmine[4][11]=0.5;
+        rdcutsvalmine[5][11]=0.15;
+        rdcutsvalmine[6][11]=0.15;
+        rdcutsvalmine[7][11]=-5e-05;
+        rdcutsvalmine[8][11]=0.92;
+        rdcutsvalmine[9][11]=0.15;
+        rdcutsvalmine[10][11]=0.15;
+        rdcutsvalmine[11][11]=0.3;
+        rdcutsvalmine[12][11]=100;
+        rdcutsvalmine[13][11]=1.;
+        rdcutsvalmine[14][11]=0.99;
+        rdcutsvalmine[15][11]=1.;
+        //24-36
+        rdcutsvalmine[0][12]=0.094;
+        rdcutsvalmine[1][12]=0.02;
+        rdcutsvalmine[2][12]=1.0;
+        rdcutsvalmine[3][12]=0.5;
+        rdcutsvalmine[4][12]=0.5;
+        rdcutsvalmine[5][12]=0.2;
+        rdcutsvalmine[6][12]=0.2;
+        rdcutsvalmine[7][12]=0.0004;
+        rdcutsvalmine[8][12]=0.85;
+        rdcutsvalmine[9][12]=0.15;
+        rdcutsvalmine[10][12]=0.15;
+        rdcutsvalmine[11][12]=0.3;
+        rdcutsvalmine[12][12]=100;
+        rdcutsvalmine[13][12]=1.;
+        rdcutsvalmine[14][12]=0.9;
+        rdcutsvalmine[15][12]=0;
+        //36-50
+        rdcutsvalmine[0][13]=0.094;
+        rdcutsvalmine[1][13]=0.02;
+        rdcutsvalmine[2][13]=1.0;
+        rdcutsvalmine[3][13]=0.5;
+        rdcutsvalmine[4][13]=0.5;
+        rdcutsvalmine[5][13]=0.2;
+        rdcutsvalmine[6][13]=0.2;
+        rdcutsvalmine[7][13]=0.0004;
+        rdcutsvalmine[8][13]=0.8;
+        rdcutsvalmine[9][13]=0.15;
+        rdcutsvalmine[10][13]=0.15;
+        rdcutsvalmine[11][13]=0.3;
+        rdcutsvalmine[12][13]=100;
+        rdcutsvalmine[13][13]=1.;
+        rdcutsvalmine[14][13]=0.9;
+        rdcutsvalmine[15][13]=0;
 
-        cutsDstartoKpipi->SetCuts(nvars,nptbins,fCutsRD);
+        cutsDstartoKpipi->SetCuts(nvars,nptbins,rdcutsvalmine);
         
         Bool_t pidflag=kTRUE;
         cutsDstartoKpipi->SetUsePID(pidflag);
