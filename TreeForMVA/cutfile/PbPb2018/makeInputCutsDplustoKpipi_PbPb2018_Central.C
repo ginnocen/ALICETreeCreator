@@ -272,11 +272,9 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
         cuts->SetScaleNormDLxyBypOverPt(kFALSE);
         
         cuts->SetUsePID(kTRUE);
-        AliAODPidHF* PidHF =0x0;
-        cuts->SetUseStrongPid(3);
-        //cuts->Set();
-        cuts->SetMaxPStrongPidK(1);
-        cuts->SetMaxPStrongPidpi(1);
+//        cuts->SetUseStrongPid(3);
+//        cuts->SetMaxPStrongPidK(1);
+//        cuts->SetMaxPStrongPidpi(1);
         cuts->SetUseImpParProdCorrCut(kFALSE);
         
         cuts->SetRemoveTrackletOutliers(kTRUE);//added on June 28
