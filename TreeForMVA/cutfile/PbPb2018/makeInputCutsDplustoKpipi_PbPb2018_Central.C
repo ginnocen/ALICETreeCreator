@@ -86,12 +86,8 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
         
         cuts->SetUsePID(kTRUE);
         
-        cuts->SetRemoveTrackletOutliers(kTRUE);//added on June 28
         cuts->SetMinPtCandidate(2.);
         cuts->SetMaxPtCandidate(1000.);
-        
-        //Do not recalculate the vertex
-        cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
     }
     else if(whichCuts==1){
         
@@ -277,14 +273,17 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
 //        cuts->SetMaxPStrongPidpi(1);
         cuts->SetUseImpParProdCorrCut(kFALSE);
         
-        cuts->SetRemoveTrackletOutliers(kTRUE);//added on June 28
-        
+      
         cuts->SetMinPtCandidate(2.);
         cuts->SetMaxPtCandidate(50.);
-        
-        //Do not recalculate the vertex
-        cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+      
     }
+  
+    cuts->SetRemoveTrackletOutliers(kFALSE);
+    cuts->fUseTrackSelectionWithFilterBits(kFALSE);
+    //Do not recalculate the vertex
+    cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
     //event selection
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
