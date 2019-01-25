@@ -93,7 +93,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsD0toKpi->SetPtBins(nptbinsD0+1,ptlimitsD0);
         cutsD0toKpi->SetCuts(11,nptbinsD0,cutsArrayD0toKpi);
 
-                Bool_t pidflag=kTRUE;
+        Bool_t pidflag=kTRUE;
         cutsD0toKpi->SetUsePID(pidflag);
         if(pidflag) cout<<"PID is used"<<endl;
         else cout<<"PID is not used"<<endl;
@@ -120,6 +120,11 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         pidObj->SetSigmaForTOFCompat(3.);
         
         pidObj->SetOldPid(kFALSE);
+        
+        cutsD0toKpi->SetLowPt(kFALSE);
+        cutsD0toKpi->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
+        
+        cutsD0toKpi->SetPidHF(pidObj);
     }
     else if(whichCuts==1){
         
@@ -368,7 +373,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     cutsD0toKpi->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
     cutsD0toKpi->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
     cutsD0toKpi->SetMaxVtxZ(10.);
-    cutsD0toKpi->SetCutOnzVertexSPD(2);
+    cutsD0toKpi->SetCutOnzVertexSPD(3);
     
     cout<<"This is the object I'm going to save:"<<endl;
     cutsD0toKpi->SetName(nameCuts.Data());
