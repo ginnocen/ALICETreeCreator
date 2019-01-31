@@ -62,7 +62,8 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
   //if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
 
   float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, sig_vert_ML, max_norm_d0d0exp_ML;
-  float cand_type_ML, y_cand_ML, eta_cand_ML, phi_cand_ML;
+  float y_cand_ML, eta_cand_ML, phi_cand_ML;
+  int cand_type_ML;
   float imp_par_prong0_ML, imp_par_prong1_ML, imp_par_prong2_ML, p_prong0_ML, p_prong1_ML, p_prong2_ML, pt_prong0_ML, pt_prong1_ML, pt_prong2_ML, eta_prong0_ML, eta_prong1_ML, eta_prong2_ML, phi_prong0_ML, phi_prong1_ML, phi_prong2_ML;
   float nTPCcls_prong0_ML, nTPCclspid_prong0_ML, nTPCcrossrow_prong0_ML, chi2perndf_prong0_ML, nITScls_prong0_ML, ITSclsmap_prong0_ML, nTPCcls_prong1_ML, nTPCclspid_prong1_ML, nTPCcrossrow_prong1_ML, chi2perndf_prong1_ML, nITScls_prong1_ML, ITSclsmap_prong1_ML, nTPCcls_prong2_ML, nTPCclspid_prong2_ML, nTPCcrossrow_prong2_ML, chi2perndf_prong2_ML, nITScls_prong2_ML, ITSclsmap_prong2_ML;
   float nsigTPC_Pi_0_ML, nsigTPC_K_0_ML, nsigTPC_Pr_0_ML, nsigTOF_Pi_0_ML, nsigTOF_K_0_ML, nsigTOF_Pr_0_ML, dEdxTPC_0_ML, ToF_0_ML, pTPC_prong0_ML, pTOF_prong0_ML, trlen_prong0_ML, start_time_res_prong0_ML, nsigTPC_Pi_1_ML, nsigTPC_K_1_ML, nsigTPC_Pr_1_ML, nsigTOF_Pi_1_ML, nsigTOF_K_1_ML, nsigTOF_Pr_1_ML, dEdxTPC_1_ML, ToF_1_ML, pTPC_prong1_ML, pTOF_prong1_ML, trlen_prong1_ML, start_time_res_prong1_ML, nsigTPC_Pi_2_ML, nsigTPC_K_2_ML, nsigTPC_Pr_2_ML, nsigTOF_Pi_2_ML, nsigTOF_K_2_ML, nsigTOF_Pr_2_ML, dEdxTPC_2_ML, ToF_2_ML, pTPC_prong2_ML, pTOF_prong2_ML, trlen_prong2_ML, start_time_res_prong2_ML;
@@ -79,7 +80,7 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeLcML->Branch("sig_vert_ML",&sig_vert_ML,"sig_vert_ML/F");
   fTreeLcML->Branch("max_norm_d0d0exp_ML",&max_norm_d0d0exp_ML,"max_norm_d0d0exp_ML/F");
 
-  fTreeLcML->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/F");
+  fTreeLcML->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/I");
   fTreeLcML->Branch("y_cand_ML",&y_cand_ML,"y_cand_ML/F");
   fTreeLcML->Branch("eta_cand_ML",&eta_cand_ML,"eta_cand_ML/F");
   fTreeLcML->Branch("phi_cand_ML",&phi_cand_ML,"phi_cand_ML/F");
@@ -156,12 +157,13 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
   fTreeLcML->Branch("trlen_prong2_ML",&trlen_prong2_ML,"trlen_prong2_ML/F");
   fTreeLcML->Branch("start_time_res_prong2_ML",&start_time_res_prong2_ML,"start_time_res_prong2_ML/F");
     
-  float cand_type_gen_ML, pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML, forCand_z_vtx_gen_ML;
+  int cand_type_gen_ML;
+  float pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML, forCand_z_vtx_gen_ML;
   bool dau_in_acc_gen_ML;
   int new_event_gen_ML;
 
   if(isMC && tree_gen){
-    fTreeLcGenML->Branch("cand_type_gen_ML",&cand_type_gen_ML,"cand_type_gen_ML/F");
+    fTreeLcGenML->Branch("cand_type_gen_ML",&cand_type_gen_ML,"cand_type_gen_ML/I");
     fTreeLcGenML->Branch("pt_cand_gen_ML",&pt_cand_gen_ML,"pt_cand_gen_ML/F");
     fTreeLcGenML->Branch("y_cand_gen_ML",&y_cand_gen_ML,"y_cand_gen_ML/F");
     //fTreeLcGenML->Branch("eta_cand_gen_ML",&eta_cand_gen_ML,"eta_cand_gen_ML/F");
