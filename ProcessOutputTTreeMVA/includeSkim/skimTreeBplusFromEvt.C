@@ -21,7 +21,7 @@ void skimTreeBplusFromEvt(TString input="AnalysisResults-8.root",TString output=
   TTree* fTreeBplus = new TTree("fTreeBplusFlagged","fTreeBplusFlagged");
   
   float inv_mass_ML,pt_cand_ML,d_len_ML,d_len_xy_ML,norm_dl_xy_ML,cos_p_ML,cos_p_xy_ML,imp_par_ML,imp_par_xy_ML,pt_prong0_ML,pt_prong1_ML,pt_prong2_ML;
-  float cand_type_ML;
+  int cand_type_ML;
   float pTPC_prong0_ML,pTPC_prong1_ML,pTPC_prong2_ML,nTPCclspid_prong0_ML,nTPCclspid_prong1_ML,nTPCclspid_prong2_ML,dEdxTPC_0_ML,dEdxTPC_1_ML,dEdxTPC_2_ML;
   int event_ID_ML;
 
@@ -36,7 +36,7 @@ void skimTreeBplusFromEvt(TString input="AnalysisResults-8.root",TString output=
   fTreeBplus->Branch("pt_prong0_ML",&pt_prong0_ML,"pt_prong0_ML/F");
   fTreeBplus->Branch("pt_prong1_ML",&pt_prong1_ML,"pt_prong1_ML/F");
   fTreeBplus->Branch("pt_prong2_ML",&pt_prong2_ML,"pt_prong2_ML/F");
-  fTreeBplus->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/F");
+  fTreeBplus->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/I");
   fTreeBplus->Branch("pTPC_prong0_ML",&pTPC_prong0_ML,"pTPC_prong0_ML/F");
   fTreeBplus->Branch("pTPC_prong1_ML",&pTPC_prong1_ML,"pTPC_prong1_ML/F");
   fTreeBplus->Branch("pTPC_prong2_ML",&pTPC_prong2_ML,"pTPC_prong2_ML/F");
