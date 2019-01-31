@@ -34,26 +34,26 @@ jalien
 exit
 ```
 > **NB:** If you get the error: "**JBox isn't running, so we won't start JSh.**", your grid certificates probably don't have the right permissions. Correct them in *~/.globus/* using: *"chmod 0440 usercert.pem"* and *"chmod 0400 userkey.pem"*. It seems that JALiEn needs slightly different permissions than usual.
- +
- +
+ 
+ 
 The scripts are saved in *~/MachineLearningHF/ProcessOutputTTreeMVA*. There are two ways to run the DownloadSkimMerge.sh script:
 1) Run ./DownloadSkimMerge.sh **without** arguments. The script will ask you for the required input.
 2) Run ./DownloadSkimMerge.sh **with** arguments: *./DownloadSkimMerge.sh trainname dataset outputdirectory gridmergingstage*
 > In this way, all three steps will run after each other. Please note that this can be a heavy process, so it is also possible to run the different steps separate (using './Download.sh', './Skim.sh', './Merge.sh', or './SkimMerge.sh').
- +
- +
+ 
+ 
 The first argument is the trainname, which has the format: *trainnumber_date-time*. Secondly the dataset should be given, for now only *LHC17pq* (pp@5TeV data) and *LHC18a4a2* (HF-enriched MC for pp@5TeV) are implemented, but it is easy to add more. The outputdirectory, the third argument, is */data/HeavyFlavour/DmesonsLambdac_pp_2017_5TeV/\** for the aliceml server, although for testing it is better to use your local folder. The last argument is the GRID merging stage, which should be in the format Stage_#. If this argument is empty, JAliEn will download the unmerged files from GRID. 
 > For now downloading the unmerged files is the preferred way, as it is not yet possible to distinguish between processed and unprocessed (in case of Stage_1 merging failure) jobs.
- +
- +
+ 
+ 
 If (some of the) arguments are empty, the script will ask for your input:
 1) The script will always ask for confirmation of the hardcoded variables (see below). Please read them carefully when submitting a job over full statistics.
 2) You will be asked to fill in the trainname (if not provided).
 3) You will be asked to fill in the dataset (if not provided).
 4) Confirmation will be asked to save output in "./" (if no outputdirectory was provided). Output path can be changed if one doesn't answer 'y' or 'Y'
 5) A warning will be shown that the script will download unmerged GRID files if the fourth argument was empty. This should however already have been checked in 1).
- +
- +
+ 
+ 
 **Finally, note that the skimming and merging part of this script will be performed in sequential. So it will fill up the/your system. So please use with care!**
 
 ### a) Hardcoded values
@@ -98,8 +98,8 @@ git clone https://github.com/alisw/alidist
 aliBuild build JAliEn --defaults jalien -z jalien
 ```
 > JAliEn is already installed at lxplus. To enter the environment, do '/cvmfs/alice.cern.ch/bin/alienv enter JAliEn'
- +
- +
+
+
 ROOT is needed for the skimming and merging of the files. If this is not yet installed, please follow the instructions below. **Please note that these instructions don't build against a specific python version, which you might need for ML studies.**
 ```
 git clone http://github.com/root-project/root.git
