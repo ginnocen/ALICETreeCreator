@@ -1416,7 +1416,7 @@ void AliAnalysisTaskSEHFTreeCreator::Process3Prong(TClonesArray *array3Prong, Al
                                 //do not apply cuts, but enable flag if is selected
                                 fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                               }
-                              fTreeHandlerDs->SetIsSelectedStd(isSelAnCutsKKpi);
+                              fTreeHandlerDs->SetIsSelectedStd(isSelAnCutsKKpi,isSelAnTopoCutsKKpi,isSelAnPidCutsKKpi);
                               fTreeHandlerDs->SetVariables(ds,bfield,0,fPIDresp);
                             }
                           issignal = kFALSE;
@@ -1439,7 +1439,7 @@ void AliAnalysisTaskSEHFTreeCreator::Process3Prong(TClonesArray *array3Prong, Al
                               //do not apply cuts, but enable flag if is selected
                                 fTreeHandlerDs->SetCandidateType(issignal,isbkg,isprompt,isFD,isrefl);
                               }
-                            fTreeHandlerDs->SetIsSelectedStd(isSelAnCutspiKK);
+                            fTreeHandlerDs->SetIsSelectedStd(isSelAnCutspiKK,isSelAnTopoCutspiKK,isSelAnPidCutspiKK);
                             fTreeHandlerDs->SetVariables(ds,bfield,1,fPIDresp);
                           }
                         }//end fill tree
