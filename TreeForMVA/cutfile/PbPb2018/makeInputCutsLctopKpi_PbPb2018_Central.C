@@ -65,8 +65,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     }
   
     //0-8
-    rdcutsvalmine[0][0]=0.013;   //inv mass window
-    rdcutsvalmine[1][0]=0.05;    // pTK
+    rdcutsvalmine[0][0]=0.13;   //inv mass window
+    rdcutsvalmine[1][0]=0.5;    // pTK
     rdcutsvalmine[2][0]=0.625;   // pTP
     rdcutsvalmine[3][0]=0.;      // d0K
     rdcutsvalmine[4][0]=0.;      // d0Pi
@@ -79,8 +79,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     rdcutsvalmine[11][0]=0.0375; // dca cut
     rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
     //8-999
-    rdcutsvalmine[0][0]=0.013;   //inv mass window
-    rdcutsvalmine[1][0]=0.05;    // pTK
+    rdcutsvalmine[0][0]=0.13;   //inv mass window
+    rdcutsvalmine[1][0]=0.5;    // pTK
     rdcutsvalmine[2][0]=0.625;   // pTP
     rdcutsvalmine[3][0]=0.;      // d0K
     rdcutsvalmine[4][0]=0.;      // d0Pi
