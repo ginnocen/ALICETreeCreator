@@ -280,7 +280,7 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
     }
   
     cuts->SetRemoveTrackletOutliers(kFALSE);
-    cuts->fUseTrackSelectionWithFilterBits(kFALSE);
+    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
     //Do not recalculate the vertex
     cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
 
