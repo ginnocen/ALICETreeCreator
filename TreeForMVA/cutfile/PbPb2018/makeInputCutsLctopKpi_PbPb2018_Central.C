@@ -148,6 +148,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     AliAODPidHF* pidObjp=new AliAODPidHF();
     AliAODPidHF* pidObjK=new AliAODPidHF();
     AliAODPidHF* pidObjpi=new AliAODPidHF();
+    pidObjp->SetMatch(1);
+    pidObjK->SetMatch(1);
+    pidObjpi->SetMatch(1);
     pidObjp->SetTPC(kTRUE);
     pidObjK->SetTPC(kTRUE);
     pidObjpi->SetTPC(kTRUE);
