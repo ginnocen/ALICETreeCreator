@@ -70,28 +70,28 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     rdcutsvalmine[2][0]=0.625;   // pTP
     rdcutsvalmine[3][0]=0.;      // d0K
     rdcutsvalmine[4][0]=0.;      // d0Pi
-    rdcutsvalmine[5][0]=0.0125;  // dist12
+    rdcutsvalmine[5][0]=0.025;  // dist12
     rdcutsvalmine[6][0]=0.035;   // sigmavert
     rdcutsvalmine[7][0]=0.00625; // dist prim-sec
     rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
-    rdcutsvalmine[9][0]=0.7;    // cosThetaPoint
+    rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
     rdcutsvalmine[10][0]=0.;     // Sum d0^2
     rdcutsvalmine[11][0]=0.0375; // dca cut
     rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
     //8-999
-    rdcutsvalmine[0][0]=0.13;   //inv mass window
-    rdcutsvalmine[1][0]=0.5;    // pTK
-    rdcutsvalmine[2][0]=0.625;   // pTP
-    rdcutsvalmine[3][0]=0.;      // d0K
-    rdcutsvalmine[4][0]=0.;      // d0Pi
-    rdcutsvalmine[5][0]=0.0125;  // dist12
-    rdcutsvalmine[6][0]=0.045;   // sigmavert
-    rdcutsvalmine[7][0]=0.00625; // dist prim-sec
-    rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
-    rdcutsvalmine[9][0]=0.25;    // cosThetaPoint
-    rdcutsvalmine[10][0]=0.;     // Sum d0^2
-    rdcutsvalmine[11][0]=0.0375; // dca cut
-    rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
+    rdcutsvalmine[0][1]=0.13;   //inv mass window
+    rdcutsvalmine[1][1]=0.5;    // pTK
+    rdcutsvalmine[2][1]=0.625;   // pTP
+    rdcutsvalmine[3][1]=0.;      // d0K
+    rdcutsvalmine[4][1]=0.;      // d0Pi
+    rdcutsvalmine[5][1]=0.0125;  // dist12
+    rdcutsvalmine[6][1]=0.045;   // sigmavert
+    rdcutsvalmine[7][1]=0.00625; // dist prim-sec
+    rdcutsvalmine[8][1]=0.8;     // pM=Max{pT1,pT2,pT3}
+    rdcutsvalmine[9][1]=0.25;    // cosThetaPoint
+    rdcutsvalmine[10][1]=0.;     // Sum d0^2
+    rdcutsvalmine[11][1]=0.0375; // dca cut
+    rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
   
     cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
     cuts->SetMinPtCandidate(4.);
