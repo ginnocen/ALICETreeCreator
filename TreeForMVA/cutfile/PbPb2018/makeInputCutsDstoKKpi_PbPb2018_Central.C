@@ -71,7 +71,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         anacutsval[16][0]=0.;
         anacutsval[17][0]=0.;
         anacutsval[18][0]=2.;
-        anacutsval[19][0]=0.99;
+        anacutsval[19][0]=0.98;
 
         anacutsval[0][1]=0.3;
         anacutsval[1][1]=0.6;
