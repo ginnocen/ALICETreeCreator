@@ -67,7 +67,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         cutsLctoV0->SetMinPtCandidate(0.);
         cutsLctoV0->SetUsePID(kFALSE);
         cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
-        cutsLctoV0->SetUseSpecialCuts(kFALSE);
+        //cutsLctoV0->SetUseSpecialCuts(kFALSE);
         //cutsLctoV0->SetUsePhysicsSelection(kFALSE);
         //cutsLctoV0->SetMaxCentrality(101.);//90.);
         //cutsLctoV0->SetMaxVtxZ(1.e6);
@@ -81,7 +81,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         
         //pid settings
         AliAODPidHF* pidObj=new AliAODPidHF();
-        pidObj->SetName("pid4LctoV0");;
+        //pidObj->SetName("pid4LctoV0");;
 	//const Int_t nlims=2;
         //Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
         //Bool_t compat=kTRUE; //effective only for this mode
