@@ -12,6 +12,7 @@
 #include "makeInputCutsDplustoKpipi_PbPb2018_Central.C"
 #include "makeInputCutsBplustoD0pi_PbPb2018_Central.C"
 #include "makeInputCutsLctopKpi_PbPb2018_Central.C"
+#include "makeInputCutsLctoV0_PbPb2018_Central.C"
 #include "makeInputCutsDstartoKpipi_PbPb2018_Central.C"
 
 Float_t minCent=0.;
@@ -53,6 +54,12 @@ void makeCutsTreeCreator()
     Printf("Lc analysis cuts");
     AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
     Printf("*************************************************************");
+    Printf("Lc to K0s filtering cuts");
+    AliRDHFCutsLctoV0  *looseCutsLctoV0    = makeInputCutsLctoV0(0,"LctoV0FilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("Lc to K0s analysis cuts");
+    AliRDHFCutsLctoV0  *analysisCutsLctoV0 = makeInputCutsLctoV0(1,"LctoV0AnalysisCuts",minCent,maxCent);
+    Printf("*************************************************************");
     Printf("Dstar filtering cuts");
     AliRDHFCutsDStartoKpipi  *looseCutsDStartoKpipi    = makeInputCutsDstartoKpipi(0,"DstartoKpipiFilteringCuts",minCent,maxCent);
     Printf("\n\n");
@@ -71,6 +78,8 @@ void makeCutsTreeCreator()
     analysisCutsBplustoD0pi->Write();
     looseCutsLctopKpi->Write();
     analysisCutsLctopKpi->Write();
+    looseCutsLctoV0->Write();
+    analysisCutsLctoV0->Write();
     looseCutsDStartoKpipi->Write();
     analysisCutsDStartoKpipi->Write();
     fout->Close();
