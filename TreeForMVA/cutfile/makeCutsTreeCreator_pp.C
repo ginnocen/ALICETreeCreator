@@ -13,6 +13,7 @@
 #include "makeInputCutsDstartoKpipi_pp.C"
 #include "makeInputCutsLctopKpi_pp.C"
 #include "makeInputCutsBplustoD0pi_pp.C"
+#include "makeInputCutsLctoV0_pp.C"
 
 Float_t minCent=0.;
 Float_t maxCent=100.;
@@ -59,7 +60,13 @@ void makeCutsTreeCreator_pp()
     Printf("\n\n");
     Printf("Bplus analysis cuts");
     AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi_pp(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
-  
+    Printf("*************************************************************");
+    Printf("LctoV0bachelor filtering cuts");
+    AliRDHFCutsLctoV0  *looseCutsLctoV0bachelor    = makeInputCutsLctoV0(0,"Lc2V0bachelorFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("LctoV0bachelor analysis cuts");
+    AliRDHFCutsLctoV0  *analysisCutsLctoV0bachelor = makeInputCutsLctoV0(1,"Lc2V0bachelorAnalysisCuts",minCent,maxCent);
+
     TFile* fout=new TFile("D0DsDplusDstarLcBplusCuts_pp.root","recreate");
     fout->cd();
     looseCutsD0toKpi->Write();
@@ -74,6 +81,8 @@ void makeCutsTreeCreator_pp()
     analysisCutsBplustoD0pi->Write();
     looseCutsDstartoKpipi->Write();
     analysisCutsDstartoKpipi->Write();
+    looseCutsLctoV0bachelor->Write();
+    analysisCutsLctoV0bachelor->Write();
     fout->Close();
     
 }
