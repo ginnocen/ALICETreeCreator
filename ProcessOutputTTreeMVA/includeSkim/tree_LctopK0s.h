@@ -40,8 +40,18 @@ public :
    vector<float>   *cos_p_xy;
    vector<float>   *imp_par_xy;
    vector<float>   *dca;
-   vector<float>   *max_norm_d0d0exp;
-   vector<float>   *sig_vert;
+   vector<float>   *cos_t_star;
+   vector<float>   *signd0;
+   vector<float>   *inv_mass_K0s;
+   vector<float>   *dca_K0s;
+   vector<float>   *imp_par_K0s;
+   vector<float>   *d_len_K0s;
+   vector<float>   *armenteros_K0s;
+   vector<float>   *ctau_K0s;
+   vector<float>   *cos_p_K0s;
+   vector<float>   *pt_K0s;
+   vector<float>   *eta_K0s;
+   vector<float>   *phi_K0s;
    vector<float>   *p_prong0;
    vector<float>   *pt_prong0;
    vector<float>   *eta_prong0;
@@ -123,8 +133,18 @@ public :
    TBranch        *b_cos_p_xy;   //!
    TBranch        *b_imp_par_xy;   //!
    TBranch        *b_dca;  //!
-   TBranch        *b_max_norm_d0d0exp;   //!
-   TBranch        *b_sig_vert;   //!
+   TBranch        *b_cos_t_star;  //!
+   TBranch        *b_signd0;  //!
+   TBranch        *b_inv_mass_K0s;  //!
+   TBranch        *b_dca_K0s;  //!
+   TBranch        *b_imp_par_K0s;  //!
+   TBranch        *b_d_len_K0s;  //!
+   TBranch        *b_armenteros_K0s;  //!
+   TBranch        *b_ctau_K0s;  //!
+   TBranch        *b_cos_p_K0s;  //!
+   TBranch        *b_pt_K0s;  //!
+   TBranch        *b_eta_K0s;  //!
+   TBranch        *b_phi_K0s; //!
    TBranch        *b_p_prong0;   //!
    TBranch        *b_pt_prong0;   //!
    TBranch        *b_eta_prong0;   //!
@@ -275,8 +295,18 @@ void tree_LctopK0s::Init(TTree *tree)
    cos_p_xy = 0;
    imp_par_xy = 0;
    dca = 0;
-   max_norm_d0d0exp = 0;
-   sig_vert = 0;
+   cos_t_star = 0;
+   signd0 = 0;
+   inv_mass_K0s = 0;
+   dca_K0s = 0;
+   imp_par_K0s = 0;
+   d_len_K0s = 0;
+   armenteros_K0s = 0;
+   ctau_K0s = 0;
+   cos_p_K0s = 0;
+   pt_K0s = 0;
+   eta_K0s = 0;
+   phi_K0s = 0;
    p_prong0 = 0;
    pt_prong0 = 0;
    eta_prong0 = 0;
@@ -363,8 +393,19 @@ void tree_LctopK0s::Init(TTree *tree)
    fChain->SetBranchAddress("cos_p_xy", &cos_p_xy, &b_cos_p_xy);
    fChain->SetBranchAddress("imp_par_xy", &imp_par_xy, &b_imp_par_xy);
    fChain->SetBranchAddress("dca", &dca, &b_dca);
-   fChain->SetBranchAddress("max_norm_d0d0exp", &max_norm_d0d0exp, &b_max_norm_d0d0exp);
-   fChain->SetBranchAddress("sig_vert", &sig_vert, &b_sig_vert);
+   fChain->SetBranchAddress("cos_t_star", &cos_t_star, &b_cos_t_star);
+   fChain->SetBranchAddress("signd0", &signd0, &b_signd0);
+   fChain->SetBranchAddress("inv_mass_K0s", &inv_mass_K0s, &b_inv_mass_K0s);
+   fChain->SetBranchAddress("dca_K0s", &dca_K0s, &b_dca_K0s);
+   fChain->SetBranchAddress("imp_par_K0s", &imp_par_K0s, &b_imp_par_K0s);
+   fChain->SetBranchAddress("d_len_K0s", &d_len_K0s, &b_d_len_K0s);
+   fChain->SetBranchAddress("armenteros_K0s", &armenteros_K0s, &b_armenteros_K0s);
+   fChain->SetBranchAddress("ctau_K0s", &ctau_K0s, &b_ctau_K0s);
+   fChain->SetBranchAddress("cos_p_K0s", &cos_p_K0s, &b_cos_p_K0s);
+   fChain->SetBranchAddress("pt_K0s", &pt_K0s, &b_pt_K0s);
+   fChain->SetBranchAddress("eta_K0s", &eta_K0s, &b_eta_K0s);
+   fChain->SetBranchAddress("phi_K0s", &phi_K0s, &b_phi_K0s);
+
    fChain->SetBranchAddress("p_prong0", &p_prong0, &b_p_prong0);
    fChain->SetBranchAddress("pt_prong0", &pt_prong0, &b_pt_prong0);
    fChain->SetBranchAddress("eta_prong0", &eta_prong0, &b_eta_prong0);
