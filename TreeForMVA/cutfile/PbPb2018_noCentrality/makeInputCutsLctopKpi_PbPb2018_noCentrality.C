@@ -165,13 +165,10 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
   }
     cuts->SetKinkRejection(kTRUE);
-
+  
     //event selection
     cuts->SetTriggerClass("");
-    cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
-    cuts->SetMinCentrality(minc);
-    cuts->SetMaxCentrality(maxc);
-    cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,k CentInvalid
+    cuts->SetTriggerMask(AliVEvent::kINT7);
     cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
     cuts->SetMaxVtxZ(10.);
     cuts->SetCutOnzVertexSPD(3);
