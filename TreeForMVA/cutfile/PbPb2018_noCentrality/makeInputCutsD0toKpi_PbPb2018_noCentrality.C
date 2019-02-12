@@ -364,7 +364,11 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         
         
     }
-    
+    //To overwrite the centrality settings of SetStandardCutsPbPb2011()
+    cutsD0toKpi->SetMinCentrality(0.);
+    cutsD0toKpi->SetMaxCentrality(100.);
+    cutsD0toKpi->SetUseCentrality(AliRDHFCuts::kCentOff);
+  
     //event selection
     cutsD0toKpi->SetTriggerClass("");
     cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7);
