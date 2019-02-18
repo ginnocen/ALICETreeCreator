@@ -161,7 +161,7 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
   if(t.EnabledSkim_start_time_res_prong2) fTreeLcML->Branch("start_time_res_prong2_ML",&start_time_res_prong2_ML,"start_time_res_prong2_ML/F");
   
   /*-------LcGenFlagged-------*/
-  int cand_type_gen_ML;
+  int cand_type_gen_ML, cand_fileID_gen_ML, cand_evtID_gen_ML;
   float pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML, forCand_z_vtx_gen_ML;
   bool dau_in_acc_gen_ML;
   int new_event_gen_ML;
