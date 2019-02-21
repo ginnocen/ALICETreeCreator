@@ -165,7 +165,7 @@ fi
 #----RUNNING THE DOWNLOADER----#
 printf "\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
 printf "  Output of downloaders stored in:            \e[1m%s\e[0m\n  Warnings/Errors of downloader stored in:    \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-rundownloader="sh ./downloader.sh"
+rundownloader="sh ./utils/downloader.sh"
 
 printf "\n\n\n\nOutput downloading starts here\n\n" > "$stdoutputfile"
 printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
@@ -173,22 +173,22 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 #run downloaders + progress bar. Not in parallel as writing time is the limiting factor here
 if [ $ninput -eq 1 ]; then
   if [ "$dataset" == "LHC16i2a" ] || [ "$dataset" == "LHC18r" ]; then
-    sh ./run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+    sh ./utils/run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   else
-    sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+    sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   fi
 elif [ $ninput -eq 2 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 3 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 4 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 else
   printf "ERROR: More than 4 childs not yet supported, please implement. Returning..."
   exit

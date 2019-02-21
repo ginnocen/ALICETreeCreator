@@ -210,13 +210,13 @@ do
     skimmeroutputfile="skimmer_stdout.txt"
     skimmererrorfile="skimmer_stderr.txt"
     printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-    runskimmer="sh ./skimmer.sh"
+    runskimmer="sh ./utils/skimmer.sh"
 
     printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
     printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
 
     #run skimmer + progress bar
-    sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+    sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
 
     #Look for errors in logfile, and print warning if the case
     if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault\|No such file or directory" "$skimmererrorfile"

@@ -22,14 +22,14 @@ printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
 
 
 #----THINGS TO SET----#
-nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
 
 doDplus=1       #toset (skimmers)
-doDs=1          #toset (skimmers)
-doDzero=1       #toset (skimmers)
-doDstar=1       #toset (skimmers)
-doLcpKpi=1          #toset (skimmers)
+doDs=0          #toset (skimmers)
+doDzero=0       #toset (skimmers)
+doDstar=0       #toset (skimmers)
+doLcpKpi=0      #toset (skimmers)
 doLcpK0s=0      #toset (skimmers)
 
 filestomerge=150
@@ -176,7 +176,7 @@ fi
 #----RUNNING THE DOWNLOADER----#
 printf "\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
 printf "  Output of downloaders stored in:            \e[1m%s\e[0m\n  Warnings/Errors of downloader stored in:    \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-rundownloader="sh ./downloader.sh"
+rundownloader="sh ./utils/downloader.sh"
 
 printf "\n\n\n\nOutput downloading starts here\n\n" > "$stdoutputfile"
 printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
@@ -184,22 +184,22 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 #run downloaders + progress bar. Not in parallel as writing time is the limiting factor here
 if [ $ninput -eq 1 ]; then
   if [ "$dataset" == "LHC16i2a" ] || [ "$dataset" == "LHC18r" ]; then
-    sh ./run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+    sh ./utils/run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   else
-    sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+    sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
   fi
 elif [ $ninput -eq 2 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 3 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 4 ]; then
-  sh ./run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 else
   printf "ERROR: More than 4 childs not yet supported, please implement. Returning..."
   exit
@@ -237,13 +237,13 @@ do
   skimmeroutputfile="skimmer_stdout.txt"
   skimmererrorfile="skimmer_stderr.txt"
   printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-  runskimmer="sh ./skimmer.sh"
+  runskimmer="sh ./utils/skimmer.sh"
 
   printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
   printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
 
   #run skimmer + progress bar
-  sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+  sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
 
   #Look for errors in logfile, and print warning if the case
   if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault" "$skimmererrorfile"
@@ -292,29 +292,29 @@ do
   mergeroutputfile="merger_stdout.txt"
   mergererrorfile="merger_stderr.txt"
   printf "  Output of merger (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of merger stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-  runmerger="sh ./merger.sh"
+  runmerger="sh ./utils/merger.sh"
 
   printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergeroutputfile"
   printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergererrorfile"
 
   #run mergers + progress bar
   if [ "$doDplus" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doDs" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doDzero" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doDstar" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doLcpKpi" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopKpi" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopKpi" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
   if [ "$doLcpK0s" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopK0s" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+    sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopK0s" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
 
 

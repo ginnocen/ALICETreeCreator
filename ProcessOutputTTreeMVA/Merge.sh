@@ -226,29 +226,29 @@ do
     mergeroutputfile="merger_stdout.txt"
     mergererrorfile="merger_stderr.txt"
     printf "  Output of merger (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of merger stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-    runmerger="sh ./merger.sh"
+    runmerger="sh ./utils/merger.sh"
 
     printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergeroutputfile"
     printf "\n\n\n\nMerging child_$i starts here\n\n" > "$mergererrorfile"
 
     #run mergers + progress bar
     if [ "$doDplus" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dplus" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
     if [ "$doDs" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Ds" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
     if [ "$doDzero" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dzero" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
     if [ "$doDstar" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
     if [ "$doLcpKpi" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopKpi" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopKpi" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
     if [ "$doLcpK0s" == "1" ]; then
-      sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopK0s" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+      sh ./utils/run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopK0s" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
     fi
 
     #Copy log in general log, and empty for next child

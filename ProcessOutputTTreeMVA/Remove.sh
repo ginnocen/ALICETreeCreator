@@ -7,7 +7,7 @@
 #
 #To set in script (find with "#toset"):
 #   OUTPUTFILE (name of file to download)
-#   What mesons to skim
+#   What mesons to remove
 
 printf "\n\n\n\e[1m----RUNNING THE REMOVER----\e[0m\n\n"
 
@@ -174,7 +174,7 @@ fi
 
 #----RUNNING THE REMOVER----#
 printf "\n\n\e[1m----RUNNING THE REMOVER----\e[0m\n\n"
-printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
+printf "Removing for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 
 for ((i=1; i<=$ninput; i++))
 do
@@ -212,13 +212,13 @@ do
     removeroutputfile="remover_stdout.txt"
     removererrorfile="remover_stderr.txt"
     printf "  Output of remover (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of remover stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-    runremover="sh ./remover.sh"
+    runremover="sh ./utils/remover.sh"
 
     printf "\n\n\n\nRemoving one/more TTrees from child_$i starts here\n\n" > "$removeroutputfile"
     printf "\n\n\n\nRemoving one/more TTrees from child_$i starts here\n\n" > "$removererrorfile"
 
     #run remover + progress bar
-    sh ./run_remover $runremover $outputlist $isMC $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$removeroutputfile" 2>> "$removererrorfile"
+    sh ./utils/run_remover $runremover $outputlist $isMC $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$removeroutputfile" 2>> "$removererrorfile"
 
     #Look for errors in logfile, and print warning if the case
     if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault\|No such file or directory" "$removererrorfile"
