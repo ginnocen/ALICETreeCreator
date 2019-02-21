@@ -76,6 +76,7 @@ if [ "$dataset" == "LHC17pq" ]; then
   ninput=4
   isMC=0
   ispp=1
+  datasetwithchilds=1
 elif [ "$dataset" == "LHC18a4a2" ]; then
   inputpathchild1=/alice/sim/2018/LHC18a4a2_fast/282341/PWGZZ/Devel_2
   inputpathchild2=/alice/sim/2018/LHC18a4a2_fast/282366/PWGZZ/Devel_2
@@ -84,16 +85,19 @@ elif [ "$dataset" == "LHC18a4a2" ]; then
   ninput=4
   isMC=1
   ispp=1
+  datasetwithchilds=1
 elif [ "$dataset" == "LHC16i2a" ]; then
   inputpathchild1=/alice/sim/2016/LHC16i2a/246087/AOD198/PWGZZ/Devel_2
   ninput=1
   isMC=1
   ispp=0
+  datasetwithchilds=0
 elif [ "$dataset" == "LHC18r" ]; then
   inputpathchild1=/alice/data/2018/LHC18r/000296932/pass1/PWGZZ/Devel_2
   ninput=1
   isMC=0
   ispp=0
+  datasetwithchilds=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
@@ -172,25 +176,21 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 
 #run downloaders + progress bar. Not in parallel as writing time is the limiting factor here
 if [ $ninput -eq 1 ]; then
-  if [ "$dataset" == "LHC16i2a" ] || [ "$dataset" == "LHC18r" ]; then
-    sh ./utils/run_downloader $rundownloader $inputpathchild1 0 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  else
-    sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  fi
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 2 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 3 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 elif [ $ninput -eq 4 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  sh ./utils/run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 else
-  printf "ERROR: More than 4 childs not yet supported, please implement. Returning..."
+  printf "ERROR: More than 4 childs/runlist not yet supported, please implement. Returning..."
   exit
 fi
 

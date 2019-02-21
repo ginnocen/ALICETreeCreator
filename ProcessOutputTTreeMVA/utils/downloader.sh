@@ -6,7 +6,8 @@ NFILES=$3
 DWNLDOUTPUTFILE=$4
 BASEDIR=$5
 TRAINNAME=$6
-STAGE=$7
+DATASETWITHCHILDS=$7
+STAGE=$8
 
 SAVEDIR=$(printf "%s/%s/unmerged/child_%s" $BASEDIR $TRAINNAME $CHILD)
 mkdir -p -m 777 $SAVEDIR
@@ -17,7 +18,7 @@ else
   printf "Created directory: $SAVEDIR \n"
 fi
 
-if [ -z "$7" ]; then
+if [ -z "$8" ]; then
   #do nothing, if-statement to be reversed
   dummy=1
 else
@@ -31,10 +32,10 @@ else
   fi
 fi
 
-if [ $CHILD -eq 0 ]; then
-  DWNLDOUTPUTPATH=$(printf "%s/%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $STAGE)
-else
+if [ $DATASETWITHCHILDS -eq 1 ]; then
   DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $CHILD $STAGE)
+else
+  DWNLDOUTPUTPATH=$(printf "%s/%s/%s" $DWNLDOUTPUTPATH $TRAINNAME $STAGE)
 fi
 printf "Downloading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
 
