@@ -212,6 +212,8 @@ public :
    TBranch        *b_start_time_res_prong2;   //!
 
    // Declaration if branch should be enabled in skimmer
+   bool   EnabledSkim_n_cand;
+   bool   EnabledSkim_cand_type;
    bool   EnabledSkim_inv_mass;
    bool   EnabledSkim_pt_cand;
    bool   EnabledSkim_y_cand;
@@ -563,6 +565,8 @@ void tree_LctopK0s::Init(TTree *tree)
    fChain->SetBranchAddress("trlen_prong2", &trlen_prong2, &b_trlen_prong2);
    fChain->SetBranchAddress("start_time_res_prong2", &start_time_res_prong2, &b_start_time_res_prong2);
 
+   EnabledSkim_n_cand = kTRUE;
+   EnabledSkim_cand_type = kTRUE;
    EnabledSkim_inv_mass = kTRUE;
    EnabledSkim_pt_cand = kTRUE;
    EnabledSkim_y_cand = kTRUE;

@@ -4,12 +4,12 @@ START=$(date +%s)
 
 myfile=$1
 #isMC=$2             #to be added
-#doDplusFromEvt=$3   #to be added
-#doDsFromEvt=$4      #to be added
-#doDzeroFromEvt=$5   #to be added
-#doDstarFromEvt=$6   #to be added
-#doLcFromEvt=$7      #to be added
-doLctopK0sFromEvt=$8
+doDplusFromEvt=$3   #to be added
+doDsFromEvt=$4      #to be added
+doDzeroFromEvt=$5   #to be added
+doDstarFromEvt=$6   #to be added
+doLcpKpiFromEvt=$7  #to be added
+doLcpK0sFromEvt=$8
 #doBplusFromEvt=$9   #to be added
 #doPID=$10           #to be added
 

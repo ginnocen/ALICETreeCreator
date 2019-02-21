@@ -4,7 +4,7 @@
 #   $2 is path where input is saved (e.g. "" or ../ALICEanalysis/MLproductions/ -> Should be the as used for downloadOutputTrain.sh)
 #   $3 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
 #   $4 is how many files to merge into one
-#   $5 particle name (options: Dzero, Dplus, Ds, Dstar, Lc, Bplus)
+#   $5 particle name (options: Dzero, Dplus, Ds, Dstar, LctopKpi, LctopK0s)
 #   $6 child
 
 TRAINNAME=$1
