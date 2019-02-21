@@ -20,8 +20,8 @@ doDplus=1       #toset (skimmers)
 doDs=0          #toset (skimmers)
 doDzero=0       #toset (skimmers)
 doDstar=0       #toset (skimmers)
-doLcpKpi=0      #toset (skimmers)
-doLcpK0s=0      #toset (skimmers)
+doLcpKpi=1      #toset (skimmers)
+doLcpK0s=1      #toset (skimmers)
 
 #Confirm with user if hardcoded values are what he/she wants
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"

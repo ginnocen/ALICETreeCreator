@@ -9,7 +9,7 @@ doDplusFromEvt=$4
 doDsFromEvt=$5
 doDzeroFromEvt=$6
 doDstarFromEvt=$7
-doLcFromEvt=$8
+doLctopKpiFromEvt=$8
 doLctopK0sFromEvt=$9
 
 
@@ -122,14 +122,14 @@ fi
 
 
 
-if [ $doLcFromEvt -eq 1 ]
+if [ $doLctopKpiFromEvt -eq 1 ]
 then
 
 DataTree="tree_LctopKpi"
 
-g++ includeSkim/skimTreeLcFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLcFromEvt.exe
+g++ includeSkim/skimTreeLctopKpiFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLctopKpiFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeLcFromEvt.exe "${line}" "${line%.*}_LctopKpi_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeLctopKpiFromEvt.exe "${line}" "${line%.*}_LctopKpi_skimmed.root" "$DataTree" "$isMC" "$ispp" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -143,7 +143,7 @@ done < "$myfile"
 ## before displaying all done message
 wait
 echo "Lc->pKpi = All done"
-rm -rf skimTreeLcFromEvt.exe skimTreeLcFromEvt.exe.dSYM
+rm -rf skimTreeLctopKpiFromEvt.exe skimTreeLctopKpiFromEvt.exe.dSYM
 
 fi
 
@@ -156,7 +156,7 @@ DataTree="tree_Lc2V0bachelor"
 
 g++ includeSkim/skimTreeLctopK0sFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLctopK0sFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeLctopK0sFromEvt.exe "${line}" "${line%.*}_LctopK0s_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeLctopK0sFromEvt.exe "${line}" "${line%.*}_LctopK0s_skimmed.root" "$DataTree" "$isMC" "$ispp" "0" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
