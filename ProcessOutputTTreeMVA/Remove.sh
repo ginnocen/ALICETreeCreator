@@ -20,15 +20,15 @@ doDplus=0       #toset (removers)
 doDs=0          #toset (removers)
 doDzero=0       #toset (removers)
 doDstar=0       #toset (removers)
-doLc=0          #toset (removers)
-doLctopK0s=1    #toset (removers)
+doLcpKpi=0      #toset (removers)
+doLcpK0s=1      #toset (removers)
 #doBplus=0      #to be added
 #doPID=0        #to be added
 
 #Confirm with user if hardcoded values are what he/she wants
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
 printf "   Outputfile that was downloaded from grid: \e[1m$outputfile.root\e[0m\n"
-printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, LctopKpi \e[1m(%s)\e[0m, LctopK0s \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc $doLctopK0s
+printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc->pKpi \e[1m(%s)\e[0m, Lc->pK0s \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 if [ -z "$4" ]; then
   printf "   You didn't provide the GRID merging stage as argument. I will look for \e[1mnon-merged files\e[0m from GRID\n"
 fi
@@ -174,7 +174,7 @@ fi
 
 #----RUNNING THE REMOVER----#
 printf "\n\n\e[1m----RUNNING THE REMOVER----\e[0m\n\n"
-printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), LctopKpi (%s), LctopK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc $doLctopK0s
+printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 
 for ((i=1; i<=$ninput; i++))
 do
@@ -218,7 +218,7 @@ do
     printf "\n\n\n\nRemoving one/more TTrees from child_$i starts here\n\n" > "$removererrorfile"
 
     #run remover + progress bar
-    sh ./run_remover $runremover $outputlist $isMC $doDplus $doDs $doDzero $doDstar $doLc $doLctopK0s >> "$removeroutputfile" 2>> "$removererrorfile"
+    sh ./run_remover $runremover $outputlist $isMC $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$removeroutputfile" 2>> "$removererrorfile"
 
     #Look for errors in logfile, and print warning if the case
     if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault\|No such file or directory" "$removererrorfile"

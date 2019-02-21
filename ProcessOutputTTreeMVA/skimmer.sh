@@ -10,8 +10,7 @@ doDsFromEvt=$5
 doDzeroFromEvt=$6
 doDstarFromEvt=$7
 doLcFromEvt=$8
-#doBplusFromEvt=$9   #to be added
-#doPID=$10           #to be added
+doLctopK0sFromEvt=$9
 
 
 
@@ -130,7 +129,7 @@ DataTree="tree_LctopKpi"
 
 g++ includeSkim/skimTreeLcFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLcFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeLcFromEvt.exe "${line}" "${line%.*}_Lc_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeLcFromEvt.exe "${line}" "${line%.*}_LctopKpi_skimmed.root" "$DataTree" "$isMC" "$ispp" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -143,30 +142,37 @@ done < "$myfile"
 ## would wait until those are completed
 ## before displaying all done message
 wait
-echo "Lc = All done"
+echo "Lc->pKpi = All done"
 rm -rf skimTreeLcFromEvt.exe skimTreeLcFromEvt.exe.dSYM
 
 fi
 
 
 
-#if [ $doBplusFromEvt -eq 1 ]
-#then
-#
-#DataTree="tree_Bplus"
-#
-#g++ includeSkim/skimTreeBplusFromEvt.C $(root-config --cflags --libs) -g -o skimTreeBplusFromEvt.exe
-#while IFS='' read -r line || [[ -n "$line" ]]; do
-#  ./skimTreeBplusFromEvt.exe "${line}" "${line%.*}_Bplus_skimmed.root" "$DataTree" &
-#done < "$myfile" &
-#
-### would wait until those are completed
-### before displaying all done message
-#wait
-#echo "Bplus = All done"
-#rm -rf skimTreeBplusFromEvt.exe skimTreeBplusFromEvt.exe.dSYM
-#
-#fi
+if [ $doLctopK0sFromEvt -eq 1 ]
+then
+
+DataTree="tree_Lc2V0bachelor"
+
+g++ includeSkim/skimTreeLctopK0sFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLctopK0sFromEvt.exe
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  ./skimTreeLctopK0sFromEvt.exe "${line}" "${line%.*}_LctopK0s_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+
+  #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
+  #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
+  #Take job a bit further? The third one by '| head -3 | tail -1'
+  if [ $(jobs -r | wc -l) -ge 50 ]; then
+    wait $(jobs -r -p | head -3 | tail -1)
+  fi
+done < "$myfile"
+
+## would wait until those are completed
+## before displaying all done message
+wait
+echo "Lc->pK0s = All done"
+rm -rf skimTreeLctopK0sFromEvt.exe skimTreeLctopK0sFromEvt.exe.dSYM
+
+fi
 
 
 

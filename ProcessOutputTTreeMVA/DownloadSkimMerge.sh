@@ -29,9 +29,8 @@ doDplus=1       #toset (skimmers)
 doDs=1          #toset (skimmers)
 doDzero=1       #toset (skimmers)
 doDstar=1       #toset (skimmers)
-doLc=1          #toset (skimmers)
-#doBplus=0      #to be added
-#doPID=0        #to be added
+doLcpKpi=1          #toset (skimmers)
+doLcpK0s=0      #toset (skimmers)
 
 filestomerge=150
 
@@ -39,8 +38,8 @@ filestomerge=150
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
 printf "   Number of files to download from grid: \e[1m$nfiles\e[0m\n"
 printf "   Outputfile to be downloaded from grid: \e[1m$outputfile.root\e[0m\n"
-printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: average size of one skimmed file is XX for unmerged, and XX for Stage_1 merging)\e[0m\n"
-printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "   Number of skimmed files to be merged:  \e[1m$filestomerge\e[0m\n       \033[0;37m(NB: for pp data '100' is usually used, for pp MC '200')\e[0m\n"
+printf "   Particles that are enabled: Dplus \e[1m(%s)\e[0m, Ds \e[1m(%s)\e[0m, Dzero \e[1m(%s)\e[0m, Dstar \e[1m(%s)\e[0m, Lc->pKpi \e[1m(%s)\e[0m, Lc->pK0s \e[1m(%s)\e[0m\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 if [ -z "$4" ]; then
   printf "   You didn't provide the GRID merging stage as argument. I will download \e[1mnon-merged files\e[0m from GRID\n"
 fi
@@ -222,7 +221,7 @@ wait
 
 #----RUNNING THE SKIMMER----#
 printf "\n\n\e[1m----RUNNING THE SKIMMER----\e[0m\n\n"
-printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s) \n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 
 for ((i=1; i<=$ninput; i++))
 do
@@ -244,7 +243,7 @@ do
   printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
 
   #run skimmer + progress bar
-  sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLc >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+  sh ./run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
 
   #Look for errors in logfile, and print warning if the case
   if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault" "$skimmererrorfile"
@@ -266,7 +265,7 @@ wait
 
 #----RUNNING THE MERGER----#
 printf "\n\e[1m----RUNNING THE MERGER----\e[0m\n\n"
-printf "Merging for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc (%s)\n" $doDplus $doDs $doDzero $doDstar $doLc
+printf "Merging for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
 
 #Create /merged/ dir, in exactly the same structure as downloaded files
 mkdir -p -m 777 $placetosave/$trainname/merged
@@ -311,9 +310,13 @@ do
   if [ "$doDstar" == "1" ]; then
     sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Dstar" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
-  if [ "$doLc" == "1" ]; then
-    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "Lc" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  if [ "$doLcpKpi" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopKpi" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
   fi
+  if [ "$doLcpK0s" == "1" ]; then
+    sh ./run_merger $runmerger $trainname $placetosave $i $filestomerge "LctopK0s" $stage >> "$mergeroutputfile" 2>> "$mergererrorfile"
+  fi
+
 
   #Copy log in general log, and empty for next child
   cat "$mergeroutputfile" >> "$stdoutputfile"
