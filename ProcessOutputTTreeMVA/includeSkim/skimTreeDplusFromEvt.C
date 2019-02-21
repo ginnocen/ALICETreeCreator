@@ -2,16 +2,18 @@
 #include <vector>
 #include <algorithm>
 #include <TKey.h>
+#include <TMath.h>
 #include "tree_Dplus.C"
 #include "tree_Event.C"
 #include "tree_Gen.C"
 
 using namespace std;
 
-//Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point (using //). Including different possibilities (using ///) to match event_tree to cand_tree
+//Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
 
 void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_Dplus", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE){
 
+/*-------------Reading input-------------*/
   TFile *f = TFile::Open(input.Data());
   TDirectory * dir = (TDirectory*)f->Get("PWGHF_TreeCreator");
   TTree* tree = (TTree*)dir->Get(ttreeout.Data());
@@ -22,141 +24,137 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
     if(!tree_gen) cout << "MC generated TTree was not enabled, skipping this." << endl;
   }
 
+/*-------------Input TTrees and initialisation-------------*/
   tree_Dplus t(tree);
   tree_Event t_ev(tree_ev, isMC);
   tree_Gen t_gen(tree_gen);
+
+  //TODO, overwrite here all EnabledSkim variables using a .txt file as input.
 
   int nevt = t.GetEntriesFast();
     cout << "\n\nRUNNING Dplus: " << input.Data() << endl;
   TFile *fout = new TFile(output.Data(),"recreate");
 
-  //TH1F* hEvent = 0;
-  //TH2F* hNorm = 0;
-  //for(auto k : *dir->GetListOfKeys()) {
-  //  TKey *key = static_cast<TKey*>(k);
-  //  TClass *cl = gROOT->GetClass(key->GetClassName());
-  //  if (cl->InheritsFrom("TH1F")){
-  //    TH1F* hEvent=(TH1F*)key->ReadObj();
-  //    hEvent->Write();
-  //  } else if (cl->InheritsFrom("TH2F")){
-  //    TH2F* hNorm=(TH2F*)key->ReadObj();
-  //    hNorm->Write();
-  //  }
-  //}
-
+/*-------------Output TTrees-------------*/
   TTree* fTreeEventCharML = new TTree("fTreeEventChar","fTreeEventChar");
   TTree* fTreeDplusML = new TTree("fTreeDplusFlagged","fTreeDplusFlagged");
   TTree* fTreeDplusGenML;
   if(isMC && tree_gen) fTreeDplusGenML = new TTree("fTreeDplusGenFlagged","fTreeDplusGenFlagged");
 
+  /*-------EventChar-------*/
   float centrality_ML, z_vtx_reco_ML, z_vtx_gen_ML;
-  int n_vtx_contributors_ML, n_tracks_ML, is_ev_rej_ML, run_number_ML;
+  int n_vtx_contributors_ML, n_tracks_ML, is_ev_rej_ML, run_number_ML, fileID_ML, evtID_ML;
   int ev_has_reco_cand_ML, ev_has_gen_cand_ML, n_reco_cand_ML, n_gen_cand_ML;
+  bool flagVtxPos_ML, flagVtxIsReco_ML;
 
   if(!ispp) fTreeEventCharML->Branch("centrality_ML",&centrality_ML,"centrality_ML/F");
   fTreeEventCharML->Branch("z_vtx_reco_ML",&z_vtx_reco_ML,"z_vtx_reco_ML/F");
   //fTreeEventCharML->Branch("n_vtx_contributors_ML",&n_vtx_contributors_ML,"n_vtx_contributors_ML/I");
   //fTreeEventCharML->Branch("n_tracks_ML",&n_tracks_ML,"n_tracks_ML/I");
   fTreeEventCharML->Branch("is_ev_rej_ML",&is_ev_rej_ML,"is_ev_rej_ML/I");
+  fTreeEventCharML->Branch("flagVtxPos_ML",&flagVtxPos_ML,"flagVtxPos_ML/O");
+  fTreeEventCharML->Branch("flagVtxIsReco_ML",&flagVtxIsReco_ML,"flagVtxIsReco_ML/O");
+  fTreeEventCharML->Branch("fileID_ML",&fileID_ML,"fileID_ML/I");
+  fTreeEventCharML->Branch("evtID_ML",&evtID_ML,"evtID_ML/I");
   //fTreeEventCharML->Branch("run_number_ML",&run_number_ML,"run_number_ML/I");
   //if(isMC) fTreeEventCharML->Branch("z_vtx_gen_ML",&z_vtx_gen_ML,"z_vtx_gen_ML/F");
-  ///fTreeEventCharML->Branch("ev_has_reco_cand_ML",&ev_has_reco_cand_ML,"ev_has_reco_cand_ML/I");
-  ///if(isMC) fTreeEventCharML->Branch("ev_has_gen_cand_ML",&ev_has_gen_cand_ML,"ev_has_gen_cand_ML/I");
-  ///fTreeEventCharML->Branch("n_reco_cand_ML",&n_reco_cand_ML,"n_reco_cand_ML/I");
-  ///if(isMC) fTreeEventCharML->Branch("n_gen_cand_ML",&n_gen_cand_ML,"n_gen_cand_ML/I");
 
-  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, imp_par_xy_ML, sig_vert_ML, max_norm_d0d0exp_ML;
+  /*-------DplusFlagged-------*/
+  float inv_mass_ML, pt_cand_ML, d_len_ML, d_len_xy_ML, norm_dl_xy_ML, cos_p_ML, cos_p_xy_ML, dca_ML, imp_par_xy_ML, sig_vert_ML, max_norm_d0d0exp_ML;
   float y_cand_ML, eta_cand_ML, phi_cand_ML;
-  int cand_type_ML;
+  int cand_type_ML, cand_fileID_ML, cand_evtID_ML;
   float imp_par_prong0_ML, imp_par_prong1_ML, imp_par_prong2_ML, p_prong0_ML, p_prong1_ML, p_prong2_ML, pt_prong0_ML, pt_prong1_ML, pt_prong2_ML, eta_prong0_ML, eta_prong1_ML, eta_prong2_ML, phi_prong0_ML, phi_prong1_ML, phi_prong2_ML;
   float nTPCcls_prong0_ML, nTPCclspid_prong0_ML, nTPCcrossrow_prong0_ML, chi2perndf_prong0_ML, nITScls_prong0_ML, ITSclsmap_prong0_ML, nTPCcls_prong1_ML, nTPCclspid_prong1_ML, nTPCcrossrow_prong1_ML, chi2perndf_prong1_ML, nITScls_prong1_ML, ITSclsmap_prong1_ML, nTPCcls_prong2_ML, nTPCclspid_prong2_ML, nTPCcrossrow_prong2_ML, chi2perndf_prong2_ML, nITScls_prong2_ML, ITSclsmap_prong2_ML;
   float nsigTPC_Pi_0_ML, nsigTPC_K_0_ML, nsigTOF_Pi_0_ML, nsigTOF_K_0_ML, dEdxTPC_0_ML, ToF_0_ML, pTPC_prong0_ML, pTOF_prong0_ML, trlen_prong0_ML, start_time_res_prong0_ML, nsigTPC_Pi_1_ML, nsigTPC_K_1_ML, nsigTOF_Pi_1_ML, nsigTOF_K_1_ML, dEdxTPC_1_ML, ToF_1_ML, pTPC_prong1_ML, pTOF_prong1_ML, trlen_prong1_ML, start_time_res_prong1_ML, nsigTPC_Pi_2_ML, nsigTPC_K_2_ML, nsigTOF_Pi_2_ML, nsigTOF_K_2_ML, dEdxTPC_2_ML, ToF_2_ML, pTPC_prong2_ML, pTOF_prong2_ML, trlen_prong2_ML, start_time_res_prong2_ML;
   int new_event_ML;
 
-  fTreeDplusML->Branch("inv_mass_ML",&inv_mass_ML,"inv_mass_ML/F");
-  fTreeDplusML->Branch("pt_cand_ML",&pt_cand_ML,"pt_cand_ML/F");
-  fTreeDplusML->Branch("d_len_ML",&d_len_ML,"d_len_ML/F");
-  fTreeDplusML->Branch("d_len_xy_ML",&d_len_xy_ML,"d_len_xy_ML/F");
-  fTreeDplusML->Branch("norm_dl_xy_ML",&norm_dl_xy_ML,"norm_dl_xy_ML/F");
-  fTreeDplusML->Branch("cos_p_ML",&cos_p_ML,"cos_p_ML/F");
-  fTreeDplusML->Branch("cos_p_xy_ML",&cos_p_xy_ML,"cos_p_xy_ML/F");
-  fTreeDplusML->Branch("imp_par_xy_ML",&imp_par_xy_ML,"imp_par_xy_ML/F");
-  fTreeDplusML->Branch("sig_vert_ML",&sig_vert_ML,"sig_vert_ML/F");
-  fTreeDplusML->Branch("max_norm_d0d0exp_ML",&max_norm_d0d0exp_ML,"max_norm_d0d0exp_ML/F");
+  if(t.EnabledSkim_inv_mass) fTreeDplusML->Branch("inv_mass_ML",&inv_mass_ML,"inv_mass_ML/F");
+  if(t.EnabledSkim_pt_cand) fTreeDplusML->Branch("pt_cand_ML",&pt_cand_ML,"pt_cand_ML/F");
+  if(t.EnabledSkim_d_len) fTreeDplusML->Branch("d_len_ML",&d_len_ML,"d_len_ML/F");
+  if(t.EnabledSkim_d_len_xy) fTreeDplusML->Branch("d_len_xy_ML",&d_len_xy_ML,"d_len_xy_ML/F");
+  if(t.EnabledSkim_norm_dl_xy) fTreeDplusML->Branch("norm_dl_xy_ML",&norm_dl_xy_ML,"norm_dl_xy_ML/F");
+  if(t.EnabledSkim_cos_p) fTreeDplusML->Branch("cos_p_ML",&cos_p_ML,"cos_p_ML/F");
+  if(t.EnabledSkim_cos_p_xy) fTreeDplusML->Branch("cos_p_xy_ML",&cos_p_xy_ML,"cos_p_xy_ML/F");
+  if(t.EnabledSkim_imp_par_xy) fTreeDplusML->Branch("imp_par_xy_ML",&imp_par_xy_ML,"imp_par_xy_ML/F");
+  if(t.EnabledSkim_dca) fTreeDplusML->Branch("dca_ML",&dca_ML,"dca_ML/F");
+  if(t.EnabledSkim_sig_vert) fTreeDplusML->Branch("sig_vert_ML",&sig_vert_ML,"sig_vert_ML/F");
+  if(t.EnabledSkim_max_norm_d0d0exp) fTreeDplusML->Branch("max_norm_d0d0exp_ML",&max_norm_d0d0exp_ML,"max_norm_d0d0exp_ML/F");
 
-  fTreeDplusML->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/I");
-  fTreeDplusML->Branch("y_cand_ML",&y_cand_ML,"y_cand_ML/F");
-  fTreeDplusML->Branch("eta_cand_ML",&eta_cand_ML,"eta_cand_ML/F");
-  fTreeDplusML->Branch("phi_cand_ML",&phi_cand_ML,"phi_cand_ML/F");
-
-  fTreeDplusML->Branch("imp_par_prong0_ML",&imp_par_prong0_ML,"imp_par_prong0_ML/F");
-  fTreeDplusML->Branch("imp_par_prong1_ML",&imp_par_prong1_ML,"imp_par_prong1_ML/F");
-  fTreeDplusML->Branch("imp_par_prong2_ML",&imp_par_prong2_ML,"imp_par_prong2_ML/F");
-  fTreeDplusML->Branch("pt_prong0_ML",&pt_prong0_ML,"pt_prong0_ML/F");
-  fTreeDplusML->Branch("pt_prong1_ML",&pt_prong1_ML,"pt_prong1_ML/F");
-  fTreeDplusML->Branch("pt_prong2_ML",&pt_prong2_ML,"pt_prong2_ML/F");
-  fTreeDplusML->Branch("p_prong0_ML",&p_prong0_ML,"p_prong0_ML/F");
-  fTreeDplusML->Branch("p_prong1_ML",&p_prong1_ML,"p_prong1_ML/F");
-  fTreeDplusML->Branch("p_prong2_ML",&p_prong2_ML,"p_prong2_ML/F");
-  fTreeDplusML->Branch("eta_prong0_ML",&eta_prong0_ML,"eta_prong0_ML/F");
-  fTreeDplusML->Branch("eta_prong1_ML",&eta_prong1_ML,"eta_prong1_ML/F");
-  fTreeDplusML->Branch("eta_prong2_ML",&eta_prong2_ML,"eta_prong2_ML/F");
-  fTreeDplusML->Branch("phi_prong0_ML",&phi_prong0_ML,"phi_prong0_ML/F");
-  fTreeDplusML->Branch("phi_prong1_ML",&phi_prong1_ML,"phi_prong1_ML/F");
-  fTreeDplusML->Branch("phi_prong2_ML",&phi_prong2_ML,"phi_prong2_ML/F");
+  if(t.EnabledSkim_cand_type) fTreeDplusML->Branch("cand_type_ML",&cand_type_ML,"cand_type_ML/I");
+  if(t.EnabledSkim_y_cand) fTreeDplusML->Branch("y_cand_ML",&y_cand_ML,"y_cand_ML/F");
+  if(t.EnabledSkim_eta_cand) fTreeDplusML->Branch("eta_cand_ML",&eta_cand_ML,"eta_cand_ML/F");
+  if(t.EnabledSkim_phi_cand) fTreeDplusML->Branch("phi_cand_ML",&phi_cand_ML,"phi_cand_ML/F");
+  fTreeDplusML->Branch("cand_fileID_ML",&cand_fileID_ML,"cand_fileID_ML/I");
+  fTreeDplusML->Branch("cand_evtID_ML",&cand_evtID_ML,"cand_evtID_ML/I");
+  
+  if(t.EnabledSkim_imp_par_prong0) fTreeDplusML->Branch("imp_par_prong0_ML",&imp_par_prong0_ML,"imp_par_prong0_ML/F");
+  if(t.EnabledSkim_imp_par_prong1) fTreeDplusML->Branch("imp_par_prong1_ML",&imp_par_prong1_ML,"imp_par_prong1_ML/F");
+  if(t.EnabledSkim_imp_par_prong2) fTreeDplusML->Branch("imp_par_prong2_ML",&imp_par_prong2_ML,"imp_par_prong2_ML/F");
+  if(t.EnabledSkim_pt_prong0) fTreeDplusML->Branch("pt_prong0_ML",&pt_prong0_ML,"pt_prong0_ML/F");
+  if(t.EnabledSkim_pt_prong1) fTreeDplusML->Branch("pt_prong1_ML",&pt_prong1_ML,"pt_prong1_ML/F");
+  if(t.EnabledSkim_pt_prong2) fTreeDplusML->Branch("pt_prong2_ML",&pt_prong2_ML,"pt_prong2_ML/F");
+  if(t.EnabledSkim_p_prong0) fTreeDplusML->Branch("p_prong0_ML",&p_prong0_ML,"p_prong0_ML/F");
+  if(t.EnabledSkim_p_prong1) fTreeDplusML->Branch("p_prong1_ML",&p_prong1_ML,"p_prong1_ML/F");
+  if(t.EnabledSkim_p_prong2) fTreeDplusML->Branch("p_prong2_ML",&p_prong2_ML,"p_prong2_ML/F");
+  if(t.EnabledSkim_eta_prong0) fTreeDplusML->Branch("eta_prong0_ML",&eta_prong0_ML,"eta_prong0_ML/F");
+  if(t.EnabledSkim_eta_prong1) fTreeDplusML->Branch("eta_prong1_ML",&eta_prong1_ML,"eta_prong1_ML/F");
+  if(t.EnabledSkim_eta_prong2) fTreeDplusML->Branch("eta_prong2_ML",&eta_prong2_ML,"eta_prong2_ML/F");
+  if(t.EnabledSkim_phi_prong0) fTreeDplusML->Branch("phi_prong0_ML",&phi_prong0_ML,"phi_prong0_ML/F");
+  if(t.EnabledSkim_phi_prong1) fTreeDplusML->Branch("phi_prong1_ML",&phi_prong1_ML,"phi_prong1_ML/F");
+  if(t.EnabledSkim_phi_prong2) fTreeDplusML->Branch("phi_prong2_ML",&phi_prong2_ML,"phi_prong2_ML/F");
     
-  fTreeDplusML->Branch("nTPCcls_prong0_ML",&nTPCcls_prong0_ML,"nTPCcls_prong0_ML/F");
-  fTreeDplusML->Branch("nTPCclspid_prong0_ML",&nTPCclspid_prong0_ML,"nTPCclspid_prong0_ML/F");
-  fTreeDplusML->Branch("nTPCcrossrow_prong0_ML",&nTPCcrossrow_prong0_ML,"nTPCcrossrow_prong0_ML/F");
-  fTreeDplusML->Branch("chi2perndf_prong0_ML",&chi2perndf_prong0_ML,"chi2perndf_prong0_ML/F");
-  fTreeDplusML->Branch("nITScls_prong0_ML",&nITScls_prong0_ML,"nITScls_prong0_ML/F");
-  fTreeDplusML->Branch("ITSclsmap_prong0_ML",&ITSclsmap_prong0_ML,"ITSclsmap_prong0_ML/F");
-  fTreeDplusML->Branch("nTPCcls_prong1_ML",&nTPCcls_prong1_ML,"nTPCcls_prong1_ML/F");
-  fTreeDplusML->Branch("nTPCclspid_prong1_ML",&nTPCclspid_prong1_ML,"nTPCclspid_prong1_ML/F");
-  fTreeDplusML->Branch("nTPCcrossrow_prong1_ML",&nTPCcrossrow_prong1_ML,"nTPCcrossrow_prong1_ML/F");
-  fTreeDplusML->Branch("chi2perndf_prong1_ML",&chi2perndf_prong1_ML,"chi2perndf_prong1_ML/F");
-  fTreeDplusML->Branch("nITScls_prong1_ML",&nITScls_prong1_ML,"nITScls_prong1_ML/F");
-  fTreeDplusML->Branch("ITSclsmap_prong1_ML",&ITSclsmap_prong1_ML,"ITSclsmap_prong1_ML/F");
-  fTreeDplusML->Branch("nTPCcls_prong2_ML",&nTPCcls_prong2_ML,"nTPCcls_prong2_ML/F");
-  fTreeDplusML->Branch("nTPCclspid_prong2_ML",&nTPCclspid_prong2_ML,"nTPCclspid_prong2_ML/F");
-  fTreeDplusML->Branch("nTPCcrossrow_prong2_ML",&nTPCcrossrow_prong2_ML,"nTPCcrossrow_prong2_ML/F");
-  fTreeDplusML->Branch("chi2perndf_prong2_ML",&chi2perndf_prong2_ML,"chi2perndf_prong2_ML/F");
-  fTreeDplusML->Branch("nITScls_prong2_ML",&nITScls_prong2_ML,"nITScls_prong2_ML/F");
-  fTreeDplusML->Branch("ITSclsmap_prong2_ML",&ITSclsmap_prong2_ML,"ITSclsmap_prong2_ML/F");
+  if(t.EnabledSkim_nTPCcls_prong0) fTreeDplusML->Branch("nTPCcls_prong0_ML",&nTPCcls_prong0_ML,"nTPCcls_prong0_ML/F");
+  if(t.EnabledSkim_nTPCclspid_prong0) fTreeDplusML->Branch("nTPCclspid_prong0_ML",&nTPCclspid_prong0_ML,"nTPCclspid_prong0_ML/F");
+  if(t.EnabledSkim_nTPCcrossrow_prong0) fTreeDplusML->Branch("nTPCcrossrow_prong0_ML",&nTPCcrossrow_prong0_ML,"nTPCcrossrow_prong0_ML/F");
+  if(t.EnabledSkim_chi2perndf_prong0) fTreeDplusML->Branch("chi2perndf_prong0_ML",&chi2perndf_prong0_ML,"chi2perndf_prong0_ML/F");
+  if(t.EnabledSkim_nITScls_prong0) fTreeDplusML->Branch("nITScls_prong0_ML",&nITScls_prong0_ML,"nITScls_prong0_ML/F");
+  if(t.EnabledSkim_ITSclsmap_prong0) fTreeDplusML->Branch("ITSclsmap_prong0_ML",&ITSclsmap_prong0_ML,"ITSclsmap_prong0_ML/F");
+  if(t.EnabledSkim_nTPCcls_prong1) fTreeDplusML->Branch("nTPCcls_prong1_ML",&nTPCcls_prong1_ML,"nTPCcls_prong1_ML/F");
+  if(t.EnabledSkim_nTPCclspid_prong1) fTreeDplusML->Branch("nTPCclspid_prong1_ML",&nTPCclspid_prong1_ML,"nTPCclspid_prong1_ML/F");
+  if(t.EnabledSkim_nTPCcrossrow_prong1) fTreeDplusML->Branch("nTPCcrossrow_prong1_ML",&nTPCcrossrow_prong1_ML,"nTPCcrossrow_prong1_ML/F");
+  if(t.EnabledSkim_chi2perndf_prong1) fTreeDplusML->Branch("chi2perndf_prong1_ML",&chi2perndf_prong1_ML,"chi2perndf_prong1_ML/F");
+  if(t.EnabledSkim_nITScls_prong1) fTreeDplusML->Branch("nITScls_prong1_ML",&nITScls_prong1_ML,"nITScls_prong1_ML/F");
+  if(t.EnabledSkim_ITSclsmap_prong1) fTreeDplusML->Branch("ITSclsmap_prong1_ML",&ITSclsmap_prong1_ML,"ITSclsmap_prong1_ML/F");
+  if(t.EnabledSkim_nTPCcls_prong2) fTreeDplusML->Branch("nTPCcls_prong2_ML",&nTPCcls_prong2_ML,"nTPCcls_prong2_ML/F");
+  if(t.EnabledSkim_nTPCclspid_prong2) fTreeDplusML->Branch("nTPCclspid_prong2_ML",&nTPCclspid_prong2_ML,"nTPCclspid_prong2_ML/F");
+  if(t.EnabledSkim_nTPCcrossrow_prong2) fTreeDplusML->Branch("nTPCcrossrow_prong2_ML",&nTPCcrossrow_prong2_ML,"nTPCcrossrow_prong2_ML/F");
+  if(t.EnabledSkim_chi2perndf_prong2) fTreeDplusML->Branch("chi2perndf_prong2_ML",&chi2perndf_prong2_ML,"chi2perndf_prong2_ML/F");
+  if(t.EnabledSkim_nITScls_prong2) fTreeDplusML->Branch("nITScls_prong2_ML",&nITScls_prong2_ML,"nITScls_prong2_ML/F");
+  if(t.EnabledSkim_ITSclsmap_prong2) fTreeDplusML->Branch("ITSclsmap_prong2_ML",&ITSclsmap_prong2_ML,"ITSclsmap_prong2_ML/F");
 
-  fTreeDplusML->Branch("nsigTPC_Pi_0_ML",&nsigTPC_Pi_0_ML,"nsigTPC_Pi_0_ML/F");
-  fTreeDplusML->Branch("nsigTPC_K_0_ML",&nsigTPC_K_0_ML,"nsigTPC_K_0_ML/F");
-  fTreeDplusML->Branch("nsigTOF_Pi_0_ML",&nsigTOF_Pi_0_ML,"nsigTOF_Pi_0_ML/F");
-  fTreeDplusML->Branch("nsigTOF_K_0_ML",&nsigTOF_K_0_ML,"nsigTOF_K_0_ML/F");
-  fTreeDplusML->Branch("dEdxTPC_0_ML",&dEdxTPC_0_ML,"dEdxTPC_0_ML/F");
-  fTreeDplusML->Branch("ToF_0_ML",&ToF_0_ML,"ToF_0_ML/F");
-  fTreeDplusML->Branch("pTPC_prong0_ML",&pTPC_prong0_ML,"pTPC_prong0_ML/F");
-  fTreeDplusML->Branch("pTOF_prong0_ML",&pTOF_prong0_ML,"pTOF_prong0_ML/F");
-  fTreeDplusML->Branch("trlen_prong0_ML",&trlen_prong0_ML,"trlen_prong0_ML/F");
-  fTreeDplusML->Branch("start_time_res_prong0_ML",&start_time_res_prong0_ML,"start_time_res_prong0_ML/F");
-  fTreeDplusML->Branch("nsigTPC_Pi_1_ML",&nsigTPC_Pi_1_ML,"nsigTPC_Pi_1_ML/F");
-  fTreeDplusML->Branch("nsigTPC_K_1_ML",&nsigTPC_K_1_ML,"nsigTPC_K_1_ML/F");
-  fTreeDplusML->Branch("nsigTOF_Pi_1_ML",&nsigTOF_Pi_1_ML,"nsigTOF_Pi_1_ML/F");
-  fTreeDplusML->Branch("nsigTOF_K_1_ML",&nsigTOF_K_1_ML,"nsigTOF_K_1_ML/F");
-  fTreeDplusML->Branch("dEdxTPC_1_ML",&dEdxTPC_1_ML,"dEdxTPC_1_ML/F");
-  fTreeDplusML->Branch("ToF_1_ML",&ToF_1_ML,"ToF_1_ML/F");
-  fTreeDplusML->Branch("pTPC_prong1_ML",&pTPC_prong1_ML,"pTPC_prong1_ML/F");
-  fTreeDplusML->Branch("pTOF_prong1_ML",&pTOF_prong1_ML,"pTOF_prong1_ML/F");
-  fTreeDplusML->Branch("trlen_prong1_ML",&trlen_prong1_ML,"trlen_prong1_ML/F");
-  fTreeDplusML->Branch("start_time_res_prong1_ML",&start_time_res_prong1_ML,"start_time_res_prong1_ML/F");
-  fTreeDplusML->Branch("nsigTPC_Pi_2_ML",&nsigTPC_Pi_2_ML,"nsigTPC_Pi_2_ML/F");
-  fTreeDplusML->Branch("nsigTPC_K_2_ML",&nsigTPC_K_2_ML,"nsigTPC_K_2_ML/F");
-  fTreeDplusML->Branch("nsigTOF_Pi_2_ML",&nsigTOF_Pi_2_ML,"nsigTOF_Pi_2_ML/F");
-  fTreeDplusML->Branch("nsigTOF_K_2_ML",&nsigTOF_K_2_ML,"nsigTOF_K_2_ML/F");
-  fTreeDplusML->Branch("dEdxTPC_2_ML",&dEdxTPC_2_ML,"dEdxTPC_2_ML/F");
-  fTreeDplusML->Branch("ToF_2_ML",&ToF_2_ML,"ToF_2_ML/F");
-  fTreeDplusML->Branch("pTPC_prong2_ML",&pTPC_prong2_ML,"pTPC_prong2_ML/F");
-  fTreeDplusML->Branch("pTOF_prong2_ML",&pTOF_prong2_ML,"pTOF_prong2_ML/F");
-  fTreeDplusML->Branch("trlen_prong2_ML",&trlen_prong2_ML,"trlen_prong2_ML/F");
-  fTreeDplusML->Branch("start_time_res_prong2_ML",&start_time_res_prong2_ML,"start_time_res_prong2_ML/F");
-  ///fTreeDplusML->Branch("new_event_ML",&new_event_ML,"new_event_ML/I"); //1=new_event, 0=same_event. Info on new_event_but_no_candidates saved in tree_event_char
-    
-  int cand_type_gen_ML;
+  if(t.EnabledSkim_nsigTPC_Pi_0) fTreeDplusML->Branch("nsigTPC_Pi_0_ML",&nsigTPC_Pi_0_ML,"nsigTPC_Pi_0_ML/F");
+  if(t.EnabledSkim_nsigTPC_K_0) fTreeDplusML->Branch("nsigTPC_K_0_ML",&nsigTPC_K_0_ML,"nsigTPC_K_0_ML/F");
+  if(t.EnabledSkim_nsigTOF_Pi_0) fTreeDplusML->Branch("nsigTOF_Pi_0_ML",&nsigTOF_Pi_0_ML,"nsigTOF_Pi_0_ML/F");
+  if(t.EnabledSkim_nsigTOF_K_0) fTreeDplusML->Branch("nsigTOF_K_0_ML",&nsigTOF_K_0_ML,"nsigTOF_K_0_ML/F");
+  if(t.EnabledSkim_dEdxTPC_0) fTreeDplusML->Branch("dEdxTPC_0_ML",&dEdxTPC_0_ML,"dEdxTPC_0_ML/F");
+  if(t.EnabledSkim_ToF_0) fTreeDplusML->Branch("ToF_0_ML",&ToF_0_ML,"ToF_0_ML/F");
+  if(t.EnabledSkim_pTPC_prong0) fTreeDplusML->Branch("pTPC_prong0_ML",&pTPC_prong0_ML,"pTPC_prong0_ML/F");
+  if(t.EnabledSkim_pTOF_prong0) fTreeDplusML->Branch("pTOF_prong0_ML",&pTOF_prong0_ML,"pTOF_prong0_ML/F");
+  if(t.EnabledSkim_trlen_prong0) fTreeDplusML->Branch("trlen_prong0_ML",&trlen_prong0_ML,"trlen_prong0_ML/F");
+  if(t.EnabledSkim_start_time_res_prong0) fTreeDplusML->Branch("start_time_res_prong0_ML",&start_time_res_prong0_ML,"start_time_res_prong0_ML/F");
+  if(t.EnabledSkim_nsigTPC_Pi_1) fTreeDplusML->Branch("nsigTPC_Pi_1_ML",&nsigTPC_Pi_1_ML,"nsigTPC_Pi_1_ML/F");
+  if(t.EnabledSkim_nsigTPC_K_1) fTreeDplusML->Branch("nsigTPC_K_1_ML",&nsigTPC_K_1_ML,"nsigTPC_K_1_ML/F");
+  if(t.EnabledSkim_nsigTOF_Pi_1) fTreeDplusML->Branch("nsigTOF_Pi_1_ML",&nsigTOF_Pi_1_ML,"nsigTOF_Pi_1_ML/F");
+  if(t.EnabledSkim_nsigTOF_K_1) fTreeDplusML->Branch("nsigTOF_K_1_ML",&nsigTOF_K_1_ML,"nsigTOF_K_1_ML/F");
+  if(t.EnabledSkim_dEdxTPC_1) fTreeDplusML->Branch("dEdxTPC_1_ML",&dEdxTPC_1_ML,"dEdxTPC_1_ML/F");
+  if(t.EnabledSkim_ToF_1) fTreeDplusML->Branch("ToF_1_ML",&ToF_1_ML,"ToF_1_ML/F");
+  if(t.EnabledSkim_pTPC_prong1) fTreeDplusML->Branch("pTPC_prong1_ML",&pTPC_prong1_ML,"pTPC_prong1_ML/F");
+  if(t.EnabledSkim_pTOF_prong1) fTreeDplusML->Branch("pTOF_prong1_ML",&pTOF_prong1_ML,"pTOF_prong1_ML/F");
+  if(t.EnabledSkim_trlen_prong1) fTreeDplusML->Branch("trlen_prong1_ML",&trlen_prong1_ML,"trlen_prong1_ML/F");
+  if(t.EnabledSkim_start_time_res_prong1) fTreeDplusML->Branch("start_time_res_prong1_ML",&start_time_res_prong1_ML,"start_time_res_prong1_ML/F");
+  if(t.EnabledSkim_nsigTPC_Pi_2) fTreeDplusML->Branch("nsigTPC_Pi_2_ML",&nsigTPC_Pi_2_ML,"nsigTPC_Pi_2_ML/F");
+  if(t.EnabledSkim_nsigTPC_K_2) fTreeDplusML->Branch("nsigTPC_K_2_ML",&nsigTPC_K_2_ML,"nsigTPC_K_2_ML/F");
+  if(t.EnabledSkim_nsigTOF_Pi_2) fTreeDplusML->Branch("nsigTOF_Pi_2_ML",&nsigTOF_Pi_2_ML,"nsigTOF_Pi_2_ML/F");
+  if(t.EnabledSkim_nsigTOF_K_2) fTreeDplusML->Branch("nsigTOF_K_2_ML",&nsigTOF_K_2_ML,"nsigTOF_K_2_ML/F");
+  if(t.EnabledSkim_dEdxTPC_2) fTreeDplusML->Branch("dEdxTPC_2_ML",&dEdxTPC_2_ML,"dEdxTPC_2_ML/F");
+  if(t.EnabledSkim_ToF_2) fTreeDplusML->Branch("ToF_2_ML",&ToF_2_ML,"ToF_2_ML/F");
+  if(t.EnabledSkim_pTPC_prong2) fTreeDplusML->Branch("pTPC_prong2_ML",&pTPC_prong2_ML,"pTPC_prong2_ML/F");
+  if(t.EnabledSkim_pTOF_prong2) fTreeDplusML->Branch("pTOF_prong2_ML",&pTOF_prong2_ML,"pTOF_prong2_ML/F");
+  if(t.EnabledSkim_trlen_prong2) fTreeDplusML->Branch("trlen_prong2_ML",&trlen_prong2_ML,"trlen_prong2_ML/F");
+  if(t.EnabledSkim_start_time_res_prong2) fTreeDplusML->Branch("start_time_res_prong2_ML",&start_time_res_prong2_ML,"start_time_res_prong2_ML/F");
+  
+  /*-------DplusGenFlagged-------*/
+  int cand_type_gen_ML, cand_fileID_gen_ML, cand_evtID_gen_ML;
   float pt_cand_gen_ML, y_cand_gen_ML, eta_cand_gen_ML, phi_cand_gen_ML, forCand_z_vtx_gen_ML;
   bool dau_in_acc_gen_ML;
   int new_event_gen_ML;
@@ -169,16 +167,47 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
     //fTreeDplusGenML->Branch("phi_cand_gen_ML",&phi_cand_gen_ML,"phi_cand_gen_ML/F");
     fTreeDplusGenML->Branch("dau_in_acc_gen_ML",&dau_in_acc_gen_ML,"dau_in_acc_gen_ML/O");
     fTreeDplusGenML->Branch("z_vtx_gen_ML",&forCand_z_vtx_gen_ML,"z_vtx_gen_ML/F");
-    ///fTreeDplusGenML->Branch("new_event_gen_ML",&new_event_gen_ML,"new_event_gen_ML/I"); //1=new_event, 0=same_event. Info on new_event_but_no_candidates saved in tree_event_char
+    fTreeDplusGenML->Branch("cand_fileID_gen_ML",&cand_fileID_gen_ML,"cand_fileID_gen_ML/I");
+    fTreeDplusGenML->Branch("cand_evtID_gen_ML",&cand_evtID_gen_ML,"cand_evtID_gen_ML/I");
   }
 
+  
+  /*-------------Extracting file identifier-------------*/
+  int place = input.Index("child_");
+  int childid_int;
+  if(place == -1){
+    std::cout<<"Warning, child_X not in the path name. Setting child ID to zero...";
+    childid_int = 0;
+  } else{
+    //Note that this needs to be improved when number of childs > 9!!
+    char childid_char = input(place+6);
+    childid_int = childid_char - '0';
+  }
+  int placelast = input.Last('/');
+  int placeonetolast = ((TString)input(0,placelast)).Last('/');
+  TString jobid = (TString)input(placeonetolast+1,(placelast-placeonetolast-1));
+  int jobid_int = jobid.Atoi();
+  if(jobid_int == 0){
+    std::cout<<"Warning, no job ID was found in path name. Setting to zero...";
+  }
+  int fileid_int = TMath::Power(10,(jobid.Length())) * childid_int + jobid_int;
+  fileID_ML = fileid_int;
+  cand_fileID_ML = fileid_int;
+  cand_fileID_gen_ML = fileid_int;
+  
+  
+  /*-------------Filling skimmed TTrees-------------*/
   std::cout<<"nevents (Dplus) "<<nevt<<std::endl;
   for(Long64_t jentry=0; jentry<nevt;jentry++){
     t.GetEntry(jentry);
     t_ev.GetEntry(jentry);
     t_gen.GetEntry(jentry);
     if(jentry%25000==0) cout<<jentry<<endl;
-      
+
+    evtID_ML = jentry;
+    cand_evtID_ML = jentry;
+    cand_evtID_gen_ML = jentry;
+
     if(!ispp) centrality_ML = t_ev.centrality;
     z_vtx_reco_ML = t_ev.z_vtx_reco;
     //n_vtx_contributors_ML = t_ev.n_vtx_contributors;
@@ -187,11 +216,17 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
     //run_number_ML = t_ev.run_number;
     //if(isMC) z_vtx_gen_ML = t_ev.z_vtx_gen;
 
-    ///ev_has_reco_cand_ML = (t.n_cand > 0) ? 1 : 0;
-    ///if(isMC && tree_gen) ev_has_gen_cand_ML = (t_gen.n_cand > 0) ? 1 : 0;
-    ///n_reco_cand_ML = t.n_cand;
-    ///if(isMC && tree_gen) n_gen_cand_ML = t_gen.n_cand;
-    
+    bool rejTrigPhSelCentr = false;
+    flagVtxPos_ML = true;
+    flagVtxIsReco_ML = true;
+    if(is_ev_rej_ML>>0&1 || is_ev_rej_ML>>6&1 || is_ev_rej_ML>>5&1 || is_ev_rej_ML>>9&1 || is_ev_rej_ML>>10&1 || is_ev_rej_ML>>11&1){
+      rejTrigPhSelCentr = true; //  ->rejected because of trigger / physics selection / centrality (We do nothing with this flag, but should be checked first)
+    } else if(is_ev_rej_ML>>1&1 || is_ev_rej_ML>>2&1 || is_ev_rej_ML>>7&1 || is_ev_rej_ML>>12&1){
+      flagVtxIsReco_ML = false; //  ->whyrejected==0 rejected because of no vtx reconstructed (different causes)
+    } else if(is_ev_rej_ML>>3&1){
+      flagVtxPos_ML = false; //  ->whyrejected==6 (rejected only because of zvtx>10cm)
+    }
+
     fTreeEventCharML->Fill();
     
     if(is_ev_rej_ML!=0) continue;
@@ -205,6 +240,7 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
       if(t.cos_p) cos_p_ML=t.cos_p -> at(icand);
       if(t.cos_p_xy) cos_p_xy_ML=t.cos_p_xy -> at(icand);
       if(t.imp_par_xy) imp_par_xy_ML=t.imp_par_xy -> at(icand);
+      if(t.dca) dca_ML=t.dca -> at(icand);
       if(t.sig_vert) sig_vert_ML=t.sig_vert -> at(icand);
       if(t.max_norm_d0d0exp) max_norm_d0d0exp_ML=t.max_norm_d0d0exp -> at(icand);
         
@@ -279,9 +315,6 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
       if(t.trlen_prong2) trlen_prong2_ML=t.trlen_prong2 -> at(icand);
       if(t.start_time_res_prong2) start_time_res_prong2_ML=t.start_time_res_prong2 -> at(icand);
 
-      ///if(icand==0) new_event_ML=1;
-      ///else         new_event_ML=0;
-
       fTreeDplusML->Fill();
     }
 
@@ -297,9 +330,6 @@ void skimTreeDplusFromEvt(TString input="AnalysisResults.root",TString output="t
       //eta_cand_gen_ML=t_gen.eta_cand -> at(icand);
       //phi_cand_gen_ML=t_gen.phi_cand -> at(icand);
       dau_in_acc_gen_ML=t_gen.dau_in_acc -> at(icand);
-
-      ///if(icand==0) new_event_gen_ML=1;
-      ///else         new_event_gen_ML=0;
 
       fTreeDplusGenML->Fill();
     }

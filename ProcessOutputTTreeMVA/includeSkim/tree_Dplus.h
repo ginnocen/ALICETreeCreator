@@ -39,6 +39,7 @@ public :
    vector<float>   *cos_p;
    vector<float>   *cos_p_xy;
    vector<float>   *imp_par_xy;
+   vector<float>   *dca;
    vector<float>   *max_norm_d0d0exp;
    vector<float>   *sig_vert;
    vector<float>   *p_prong0;
@@ -121,6 +122,7 @@ public :
    TBranch        *b_cos_p;   //!
    TBranch        *b_cos_p_xy;   //!
    TBranch        *b_imp_par_xy;   //!
+   TBranch        *b_dca;
    TBranch        *b_max_norm_d0d0exp;   //!
    TBranch        *b_sig_vert;   //!
    TBranch        *b_p_prong0;   //!
@@ -188,6 +190,88 @@ public :
    TBranch        *b_pTOF_prong2;   //!
    TBranch        *b_trlen_prong2;   //!
    TBranch        *b_start_time_res_prong2;   //!
+
+   // Declaration if branch should be enabled in skimmer
+   bool   EnabledSkim_inv_mass;
+   bool   EnabledSkim_pt_cand;
+   bool   EnabledSkim_d_len;
+   bool   EnabledSkim_d_len_xy;
+   bool   EnabledSkim_norm_dl_xy;
+   bool   EnabledSkim_cos_p;
+   bool   EnabledSkim_cos_p_xy;
+   bool   EnabledSkim_imp_par_xy;
+   bool   EnabledSkim_dca;
+   bool   EnabledSkim_sig_vert;
+   bool   EnabledSkim_max_norm_d0d0exp;
+   bool   EnabledSkim_cand_type;
+   bool   EnabledSkim_y_cand;
+   bool   EnabledSkim_eta_cand;
+   bool   EnabledSkim_phi_cand;
+   bool   EnabledSkim_imp_par_prong0;
+   bool   EnabledSkim_imp_par_prong1;
+   bool   EnabledSkim_imp_par_prong2;
+   bool   EnabledSkim_pt_prong0;
+   bool   EnabledSkim_pt_prong1;
+   bool   EnabledSkim_pt_prong2;
+   bool   EnabledSkim_p_prong0;
+   bool   EnabledSkim_p_prong1;
+   bool   EnabledSkim_p_prong2;
+   bool   EnabledSkim_eta_prong0;
+   bool   EnabledSkim_eta_prong1;
+   bool   EnabledSkim_eta_prong2;
+   bool   EnabledSkim_phi_prong0;
+   bool   EnabledSkim_phi_prong1;
+   bool   EnabledSkim_phi_prong2;
+  
+   bool   EnabledSkim_nTPCcls_prong0;
+   bool   EnabledSkim_nTPCclspid_prong0;
+   bool   EnabledSkim_nTPCcrossrow_prong0;
+   bool   EnabledSkim_chi2perndf_prong0;
+   bool   EnabledSkim_nITScls_prong0;
+   bool   EnabledSkim_ITSclsmap_prong0;
+   bool   EnabledSkim_nTPCcls_prong1;
+   bool   EnabledSkim_nTPCclspid_prong1;
+   bool   EnabledSkim_nTPCcrossrow_prong1;
+   bool   EnabledSkim_chi2perndf_prong1;
+   bool   EnabledSkim_nITScls_prong1;
+   bool   EnabledSkim_ITSclsmap_prong1;
+   bool   EnabledSkim_nTPCcls_prong2;
+   bool   EnabledSkim_nTPCclspid_prong2;
+   bool   EnabledSkim_nTPCcrossrow_prong2;
+   bool   EnabledSkim_chi2perndf_prong2;
+   bool   EnabledSkim_nITScls_prong2;
+   bool   EnabledSkim_ITSclsmap_prong2;
+
+   bool   EnabledSkim_nsigTPC_Pi_0;
+   bool   EnabledSkim_nsigTPC_K_0;
+   bool   EnabledSkim_nsigTOF_Pi_0;
+   bool   EnabledSkim_nsigTOF_K_0;
+   bool   EnabledSkim_dEdxTPC_0;
+   bool   EnabledSkim_ToF_0;
+   bool   EnabledSkim_pTPC_prong0;
+   bool   EnabledSkim_pTOF_prong0;
+   bool   EnabledSkim_trlen_prong0;
+   bool   EnabledSkim_start_time_res_prong0;
+   bool   EnabledSkim_nsigTPC_Pi_1;
+   bool   EnabledSkim_nsigTPC_K_1;
+   bool   EnabledSkim_nsigTOF_Pi_1;
+   bool   EnabledSkim_nsigTOF_K_1;
+   bool   EnabledSkim_dEdxTPC_1;
+   bool   EnabledSkim_ToF_1;
+   bool   EnabledSkim_pTPC_prong1;
+   bool   EnabledSkim_pTOF_prong1;
+   bool   EnabledSkim_trlen_prong1;
+   bool   EnabledSkim_start_time_res_prong1;
+   bool   EnabledSkim_nsigTPC_Pi_2;
+   bool   EnabledSkim_nsigTPC_K_2;
+   bool   EnabledSkim_nsigTOF_Pi_2;
+   bool   EnabledSkim_nsigTOF_K_2;
+   bool   EnabledSkim_dEdxTPC_2;
+   bool   EnabledSkim_ToF_2;
+   bool   EnabledSkim_pTPC_prong2;
+   bool   EnabledSkim_pTOF_prong2;
+   bool   EnabledSkim_trlen_prong2;
+   bool   EnabledSkim_start_time_res_prong2;
 
    tree_Dplus(TTree *tree=0);
    virtual ~tree_Dplus();
@@ -272,6 +356,7 @@ void tree_Dplus::Init(TTree *tree)
    cos_p = 0;
    cos_p_xy = 0;
    imp_par_xy = 0;
+   dca = 0;
    max_norm_d0d0exp = 0;
    sig_vert = 0;
    p_prong0 = 0;
@@ -359,6 +444,7 @@ void tree_Dplus::Init(TTree *tree)
    fChain->SetBranchAddress("cos_p", &cos_p, &b_cos_p);
    fChain->SetBranchAddress("cos_p_xy", &cos_p_xy, &b_cos_p_xy);
    fChain->SetBranchAddress("imp_par_xy", &imp_par_xy, &b_imp_par_xy);
+   fChain->SetBranchAddress("dca", &dca, &b_dca);
    fChain->SetBranchAddress("max_norm_d0d0exp", &max_norm_d0d0exp, &b_max_norm_d0d0exp);
    fChain->SetBranchAddress("sig_vert", &sig_vert, &b_sig_vert);
    fChain->SetBranchAddress("p_prong0", &p_prong0, &b_p_prong0);
@@ -406,16 +492,16 @@ void tree_Dplus::Init(TTree *tree)
    fChain->SetBranchAddress("pTOF_prong0", &pTOF_prong0, &b_pTOF_prong0);
    fChain->SetBranchAddress("trlen_prong0", &trlen_prong0, &b_trlen_prong0);
    fChain->SetBranchAddress("start_time_res_prong0", &start_time_res_prong0, &b_start_time_res_prong0);
-    fChain->SetBranchAddress("nsigTPC_Pi_1", &nsigTPC_Pi_1, &b_nsigTPC_Pi_1);
-    fChain->SetBranchAddress("nsigTPC_K_1", &nsigTPC_K_1, &b_nsigTPC_K_1);
-    fChain->SetBranchAddress("nsigTOF_Pi_1", &nsigTOF_Pi_1, &b_nsigTOF_Pi_1);
-    fChain->SetBranchAddress("nsigTOF_K_1", &nsigTOF_K_1, &b_nsigTOF_K_1);
-    fChain->SetBranchAddress("dEdxTPC_1", &dEdxTPC_1, &b_dEdxTPC_1);
-    fChain->SetBranchAddress("ToF_1", &ToF_1, &b_ToF_1);
-    fChain->SetBranchAddress("pTPC_prong1", &pTPC_prong1, &b_pTPC_prong1);
-    fChain->SetBranchAddress("pTOF_prong1", &pTOF_prong1, &b_pTOF_prong1);
-    fChain->SetBranchAddress("trlen_prong1", &trlen_prong1, &b_trlen_prong1);
-    fChain->SetBranchAddress("start_time_res_prong1", &start_time_res_prong1, &b_start_time_res_prong1);
+   fChain->SetBranchAddress("nsigTPC_Pi_1", &nsigTPC_Pi_1, &b_nsigTPC_Pi_1);
+   fChain->SetBranchAddress("nsigTPC_K_1", &nsigTPC_K_1, &b_nsigTPC_K_1);
+   fChain->SetBranchAddress("nsigTOF_Pi_1", &nsigTOF_Pi_1, &b_nsigTOF_Pi_1);
+   fChain->SetBranchAddress("nsigTOF_K_1", &nsigTOF_K_1, &b_nsigTOF_K_1);
+   fChain->SetBranchAddress("dEdxTPC_1", &dEdxTPC_1, &b_dEdxTPC_1);
+   fChain->SetBranchAddress("ToF_1", &ToF_1, &b_ToF_1);
+   fChain->SetBranchAddress("pTPC_prong1", &pTPC_prong1, &b_pTPC_prong1);
+   fChain->SetBranchAddress("pTOF_prong1", &pTOF_prong1, &b_pTOF_prong1);
+   fChain->SetBranchAddress("trlen_prong1", &trlen_prong1, &b_trlen_prong1);
+   fChain->SetBranchAddress("start_time_res_prong1", &start_time_res_prong1, &b_start_time_res_prong1);
    fChain->SetBranchAddress("nsigTPC_Pi_2", &nsigTPC_Pi_2, &b_nsigTPC_Pi_2);
    fChain->SetBranchAddress("nsigTPC_K_2", &nsigTPC_K_2, &b_nsigTPC_K_2);
    fChain->SetBranchAddress("nsigTOF_Pi_2", &nsigTOF_Pi_2, &b_nsigTOF_Pi_2);
@@ -426,6 +512,87 @@ void tree_Dplus::Init(TTree *tree)
    fChain->SetBranchAddress("pTOF_prong2", &pTOF_prong2, &b_pTOF_prong2);
    fChain->SetBranchAddress("trlen_prong2", &trlen_prong2, &b_trlen_prong2);
    fChain->SetBranchAddress("start_time_res_prong2", &start_time_res_prong2, &b_start_time_res_prong2);
+
+   EnabledSkim_inv_mass = kTRUE;
+   EnabledSkim_pt_cand = kTRUE;
+   EnabledSkim_d_len = kTRUE;
+   EnabledSkim_d_len_xy = kTRUE;
+   EnabledSkim_norm_dl_xy = kTRUE;
+   EnabledSkim_cos_p = kTRUE;
+   EnabledSkim_cos_p_xy = kTRUE;
+   EnabledSkim_imp_par_xy = kTRUE;
+   EnabledSkim_dca = kTRUE;
+   EnabledSkim_sig_vert = kTRUE;
+   EnabledSkim_max_norm_d0d0exp = kTRUE;
+   EnabledSkim_cand_type = kTRUE;
+   EnabledSkim_y_cand = kTRUE;
+   EnabledSkim_eta_cand = kTRUE;
+   EnabledSkim_phi_cand = kTRUE;
+   EnabledSkim_imp_par_prong0 = kTRUE;
+   EnabledSkim_imp_par_prong1 = kTRUE;
+   EnabledSkim_imp_par_prong2 = kTRUE;
+   EnabledSkim_pt_prong0 = kTRUE;
+   EnabledSkim_pt_prong1 = kTRUE;
+   EnabledSkim_pt_prong2 = kTRUE;
+   EnabledSkim_p_prong0 = kTRUE;
+   EnabledSkim_p_prong1 = kTRUE;
+   EnabledSkim_p_prong2 = kTRUE;
+   EnabledSkim_eta_prong0 = kTRUE;
+   EnabledSkim_eta_prong1 = kTRUE;
+   EnabledSkim_eta_prong2 = kTRUE;
+   EnabledSkim_phi_prong0 = kTRUE;
+   EnabledSkim_phi_prong1 = kTRUE;
+   EnabledSkim_phi_prong2 = kTRUE;
+  
+   EnabledSkim_nTPCcls_prong0 = kTRUE;
+   EnabledSkim_nTPCclspid_prong0 = kTRUE;
+   EnabledSkim_nTPCcrossrow_prong0 = kTRUE;
+   EnabledSkim_chi2perndf_prong0 = kTRUE;
+   EnabledSkim_nITScls_prong0 = kTRUE;
+   EnabledSkim_ITSclsmap_prong0 = kTRUE;
+   EnabledSkim_nTPCcls_prong1 = kTRUE;
+   EnabledSkim_nTPCclspid_prong1 = kTRUE;
+   EnabledSkim_nTPCcrossrow_prong1 = kTRUE;
+   EnabledSkim_chi2perndf_prong1 = kTRUE;
+   EnabledSkim_nITScls_prong1 = kTRUE;
+   EnabledSkim_ITSclsmap_prong1 = kTRUE;
+   EnabledSkim_nTPCcls_prong2 = kTRUE;
+   EnabledSkim_nTPCclspid_prong2 = kTRUE;
+   EnabledSkim_nTPCcrossrow_prong2 = kTRUE;
+   EnabledSkim_chi2perndf_prong2 = kTRUE;
+   EnabledSkim_nITScls_prong2 = kTRUE;
+   EnabledSkim_ITSclsmap_prong2 = kTRUE;
+
+   EnabledSkim_nsigTPC_Pi_0 = kTRUE;
+   EnabledSkim_nsigTPC_K_0 = kTRUE;
+   EnabledSkim_nsigTOF_Pi_0 = kTRUE;
+   EnabledSkim_nsigTOF_K_0 = kTRUE;
+   EnabledSkim_dEdxTPC_0 = kTRUE;
+   EnabledSkim_ToF_0 = kTRUE;
+   EnabledSkim_pTPC_prong0 = kTRUE;
+   EnabledSkim_pTOF_prong0 = kTRUE;
+   EnabledSkim_trlen_prong0 = kTRUE;
+   EnabledSkim_start_time_res_prong0 = kTRUE;
+   EnabledSkim_nsigTPC_Pi_1 = kTRUE;
+   EnabledSkim_nsigTPC_K_1 = kTRUE;
+   EnabledSkim_nsigTOF_Pi_1 = kTRUE;
+   EnabledSkim_nsigTOF_K_1 = kTRUE;
+   EnabledSkim_dEdxTPC_1 = kTRUE;
+   EnabledSkim_ToF_1 = kTRUE;
+   EnabledSkim_pTPC_prong1 = kTRUE;
+   EnabledSkim_pTOF_prong1 = kTRUE;
+   EnabledSkim_trlen_prong1 = kTRUE;
+   EnabledSkim_start_time_res_prong1 = kTRUE;
+   EnabledSkim_nsigTPC_Pi_2 = kTRUE;
+   EnabledSkim_nsigTPC_K_2 = kTRUE;
+   EnabledSkim_nsigTOF_Pi_2 = kTRUE;
+   EnabledSkim_nsigTOF_K_2 = kTRUE;
+   EnabledSkim_dEdxTPC_2 = kTRUE;
+   EnabledSkim_ToF_2 = kTRUE;
+   EnabledSkim_pTPC_prong2 = kTRUE;
+   EnabledSkim_pTOF_prong2 = kTRUE;
+   EnabledSkim_trlen_prong2 = kTRUE;
+   EnabledSkim_start_time_res_prong2 = kTRUE;
 
    Notify();
 }
