@@ -98,6 +98,12 @@ elif [ "$dataset" == "LHC18r" ]; then
   isMC=0
   ispp=0
   datasetwithchilds=0
+elif [ "$dataset" == "LHC18r_test" ]; then
+  inputpathchild1=/alice/data/2018/LHC18r/000296787/pass1/PWGZZ/Devel_2
+  ninput=1
+  isMC=0
+  ispp=0
+  datasetwithchilds=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit

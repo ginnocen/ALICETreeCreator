@@ -6,15 +6,15 @@ START=$(date +%s)
 
 if [ -z "$10" ]; then
   if [ $9 -eq 1 ]; then
-    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s/%s/%s.root\033[0m" $3 $8 "$5" $6)
-  else
     printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s_child_%s/%s/%s.root\033[0m" $3 $8 $4 "$5" $6)
+  else
+    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s/%s/%s.root\033[0m" $3 $8 "$5" $6)
   fi
 else
   if [ $9 -eq 1 ]; then
-    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s/%s/%s/%s.root\033[0m" $3 $8 $10 "$5" $6)
+    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s_child_%s/%s/%s/%s.root\033[0m" $3 $8 $4 ${10} "$5" $6)
   else
-    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s_child_%s/%s/%s/%s.root\033[0m" $3 $8 $4 $10 "$5" $6)
+    printcmd=$(printf "   \033[0;37mDownloading LEGO train files from: %s/%s/%s/%s/%s.root\033[0m" $3 $8 ${10} "$5" $6)
   fi
 fi
 printf "$printcmd\n" > /dev/tty
