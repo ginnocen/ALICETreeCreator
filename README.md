@@ -1,3 +1,14 @@
+
+## IMPORTANT: This repository is not used anymore for the MachineLearning code
+**Please have a look at MachineLearningHEP, also for a proper installation of the prerequisites**.
+
+This repository is still used for: 
+* preprocessing the Tree output (downloading-skimming-merging);
+* creating the cut objects for HF analyses;
+* development on the TTreeCreator and/or TreeHandler classes (but please note that the version can be old with respect to what is in AliPhysics/PWGHF/treeHF/).
+
+## Old README from now on
+
 # MachineLearningHF
 
 The current recommended instructions require the installation of a independent ROOT6 framework with Pyhon 3.6. 
