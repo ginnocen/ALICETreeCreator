@@ -13,6 +13,7 @@
 #include "TAxis.h"
 #include "TLegend.h"
 #include "TStyle.h"
+#include "TH1F.h"
 
 using namespace std;
 
@@ -27,20 +28,22 @@ enum cutopt {kLowerLimit,kUpperLimit,kUpperLimitAbsValue};
 enum particle {kDzero,kDplus,kDs,kDstar,kLctopKpi,kBplus};
 
 //____________________________________________________________
-void CheckTreeSize(Long64_t nentriesmax = 10000000, int part=kDs, float pTmin=0, float pTmax=50, TString infilename="skimmedDs.root", TString varname="d_len_ML",float startvalue=0., float stopvalue=0.1, float step=0.01, int opt=kLowerLimit, TString outfilename="d_len_scan.root");
+void CheckTreeSize(Int_t iterator, Long64_t nentriesmax = 10000000, int part=kDs, float pTmin=0, float pTmax=50, TString infilename="skimmedDs.root", TString varname="d_len_ML",float startvalue=0., float stopvalue=0.1, float step=0.01, int opt=kLowerLimit, TString outfilename="d_len_scan.root");
 bool CutTree(TString infilename, TString treename, TString varname, float lowlimit, float highlimit);
 Long64_t GetBasketSize(TBranch * b, bool inclusive);
 Long64_t GetBasketSize(TObjArray * branches, bool inclusive);
 Long64_t GetTotalSize(TTree *t);
 
 //____________________________________________________________
-void CheckTreeSize(Long64_t nentriesmax, int part, float pTmin, float pTmax, TString infilename, TString varname, float startvalue, float stopvalue, float step, int opt, TString outfilename) {
+void CheckTreeSize(Int_t iterator, Long64_t nentriesmax, int part, float pTmin, float pTmax, TString infilename, TString varname, float startvalue, float stopvalue, float step, int opt, TString outfilename) {
 
-  gSystem->Unlink("cuttedttree.root");
+  cout << "CheckTreeSize starting..." << endl;
+  gSystem->Unlink(Form("cuttedttree_%d.root",iterator));
   gStyle->SetPadTickX(1);
   gStyle->SetPadTickY(1);
 
   const int nsteps = TMath::Abs( stopvalue - startvalue ) / step + 1;
+  cout << "Using nsteps = " << nsteps << " (for iterator " << iterator << ")" << endl;
 
   //define graphs
   TGraph* gNbytesVsVar = new TGraph(nsteps);
@@ -104,31 +107,39 @@ void CheckTreeSize(Long64_t nentriesmax, int part, float pTmin, float pTmax, TSt
     case 5:
       treename="fTreeBplusFlagged";
       break;
+    case 6:
+      treename="fTreeLctopK0sFlagged";
+      break;
   }
 
   //get initial size and number of candidates in selected pt range
   TFile* infile = TFile::Open(infilename.Data());
-  if(!infile || !infile->IsOpen()) return;
+  if(!infile || !infile->IsOpen()){ cout << "Could not open file " << infilename.Data() << ". Returning..." << endl; return; }
+  else cout << "Opened file " << infilename.Data() << endl;
+
   TTree* treetot = (TTree*)infile->Get(treename.Data());
-  if(!treetot) return;
+  if(!treetot){ cout << "Could not open TTree " << treename.Data() << " in file " << infilename.Data() << ". Returning..." << endl; return; }
+  else cout << "Opened TTree " << treename.Data() << endl;
+
   TTree* treeev = (TTree*)infile->Get("fTreeEventChar");
-  if(!treeev) return;
+  if(!treeev){ cout << "Could not open TTree fTreeEventChar in file " << infilename.Data() << ". Returning..." << endl; return; }
+
   Long64_t nev = treeev->GetEntriesFast();
   cout << Form("\nGetting tree for candidates with %.5f < pt_cand_ML < %.5f",pTmin,pTmax) << endl;
-  TFile cuttedfile("cuttedttree.root","recreate");
+  TFile cuttedfile(Form("cuttedttree_%d.root",iterator),"recreate");
   TTree* treecutted = treetot->CopyTree(Form("pt_cand_ML>%f && pt_cand_ML<%f",pTmin,pTmax),"",nentriesmax);
   treecutted->Write();
   Long64_t ntotbyte = GetTotalSize(treecutted);
   Long64_t ntotentries = treecutted->GetEntriesFast();
-  Long64_t ntotprompt = treecutted->GetEntries("cand_type_ML==10");
-  Long64_t ntotFD = treecutted->GetEntries("cand_type_ML==18");
+  Long64_t ntotprompt = treecutted->GetEntries("cand_type_ML>>3&1");
+  Long64_t ntotFD = treecutted->GetEntries("cand_type_ML>>4&1");
   cout << "Number of bytes: " << ntotbyte << endl;
   cout << "Number of candidates: " << ntotentries << endl;
   cout << "Number of prompt: " << ntotprompt << endl;
   cout << "Number of FD: " << ntotFD << "\n" << endl;
   cuttedfile.Close();
   infile->Close();
-  
+
   //scan over selected variable
   float x         = -numeric_limits<float>::max();
   float lowlimit  = -numeric_limits<float>::max();
@@ -153,23 +164,23 @@ void CheckTreeSize(Long64_t nentriesmax, int part, float pTmin, float pTmax, TSt
     }
 
     cout << Form("Cutting ttree in range %.5f < %s < %.5f",lowlimit,varname.Data(),highlimit) << endl;
-    bool cuttree = CutTree("cuttedttree.root",treename,varname.Data(),lowlimit,highlimit);
+    bool cuttree = CutTree(Form("cuttedttree_%d.root",iterator),treename,varname.Data(),lowlimit,highlimit);
     if(!cuttree) {
       cerr << "Impossible to cut tree. Please check input file and var name" << endl;
       return;
     }
-    TFile *file = TFile::Open("cuttedttree.root");
+    TFile *file = TFile::Open(Form("cuttedttree_%d.root",iterator));
     TTree* tree = (TTree*)file->Get(treename.Data());
     gNbytesVsVar->SetPoint(iCut,x,static_cast<double>(GetTotalSize(tree))/nev);
     gNbytesRatioVsVar->SetPoint(iCut,x,static_cast<double>(GetTotalSize(tree))/ntotbyte);
     gNcandRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntriesFast())/ntotentries);
-    gPromptEffRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntries("cand_type_ML==10"))/ntotprompt);
-    gFDEffRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntries("cand_type_ML==18"))/ntotFD);
+    gPromptEffRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntries( "cand_type_ML>>3&1" ))/ntotprompt);
+    gFDEffRatioVsVar->SetPoint(iCut,x,static_cast<double>(tree->GetEntries( "cand_type_ML>>4&1" ))/ntotFD);
     file->Close();
     delete file;
     file = nullptr;
   }
-  gSystem->Unlink("cuttedttree.root");
+  gSystem->Unlink(Form("cuttedttree_%d.root",iterator));
   
   cout << "\n" << endl;
   
@@ -224,7 +235,7 @@ bool CutTree(TString infilename, TString treename, TString varname, float lowlim
   TTree* tree = (TTree*)infile->Get(treename.Data());
   if(!tree) return false;
   
-  TFile outfile("cuttedttree.root","recreate");
+  TFile outfile(infilename.Data(),"recreate");
   TTree* treeCopy = tree->CopyTree(Form("%s>%f && %s<%f",varname.Data(),lowlimit,varname.Data(),highlimit));
   treeCopy->Write();
   outfile.Close();
@@ -284,4 +295,17 @@ Long64_t GetTotalSize(TTree *t) {
     ondiskSize += GetBasketSize(t->GetBranchRef(), true);
   }
   return ondiskSize + GetBasketSize(t->GetListOfBranches(), true);
+}
+
+int main(int argc, char *argv[])
+{
+  if((argc != 13))
+  {
+    std::cout << "Wrong number of inputs" << std::endl;
+    return 1;
+  }
+  
+  if(argc == 13)
+    CheckTreeSize(atoi(argv[1]),atoi(argv[2]),atof(argv[3]),atof(argv[4]),atof(argv[5]),argv[6],argv[7],atof(argv[8]),atof(argv[9]),atof(argv[10]),atoi(argv[11]),argv[12]);
+  return 0;
 }
