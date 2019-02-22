@@ -1,4 +1,3 @@
-# MachineLearningHF
 
 ## IMPORTANT: This repository is not used anymore for the MachineLearning code
 **Please have a look at MachineLearningHEP, also for a proper installation of the prerequisites**.
@@ -9,6 +8,8 @@ This repository is still used for:
 * development on the TTreeCreator and/or TreeHandler classes (but please note that the version can be old with respect to what is in AliPhysics/PWGHF/treeHF/).
 
 ## Old README from now on
+
+# MachineLearningHF
 
 The current recommended instructions require the installation of a independent ROOT6 framework with Pyhon 3.6. 
 Using the package inside AliPhysics is possible but not described in this README.
