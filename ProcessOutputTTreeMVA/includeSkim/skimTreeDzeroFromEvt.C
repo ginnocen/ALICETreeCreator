@@ -85,8 +85,8 @@ void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="t
   if(t.EnabledSkim_y_cand) fTreeDzeroML->Branch("y_cand_ML",&y_cand_ML,"y_cand_ML/F");
   if(t.EnabledSkim_eta_cand) fTreeDzeroML->Branch("eta_cand_ML",&eta_cand_ML,"eta_cand_ML/F");
   if(t.EnabledSkim_phi_cand) fTreeDzeroML->Branch("phi_cand_ML",&phi_cand_ML,"phi_cand_ML/F");
-  fTreeDzeroML->Branch("cand_fileID_ML",&cand_fileID_ML,"cand_fileID_ML/I");
-  fTreeDzeroML->Branch("cand_evtID_ML",&cand_evtID_ML,"cand_evtID_ML/I");
+  fTreeDzeroML->Branch("fileID_ML",&cand_fileID_ML,"fileID_ML/I");
+  fTreeDzeroML->Branch("evtID_ML",&cand_evtID_ML,"evtID_ML/I");
 
   if(t.EnabledSkim_imp_par_prong0) fTreeDzeroML->Branch("imp_par_prong0_ML",&imp_par_prong0_ML,"imp_par_prong0_ML/F");
   if(t.EnabledSkim_imp_par_prong1) fTreeDzeroML->Branch("imp_par_prong1_ML",&imp_par_prong1_ML,"imp_par_prong1_ML/F");
@@ -148,8 +148,8 @@ void skimTreeDzeroFromEvt(TString input="AnalysisResults.root",TString output="t
     //fTreeDzeroGenML->Branch("phi_cand_gen_ML",&phi_cand_gen_ML,"phi_cand_gen_ML/F");
     fTreeDzeroGenML->Branch("dau_in_acc_gen_ML",&dau_in_acc_gen_ML,"dau_in_acc_gen_ML/O");
     fTreeDzeroGenML->Branch("z_vtx_gen_ML",&forCand_z_vtx_gen_ML,"z_vtx_gen_ML/F");
-    fTreeDzeroGenML->Branch("cand_fileID_gen_ML",&cand_fileID_gen_ML,"cand_fileID_gen_ML/I");
-    fTreeDzeroGenML->Branch("cand_evtID_gen_ML",&cand_evtID_gen_ML,"cand_evtID_gen_ML/I");
+    fTreeDzeroGenML->Branch("fileID_ML",&cand_fileID_gen_ML,"fileID_ML/I");
+    fTreeDzeroGenML->Branch("evtID_ML",&cand_evtID_gen_ML,"evtID_ML/I");
   }
   
   
