@@ -11,8 +11,16 @@ using namespace std;
 
 //Commented sections is code for the additional information in the big TTree that might need to be saved to the skimmed ttree at a later point.
 
-void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_LctopK0s", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE, Bool_t wasLcSecVertexReconstructed = kFALSE){
+void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test.root",TString ttreeout="tree_LctopK0s", Bool_t isMC = kFALSE, Bool_t ispp = kFALSE, Bool_t doDirectGRID = kFALSE, Bool_t wasLcSecVertexReconstructed = kFALSE){
 
+/*-------------Connect to GRID, when downloading stage is skipped-------------*/
+  if(doDirectGRID){
+    if(!TGrid::Connect("alien://")) {
+      printf("no grid connection available... Exiting!");
+       return;
+    }
+  }
+  
 /*-------------Reading input-------------*/
   TFile *f = TFile::Open(input.Data());
   TDirectory * dir = (TDirectory*)f->Get("PWGHF_TreeCreator");
@@ -368,13 +376,13 @@ void skimTreeLcFromEvt(TString input="AnalysisResults.root",TString output="test
 
 int main(int argc, char *argv[])
 {
-  if((argc != 7))
+  if((argc != 8))
   {
     std::cout << "Wrong number of inputs" << std::endl;
     return 1;
   }
   
-  if(argc == 7)
-    skimTreeLcFromEvt(argv[1],argv[2],argv[3],atoi(argv[4]),atoi(argv[5]),atoi(argv[6]));
+  if(argc == 8)
+    skimTreeLcFromEvt(argv[1],argv[2],argv[3],atoi(argv[4]),atoi(argv[5]),atoi(argv[6]),atoi(argv[7]));
   return 0;
 }

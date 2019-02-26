@@ -172,111 +172,95 @@ do
   fi
 done
 
-for ((i=$ninput; i>=1; i--))
-do
-  if [ $datasetwithchilds -eq 1 ]; then
-    DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" ${inputpathchild[i-1]} $trainname $i $stage)
-  else
-    DWNLDOUTPUTPATH=$(printf "%s/%s/%s" ${inputpathchild[i-1]} $trainname $stage)
-  fi
-  printf "Reading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
 
-  cmd1=$(printf "find %s %s > listfiles_%s_child_%s%s.txt\n" $DWNLDOUTPUTPATH $outputfile $trainname $i $stage)
-  if [ -z "$stage" ]; then
-    cmd2=$(printf "cp -T 32 listfiles_%s_child_%s%s.txt  file:%s/%s/unmerged/child_%s/%s/listfiles_%s_child_%s%s.txt\n" $trainname $i $stage $placetosave $trainname $i $stage $trainname $i $stage)
-  else
-    cmd2=$(printf "cp -T 32 listfiles_%s_child_%s.txt  file:%s/%s/unmerged/child_%s/listfiles_%s_child_%s.txt\n" $trainname $i $placetosave $trainname $i $trainname $i)
-  fi
-  cmd3=$(printf "rm listfiles_%s_child_%s%s.txt\n" $trainname $i $stage)
+###TODO. THIS PART DOESN'T WORK YET. WE NEED A WAY TO PRINT ALL PRODUCED TRAIN FILES IN A .TXT FILES
 
+#for ((i=$ninput; i>=1; i--))
+#do
+#  if [ $datasetwithchilds -eq 1 ]; then
+#    DWNLDOUTPUTPATH=$(printf "%s/%s_child_%s/%s" ${inputpathchild[i-1]} $trainname $i $stage)
+#  else
+#    DWNLDOUTPUTPATH=$(printf "%s/%s/%s" ${inputpathchild[i-1]} $trainname $stage)
+#  fi
+#  printf "Reading LEGO train files from: %s\n" $DWNLDOUTPUTPATH
+#
+#  cmd1=$(printf "find %s %s > listfiles_%s_child_%s%s.txt\n" $DWNLDOUTPUTPATH $outputfile $trainname $i $stage)
+#  if [ -z "$stage" ]; then
+#    cmd2=$(printf "cp -T 32 listfiles_%s_child_%s%s.txt  file:%s/%s/unmerged/child_%s/%s/listfiles_%s_child_%s%s.txt\n" $trainname $i $stage $placetosave $trainname $i $stage $trainname $i $stage)
+#  else
+#    cmd2=$(printf "cp -T 32 listfiles_%s_child_%s.txt  file:%s/%s/unmerged/child_%s/listfiles_%s_child_%s.txt\n" $trainname $i $placetosave $trainname $i $trainname $i)
+#  fi
+#  cmd3=$(printf "rm listfiles_%s_child_%s%s.txt\n" $trainname $i $stage)
+#
 #  /opt/jalien/src/jalien/jalien << EOF
-  $cmd1
-  $cmd2
-  $cmd3
+#  $cmd1
+#  $cmd2
+#  $cmd3
 #  exit
 #  EOF
+#done
+
+#TODO: If not already there, put 'alien://' in front of path (Note that this is already in inputchild[] at the moment
+#TODO: Check if not Stage_1 files are stored in the .txt file, if so delete
+#From now on, the script assumes there is a filled .txt file in each child_X directory
+#with the name 'listfiles_$trainname_child_X.txt' or 'listfiles_$trainname_child_XStage_1.txt'
+
+#Log files (first letters are for macro) + date and timestamp
+datestamp2="$(date +"%d-%m-%Y")"
+timestamp="$(date +"%H-%M-%S")"
+if [ -z "$4" ]; then
+  stdoutputfile=$(printf "SDG_%s_stdout_%s-%s.txt" $trainname $datestamp2 $timestamp)
+  stderrorfile=$(printf "SDG_%s_stderr_%s-%s.txt" $trainname $datestamp2 $timestamp)
+else
+  stdoutputfile=$(printf "SDG_%s_%s_stdout_%s-%s.txt" $trainname $stage $datestamp2 $timestamp)
+  stderrorfile=$(printf "SDG_%s_%s_stderr_%s-%s.txt" $trainname $stage $datestamp2 $timestamp)
+fi
+
+
+
+#----RUNNING THE SKIMMER DIRECTLY FROM GRID----#
+printf "\n\n\e[1m----RUNNING THE SKIMMER DIRECTLY FROM GRID----\e[0m\n\n"
+printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
+
+for ((i=1; i<=$ninput; i++))
+do
+
+  #Load the .txt in which downloader saved list of files
+  if [ -z "$stage" ]; then
+    outputlist=$(printf "%s/%s/unmerged/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
+  else
+    outputlist=$(printf "%s/%s/unmerged/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
+  fi
+
+  #First save logs in separate file, so macro can search for "error"-related words
+  skimmeroutputfile="skimmer_stdout.txt"
+  skimmererrorfile="skimmer_stderr.txt"
+  printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
+  runskimmer="sh ./utils/skimmer.sh"
+
+  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
+  printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
+
+  #run skimmer + progress bar
+  sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s "1" >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+
+  #Look for errors in logfile, and print warning if the case
+  if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault\|No such file or directory" "$skimmererrorfile"
+  then
+    printf "\e[1;31mwith errors, check log!\e[0m\n\n"
+  else
+    printf "\e[1;32mwithout errors\e[0m\n\n"
+  fi
+
+  #Copy log in general log, and empty for next child
+  cat "$skimmeroutputfile" >> "$stdoutputfile"
+  cat "$skimmererrorfile" >> "$stderrorfile"
+  rm "$skimmeroutputfile" "$skimmererrorfile"
+
 done
 
-#
-##Log files (first letters are for macro) + date and timestamp
-#datestamp2="$(date +"%d-%m-%Y")"
-#timestamp="$(date +"%H-%M-%S")"
-#if [ -z "$4" ]; then
-#  stdoutputfile=$(printf "SDG_%s_stdout_%s-%s.txt" $trainname $datestamp2 $timestamp)
-#  stderrorfile=$(printf "SDG_%s_stderr_%s-%s.txt" $trainname $datestamp2 $timestamp)
-#else
-#  stdoutputfile=$(printf "SDG_%s_%s_stdout_%s-%s.txt" $trainname $stage $datestamp2 $timestamp)
-#  stderrorfile=$(printf "SDG_%s_%s_stderr_%s-%s.txt" $trainname $stage $datestamp2 $timestamp)
-#fi
-#
-#
-#
-##----RUNNING THE SKIMMER DIRECTLY FROM GRID----#
-#printf "\n\n\e[1m----RUNNING THE SKIMMER DIRECTLY FROM GRID----\e[0m\n\n"
-#printf "Skimming for: Dplus (%s), Ds (%s), Dzero (%s), Dstar (%s), Lc->pKpi (%s), Lc->pK0s (%s)\n" $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s
-#
-#for ((i=1; i<=$ninput; i++))
-#do
-#
-#  #Checking bitmap, continue only when child was found before
-#  if (((childs&0x01)>0)) && ((i==1)); then
-#    foundchild=1
-#  elif (((childs&0x02)>0)) && ((i==2)); then
-#    foundchild=1
-#  elif (((childs&0x04)>0)) && ((i==3)); then
-#    foundchild=1
-#  elif (((childs&0x08)>0)) && ((i==4)); then
-#    foundchild=1
-#  elif (((childs&0x10)>0)) && ((i==5)); then
-#    foundchild=1
-#  elif (((childs&0x20)>0)) && ((i==6)); then
-#    foundchild=1
-#  elif (((childs&0x40)>0)) && ((i==7)); then
-#    foundchild=1
-#  elif (((childs&0x80)>0)) && ((i==8)); then
-#    foundchild=1
-#  else
-#    foundchild=0
-#  fi
-#
-#  if [ "$foundchild" == "1" ]; then
-#    #Load the .txt in which downloader saved list of files
-#    if [ -z "$stage" ]; then
-#      outputlist=$(printf "%s/%s/unmerged/child_%s/listfiles_%s_child_%s.txt" $placetosave $trainname $i $trainname $i)
-#    else
-#      outputlist=$(printf "%s/%s/unmerged/child_%s/%s/listfiles_%s_child_%s%s.txt" $placetosave $trainname $i $stage $trainname $i $stage)
-#    fi
-#
-#    #First save logs in separate file, so macro can search for "error"-related words
-#    skimmeroutputfile="skimmer_stdout.txt"
-#    skimmererrorfile="skimmer_stderr.txt"
-#    printf "  Output of skimmer (child_%s) stored in:  \e[1m%s\e[0m\n  Warnings/Errors of skimmer stored in:   \e[1m%s\e[0m\n" $i $stdoutputfile $stderrorfile
-#    runskimmer="sh ./utils/skimmer.sh"
-#
-#    printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmeroutputfile"
-#    printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
-#
-#    #run skimmer + progress bar
-#    sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
-#
-#    #Look for errors in logfile, and print warning if the case
-#    if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault\|No such file or directory" "$skimmererrorfile"
-#    then
-#      printf "\e[1;31mwith errors, check log!\e[0m\n\n"
-#    else
-#      printf "\e[1;32mwithout errors\e[0m\n\n"
-#    fi
-#
-#    #Copy log in general log, and empty for next child
-#    cat "$skimmeroutputfile" >> "$stdoutputfile"
-#    cat "$skimmererrorfile" >> "$stderrorfile"
-#    rm "$skimmeroutputfile" "$skimmererrorfile"
-#  fi
-#
-#done
-#
-#mv $stdoutputfile $placetosave/$trainname/
-#mv $stderrorfile $placetosave/$trainname/
-#
-#printf "\n\e[1mMoved log files to $placetosave/$trainname/\e[0m\n"
-#printf "\n\e[1m----SKIMMER FINISHED----\e[0m\n\n"
+mv $stdoutputfile $placetosave/$trainname/
+mv $stderrorfile $placetosave/$trainname/
+
+printf "\n\e[1mMoved log files to $placetosave/$trainname/\e[0m\n"
+printf "\n\e[1m----SKIMMER FINISHED----\e[0m\n\n"
