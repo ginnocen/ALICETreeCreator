@@ -11,7 +11,7 @@ doDzeroFromEvt=$6
 doDstarFromEvt=$7
 doLctopKpiFromEvt=$8
 doLctopK0sFromEvt=$9
-
+doDirectlyGRID=$10
 
 
 if [ $doDplusFromEvt -eq 1 ]
@@ -21,7 +21,7 @@ DataTree="tree_Dplus"
 
 g++ includeSkim/skimTreeDplusFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDplusFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-   ./skimTreeDplusFromEvt.exe "${line}" "${line%.*}_Dplus_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+   ./skimTreeDplusFromEvt.exe "${line}" "${line%.*}_Dplus_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -48,7 +48,7 @@ DataTree="tree_Ds"
 
 g++ includeSkim/skimTreeDsFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDsFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeDsFromEvt.exe "${line}" "${line%.*}_Ds_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeDsFromEvt.exe "${line}" "${line%.*}_Ds_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -75,7 +75,7 @@ DataTree="tree_D0"
 
 g++ includeSkim/skimTreeDzeroFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDzeroFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeDzeroFromEvt.exe "${line}" "${line%.*}_Dzero_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeDzeroFromEvt.exe "${line}" "${line%.*}_Dzero_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -102,7 +102,7 @@ DataTree="tree_Dstar"
 
 g++ includeSkim/skimTreeDstarFromEvt.C $(root-config --cflags --libs) -g -o skimTreeDstarFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeDstarFromEvt.exe "${line}" "${line%.*}_Dstar_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeDstarFromEvt.exe "${line}" "${line%.*}_Dstar_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -129,7 +129,7 @@ DataTree="tree_LctopKpi"
 
 g++ includeSkim/skimTreeLctopKpiFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLctopKpiFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeLctopKpiFromEvt.exe "${line}" "${line%.*}_LctopKpi_skimmed.root" "$DataTree" "$isMC" "$ispp" &
+  ./skimTreeLctopKpiFromEvt.exe "${line}" "${line%.*}_LctopKpi_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point
@@ -156,7 +156,7 @@ DataTree="tree_Lc2V0bachelor"
 
 g++ includeSkim/skimTreeLctopK0sFromEvt.C $(root-config --cflags --libs) -g -o skimTreeLctopK0sFromEvt.exe
 while IFS='' read -r line || [[ -n "$line" ]]; do
-  ./skimTreeLctopK0sFromEvt.exe "${line}" "${line%.*}_LctopK0s_skimmed.root" "$DataTree" "$isMC" "$ispp" "0" &
+  ./skimTreeLctopK0sFromEvt.exe "${line}" "${line%.*}_LctopK0s_skimmed.root" "$DataTree" "$isMC" "$ispp" "$doDirectlyGRID" "0" &
 
   #1) Submit 50 jobs in parallel. 2) Reached 50? Wait till oldest one is finished. 3) Keep submitting till again 50. 4) Go back to 2)
   #Not ideal solution, as the oldest one can get stuck/very big, so be there for a long long time. Worse situation, only this job is running at one point

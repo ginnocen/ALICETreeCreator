@@ -249,7 +249,7 @@ do
   printf "\n\n\n\nSkimming child_$i starts here\n\n" > "$skimmererrorfile"
 
   #run skimmer + progress bar
-  sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
+  sh ./utils/run_skimmer $runskimmer $outputlist $isMC $ispp $doDplus $doDs $doDzero $doDstar $doLcpKpi $doLcpK0s "0" >> "$skimmeroutputfile" 2>> "$skimmererrorfile"
 
   #Look for errors in logfile, and print warning if the case
   if grep -q "Error\|ERROR\|error\|segmentation\|Segmentation\|SEGMENTATION\|fault" "$skimmererrorfile"
