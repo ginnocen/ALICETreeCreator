@@ -75,8 +75,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         ptbins[2]=999.;
         cutsLctoV0->SetPtBins(nptbins+1,ptbins);
         Float_t cuts[nptbins][nvars]={
-            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.99,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1,
-            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.99,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1};
+            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.998,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1,
+            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.999,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1};
         Float_t** prodcutsval;
         prodcutsval=new Float_t*[nvars];
         for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -87,7 +87,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         }
         
         cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
-        cutsLctoV0->SetMinPtCandidate(1.);
+        cutsLctoV0->SetMinPtCandidate(3.);
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
         
         
