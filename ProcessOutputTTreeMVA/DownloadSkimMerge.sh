@@ -211,6 +211,9 @@ else
   exit
 fi
 
+#give all permissions to all directories downloaded from the GRID
+chmod -R 777 $placetosave/$trainname/unmerged/
+
 #Check logs for the comman 'jalien command not found' error. If this is the case, no files where downloaded.
 if grep -q "jalien\|command not found" "$stderrorfile"
 then
