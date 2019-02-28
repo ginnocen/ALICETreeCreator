@@ -1,6 +1,6 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is trainname (e.g. 297_20181120-2315_child_1)
+#   $1 is trainname (e.g. 297_20181120-2315)
 #   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
 #   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
 #   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
@@ -16,12 +16,12 @@ printf "\n\n\n\e[1m----RUNNING THE REMOVER----\e[0m\n\n"
 #----THINGS TO SET----#
 outputfile="AnalysisResults" #toset
 
-doDplus=0       #toset (removers)
+doDplus=1       #toset (removers)
 doDs=0          #toset (removers)
 doDzero=0       #toset (removers)
 doDstar=0       #toset (removers)
 doLcpKpi=0      #toset (removers)
-doLcpK0s=1      #toset (removers)
+doLcpK0s=0      #toset (removers)
 #doBplus=0      #to be added
 #doPID=0        #to be added
 

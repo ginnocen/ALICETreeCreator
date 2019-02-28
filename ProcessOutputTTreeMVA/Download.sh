@@ -1,6 +1,5 @@
 #!/bin/bash
 #IMPORTANT: Before running one should have entered jAliEn environment:
-#    alienv enter JAliEn/latest-jalien-jalien
 #    jalien
 #    <Enter Grid certificate password>
 #    exit
@@ -22,7 +21,7 @@ printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER----\e[0m\n\n"
 
 
 #----THINGS TO SET----#
-nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
 
 #Confirm with user if hardcoded values are what he/she wants

@@ -1,6 +1,6 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is trainname (e.g. 297_20181120-2315_child_1)
+#   $1 is trainname (e.g. 297_20181120-2315)
 #   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
 #   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
 #   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)

@@ -1,6 +1,6 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is trainname (e.g. 297_20181120-2315_child_1)
+#   $1 is trainname (e.g. 297_20181120-2315)
 #   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
 #   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
 #   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
@@ -20,8 +20,8 @@ doDplus=1       #toset (skimmers)
 doDs=0          #toset (skimmers)
 doDzero=0       #toset (skimmers)
 doDstar=0       #toset (skimmers)
-doLcpKpi=1      #toset (skimmers)
-doLcpK0s=1      #toset (skimmers)
+doLcpKpi=0      #toset (skimmers)
+doLcpK0s=0      #toset (skimmers)
 
 #Confirm with user if hardcoded values are what he/she wants
 printf "\e[1mYou set the following setters in the script. Please check them carefully before continuing.\e[0m\n"
