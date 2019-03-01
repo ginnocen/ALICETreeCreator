@@ -1,12 +1,11 @@
 #!/bin/bash
 #IMPORTANT: Before running one should have entered jAliEn environment:
-#    alienv enter JAliEn/latest-jalien-jalien
 #    jalien
 #    <Enter Grid certificate password>
 #    exit
 #
 #Arguments to this bash:
-#   $1 is trainname (e.g. 297_20181120-2315_child_1)
+#   $1 is trainname (e.g. 297_20181120-2315)
 #   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
 #   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
 #   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
@@ -22,7 +21,7 @@ printf "\n\n\n\e[1m----RUNNING THE DOWNLOADER-SKIMMER-MERGER----\e[0m\n\n"
 
 
 #----THINGS TO SET----#
-nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
+nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
 
 doDplus=1       #toset (skimmers)
@@ -210,6 +209,9 @@ else
   printf "ERROR: More than 4 childs/runlist not yet supported, please implement. Returning..."
   exit
 fi
+
+#give all permissions to all directories downloaded from the GRID
+chmod -R 777 $placetosave/$trainname/unmerged/
 
 #Check logs for the comman 'jalien command not found' error. If this is the case, no files where downloaded.
 if grep -q "jalien\|command not found" "$stderrorfile"

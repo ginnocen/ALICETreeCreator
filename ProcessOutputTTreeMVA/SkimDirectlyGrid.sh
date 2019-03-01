@@ -1,6 +1,6 @@
 #!/bin/bash
 #Arguments to this bash:
-#   $1 is trainname (e.g. 297_20181120-2315_child_1)
+#   $1 is trainname (e.g. 297_20181120-2315)
 #   $2 is dataset (e.g. for pp5TeV LHC17pq or LHC18a4a2)
 #   $3 is path to place to save output (e.g. "" or ../ALICEanalysis/MLproductions/)
 #   $4 is GRID merging Stage_X (e.g. "" for no merging, or Stage_1)
@@ -14,12 +14,12 @@ printf "\n\n\n\e[1m----RUNNING THE SKIMMER DIRECTLY FROM GRID----\e[0m\n\n"
 
 
 #----THINGS TO SET----#
+nfiles="/*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 outputfile="AnalysisResults" #toset
-nfiles="/000*/" #toset   For testing: "0*", "00*", or "000*" (Assuming 1000 < jobs < 9999)
 
-doDplus=0       #toset (skimmers)
+doDplus=1       #toset (skimmers)
 doDs=0          #toset (skimmers)
-doDzero=1       #toset (skimmers)
+doDzero=0       #toset (skimmers)
 doDstar=0       #toset (skimmers)
 doLcpKpi=0      #toset (skimmers)
 doLcpK0s=0      #toset (skimmers)
