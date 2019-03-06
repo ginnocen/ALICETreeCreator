@@ -180,8 +180,9 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
         cuts->Setd0Cut(nptbins,d0cutsval);
         
         cuts->SetUsePID(kTRUE);
-        cuts->SetPidOption(0);
-        
+        cuts->SetPidOption(1); //0=kConservative,1=kStrong
+        cuts->SetMaxPtStrongPid(6.);
+
         cuts->SetMinPtCandidate(1.);
         cuts->SetMaxPtCandidate(24.);
         cuts->SetMaxPtStrongPid(9999.);

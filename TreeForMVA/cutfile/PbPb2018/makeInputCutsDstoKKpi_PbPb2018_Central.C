@@ -70,7 +70,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         anacutsval[15][0]=1.;
         anacutsval[16][0]=0.;
         anacutsval[17][0]=0.;
-        anacutsval[18][0]=2.;
+        anacutsval[18][0]=3.;
         anacutsval[19][0]=0.98;
 
         anacutsval[0][1]=0.3;
@@ -91,7 +91,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         anacutsval[15][1]=1.;
         anacutsval[16][1]=0.;
         anacutsval[17][1]=0.;
-        anacutsval[18][1]=0.;
+        anacutsval[18][1]=3.;
         anacutsval[19][1]=-1.;
 
         cuts->SetCuts(20,nptbins,anacutsval);
@@ -196,7 +196,8 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         cuts->Setd0MeasMinusExpCut(nptbins,topomCuts);
         
         cuts->SetUsePID(kTRUE);
-        cuts->SetPidOption(0); //0=kConservative,1=kStrong
+        cuts->SetPidOption(1); //0=kConservative,1=kStrong
+        cuts->SetMaxPtStrongPid(8.);
         
         cuts->SetMinPtCandidate(4.);
         cuts->SetMaxPtCandidate(16.);
