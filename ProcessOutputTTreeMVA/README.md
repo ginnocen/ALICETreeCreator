@@ -99,6 +99,8 @@ aliBuild build JAliEn --defaults jalien -z jalien
 ```
 > JAliEn is already installed at lxplus. To enter the environment, do '/cvmfs/alice.cern.ch/bin/alienv enter JAliEn'
 
+You may need to edit the hard-coded jalien path (`/opt/jalien/src/jalien/jalien`) in `downloader.sh` to 
+something appropriate for your system, e.g. simply `jalien`. 
 
 ROOT is needed for the skimming and merging of the files. If this is not yet installed, please follow the instructions below. **Please note that these instructions don't build against a specific python version, which you might need for ML studies.**
 ```
