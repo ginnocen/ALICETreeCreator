@@ -90,6 +90,22 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         cutsLctoV0->SetMinPtCandidate(3.);
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
         
+        cutsLctoV0->SetPidSelectionFlag(0);
+        //pid settings
+        //1. bachelor: default one
+        AliAODPidHF* pidObjBachelor = new AliAODPidHF();
+        Double_t sigmasBac[5]={5.,5.,5.,5.,5.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+        pidObjBachelor->SetSigma(sigmasBac);
+        pidObjBachelor->SetAsym(kFALSE);
+        pidObjBachelor->SetMatch(1);
+        pidObjBachelor->SetTPC(kTRUE);
+        pidObjBachelor->SetTOF(kTRUE);
+        pidObjBachelor->SetTOFdecide(kFALSE);
+        
+        cutsLctoV0->SetPidHF(pidObjBachelor);
+        Bool_t pidflag=kTRUE;
+        cutsLctoV0->SetUsePID(pidflag);
+        
         
         
         
