@@ -229,7 +229,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     }
     //event selection
     cuts->SetTriggerClass("");
-    cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+    cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
     cuts->SetMinCentrality(minc);
     cuts->SetMaxCentrality(maxc);
     cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
