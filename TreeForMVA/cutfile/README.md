@@ -21,12 +21,12 @@ In this folder the cutfiles for pre-filtering and standard analysis and the macr
 | Particle | Pre-filtering | Updated | Std analysis | Updated |
 |:-:|:-:|:-:|:-:|:-:|
 | B<sup>+ | :x: | --- | :x: | --- |
-| D<sup>0 | :x: | --- | :x: | --- |
+| D<sup>0 | :heavy_check_mark: | 15-03-2019 | :x: | 15-03-2019 |
 | D<sup>+ | :heavy_check_mark: | 7-03-2019 | :heavy_check_mark: | 7-03-2019 |
 | D<sup>* | :x: | --- | :x: | --- |
 | D<sub>s | :heavy_check_mark: | 7-03-2019 | :heavy_check_mark: | 7-03-2019 |
-| &Lambda;<sub>c</sub> &rarr; pK<sup>0</sup><sub>s | :x: | --- | :x: | --- |
-| &Lambda;<sub>c</sub> &rarr; pK&pi; | :x: | --- | :x: | --- |
+| &Lambda;<sub>c</sub> &rarr; pK<sup>0</sup><sub>s | :heavy_check_mark: | 15-03-2019 | :heavy_check_mark: | 15-03-2019 |
+| &Lambda;<sub>c</sub> &rarr; pK&pi; | :heavy_check_mark: | 15-03-2019 (to be finalised) | :heavy_check_mark: | 15-03-2019 |
 
 ### No Centrality
 
