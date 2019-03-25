@@ -71,12 +71,12 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         Float_t* ptbins;
         ptbins=new Float_t[nptbins+1];
         ptbins[0]=0.;
-        ptbins[1]=5.;
+        ptbins[1]=4.;
         ptbins[2]=999.;
         cutsLctoV0->SetPtBins(nptbins+1,ptbins);
         Float_t cuts[nptbins][nvars]={
-            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.998,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1,
-            0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.999,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1};
+            0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
+            0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1};
         Float_t** prodcutsval;
         prodcutsval=new Float_t*[nvars];
         for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -87,19 +87,19 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         }
         
         cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
-        cutsLctoV0->SetMinPtCandidate(3.);
+        cutsLctoV0->SetMinPtCandidate(4.);
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
         
-        cutsLctoV0->SetPidSelectionFlag(0);
+        cutsLctoV0->SetPidSelectionFlag(11);
         //pid settings
         //1. bachelor: default one
         AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={5.,5.,5.,5.,5.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
         pidObjBachelor->SetSigma(sigmasBac);
         pidObjBachelor->SetAsym(kFALSE);
         pidObjBachelor->SetMatch(1);
         pidObjBachelor->SetTPC(kTRUE);
-        pidObjBachelor->SetTOF(kTRUE);
+        pidObjBachelor->SetTOF(kFALSE);
         pidObjBachelor->SetTOFdecide(kFALSE);
         
         cutsLctoV0->SetPidHF(pidObjBachelor);
