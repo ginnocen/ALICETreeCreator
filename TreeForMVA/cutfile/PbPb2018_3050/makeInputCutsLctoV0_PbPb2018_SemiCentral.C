@@ -77,7 +77,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         ptbins[1]=999.;
         cutsLctoV0->SetPtBins(nptbins+1,ptbins);
         Float_t cuts[nptbins][nvars]={
-          0.2,0.,0.05,0.05,0.5,0.0,0.0,1000.,1000.,0.99,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1};
+          0.2,0.,0.03,0.05,0.5,0.0,0.0,1000.,1000.,0.998,3.,1000.,0.,0.,0.,0.5,9999.,-9999.,-9999.,-9999.,1};
         Float_t** prodcutsval;
         prodcutsval=new Float_t*[nvars];
         for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -91,23 +91,23 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         cutsLctoV0->SetMinPtCandidate(4.);
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
 
-        cutsLctoV0->SetPidSelectionFlag(0);
+        cutsLctoV0->SetPidSelectionFlag(11);
         //pid settings
         //1. bachelor: default one
         AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={5.,5.,5.,5.,5.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
         pidObjBachelor->SetSigma(sigmasBac);
         pidObjBachelor->SetAsym(kFALSE);
         pidObjBachelor->SetMatch(1);
         pidObjBachelor->SetTPC(kTRUE);
-        pidObjBachelor->SetTOF(kTRUE);
+        pidObjBachelor->SetTOF(kFALSE);
         pidObjBachelor->SetTOFdecide(kFALSE);
         
         cutsLctoV0->SetPidHF(pidObjBachelor);
         Bool_t pidflag=kTRUE;
         cutsLctoV0->SetUsePID(pidflag);
-        
-    }
+
+           }
     else if(whichCuts==1){
         
         //single track cuts
@@ -204,7 +204,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     
     //event selection
     cutsLctoV0->SetTriggerClass("");
-    cutsLctoV0->SetTriggerMask(AliVEvent::kSemiCentral | AliVEvent::kINT7);
+    cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
     cutsLctoV0->SetMinCentrality(minc);
     cutsLctoV0->SetMaxCentrality(maxc);
     cutsLctoV0->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
