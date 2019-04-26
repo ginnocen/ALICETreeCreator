@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=10.)
 {
     
     AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -94,17 +94,18 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         //pid settings
         //1. bachelor: default one
         AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+        Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
         pidObjBachelor->SetSigma(sigmasBac);
         pidObjBachelor->SetAsym(kFALSE);
         pidObjBachelor->SetMatch(1);
         pidObjBachelor->SetTPC(kTRUE);
-        pidObjBachelor->SetTOF(kFALSE);
+        pidObjBachelor->SetTOF(kTRUE);
         pidObjBachelor->SetTOFdecide(kFALSE);
         
         cutsLctoV0->SetPidHF(pidObjBachelor);
         Bool_t pidflag=kTRUE;
         cutsLctoV0->SetUsePID(pidflag);
+        cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
         
         
         
@@ -197,6 +198,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         cutsLctoV0->SetPidHF(pidObjBachelor);
         Bool_t pidflag=kTRUE;
         cutsLctoV0->SetUsePID(pidflag);
+        cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
 
         cutsLctoV0->SetMinPtCandidate(1.0);
         cutsLctoV0->SetMaxPtCandidate(50.);
