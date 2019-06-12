@@ -13,9 +13,9 @@
 //SETTINGS
 //************************************
 
-Bool_t runLocal=kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
-TString pathToLocalAODfiles="../AODFiles";               // path to find AOD files when running locally
-Bool_t runGridTest=kTRUE;                                // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE 
+Bool_t runLocal=kTRUE; //kFALSE;                                  // flag to run locally on AliAOD.root + AliAOD.VertexingHF.root
+TString pathToLocalAODfiles="/home/bvolkel/ALICE/software/aliceDev/ML/HF/files";               // path to find AOD files when running locally
+Bool_t runGridTest=kFALSE; //kTRUE;                                // flag to run a grid test: kTRUE (+runLocal=kFALSE). To run job on GRID: runGridTest=kFALSE, runLocal=kFALSE 
 TString runMode="full";                                  // sets the run grid mode: "full", "terminate"
 
 TString aliPhysVersion="vAN-20180930-1";
@@ -39,7 +39,7 @@ const Int_t nruns = 1;
 Int_t runlist[nruns] = {246994};
 
 //Task configuration
-TString cutFile="./cutfile/D0DsDplusCuts.root";          // file containing the cuts for the different mesons
+TString cutFile="/home/bvolkel/ALICE/software/aliceDev/ML/HF/files/D0DsDplusDstarLcBplusCuts_pp.root";          // file containing the cuts for the different mesons
   														 // to generate the cut file: 1) move to cutfile directory
   														 //                           2) .L makeCutsTreeCreator.C
   														 //                           3) makeCutsTreeCreator();
@@ -83,9 +83,7 @@ void runAnalysis()
     AliMultSelectionTask *multSel = reinterpret_cast<AliMultSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C"))));
     //multSel->SetAlternateOADBforEstimators("LHC15o-DefaultMC-HIJING");
 
-    gInterpreter->LoadMacro("AliHFCutOptTreeHandler.cxx++g");
-    gInterpreter->LoadMacro("AliAnalysisTaskSEHFTreeCreator.cxx++g");
-    AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\")",gSystem->ExpandPathName("AddTaskHFTreeCreator.C"),isRunOnMC, 1, "HFTreeCreator", cutFile.Data())));
+    AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\",%d,%d,%d,%d,%d,%d,%d,%d,%d)",gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kFALSE, kFALSE, 1, 0, 0, 0, 0, 0)));
     
    
     AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s", gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
@@ -105,7 +103,7 @@ void runAnalysis()
     gROOT->LoadMacro("AliHFCutOptTreeHandler.cxx++g");
     gROOT->LoadMacro("AliAnalysisTaskSEHFTreeCreator.cxx++g");
     gROOT->LoadMacro("AddTaskHFTreeCreator.C");
-    AliAnalysisTaskSEHFTreeCreator *task = AddTaskHFTreeCreator(isRunOnMC, 1, "HFTreeCreator", cutFile.Data());
+    AliAnalysisTaskSEHFTreeCreator *task = AddTaskHFTreeCreator(isRunOnMC, 1, "HFTreeCreator", cutFile.Data(), 1, kFALSE, kFALSE, 1, 0, 0, 0, 0, 0);
     
 
     gROOT->LoadMacro("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C");
