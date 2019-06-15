@@ -34,14 +34,14 @@ const Int_t nvars=21;
 
 AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=20.)
 {
-  
+
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
   cutsLctoV0->SetName(nameCuts.Data());
   cutsLctoV0->SetTitle(nameCuts.Data());
-  
-  
+
+
   if(whichCuts==0){
-    
+
     AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts("AliESDtrackCuts","default");
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
@@ -53,7 +53,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     esdTrackCuts->SetPtRange(0.3,1.e10);
     esdTrackCuts->SetEtaRange(-0.9,+0.9);
     cutsLctoV0->AddTrackCuts(esdTrackCuts);
-    
+
     AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
     esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
     esdTrackCutsV0daughters->SetMinNClustersTPC(30);
@@ -64,7 +64,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     esdTrackCutsV0daughters->SetAcceptKinkDaughters(kTRUE);
     esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
     cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-    
+
     const Int_t nptbins=2;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
@@ -83,18 +83,51 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         prodcutsval[ic][ipt]=cuts[ipt][ic];
       }
     }
-    
+
     cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
     cutsLctoV0->SetMinPtCandidate(1.);
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-    
-    
-    
-    
+
+
+
+
   }
   else if(whichCuts==1){
-    
+
     //single track cuts
+    // NOTE Adapted from makeInputCutsLctoV0_PbPb_2018_Central
+    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+    esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+    esdTrackCuts->SetRequireTPCRefit(kTRUE);
+    esdTrackCuts->SetRequireITSRefit(kTRUE);
+    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+    esdTrackCuts->SetMinNCrossedRowsTPC(70);
+    esdTrackCuts->SetMinNClustersITS(0);
+    esdTrackCuts->SetMinNClustersTPC(50); //filtering
+    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
+    esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
+    esdTrackCuts->SetMinDCAToVertexXY(0.);
+    esdTrackCuts->SetMaxDCAToVertexXY(1.);
+    esdTrackCuts->SetMaxDCAToVertexZ(1.);
+    esdTrackCuts->SetPtRange(0.5,1.e10);
+    esdTrackCuts->SetEtaRange(-0.8,+0.8);
+    esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
+
+    // V0 daughters cuts
+    AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
+    esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
+    esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
+    esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
+    esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
+    esdTrackCutsV0daughters->SetMinNClustersTPC(70);
+    esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+    esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
+    esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
+    esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
+    esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
+
+    /*
+    // NOTE Former cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
@@ -108,7 +141,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     esdTrackCuts->SetEtaRange(-0.8,+0.8);
     esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
     cutsLctoV0->AddTrackCuts(esdTrackCuts);
-    
+
     AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
     esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
     esdTrackCutsV0daughters->SetMinNClustersTPC(70);
@@ -118,7 +151,20 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     esdTrackCutsV0daughters->SetPtRange(0.1,1.e10);
     esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
     esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
-    
+    */
+
+    // NOTE Adapted from makeInputCutsLctoV0_PbPb_2018_Central
+    cutsLctoV0->SetUsePhysicsSelection(kTRUE);
+    cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+    cutsLctoV0->AddTrackCuts(esdTrackCuts);
+    cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
+    //cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);//(kTRUE);
+    cutsLctoV0->SetHighPtCut(999.);
+    cutsLctoV0->SetLowPtCut(2.0);
+    cutsLctoV0->SetPidSelectionFlag(10);
+
+    /*
+    // NOTE Former cuts
     cutsLctoV0->SetUsePhysicsSelection(kTRUE);
     cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
     cutsLctoV0->AddTrackCuts(esdTrackCuts);
@@ -128,7 +174,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetHighPtCut(3.0);
     cutsLctoV0->SetLowPtCut(1.0);
     cutsLctoV0->SetPidSelectionFlag(4);
-    
+    */
+
     const Int_t nptbins=9;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
@@ -143,7 +190,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[8]=16.;
     ptbins[9]=24.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
-    
+
     Float_t cuts[nptbins][nvars]={
       0.25, 1., 0.005,   0.05, 0.6, 0.2, 0.2, 1000., 1.5, 0.99, 0.05, 0.05, 0., 0.005, 0.1, 0.5, 9999, -9999, -9999, -9999, 0.,
       0.25, 1., 0.005,   0.05, 0.6, 0.2, 0.2, 1000., 1.5, 0.99, 0.05, 0.05, 0., 0.005, 0.1, 0.5, 9999, -9999, -9999, -9999, 0.,
@@ -164,7 +211,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
       }
     }
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-    
+
     //pid settings
     //1. bachelor: default one
     AliAODPidHF* pidObjBachelor = new AliAODPidHF();
@@ -175,13 +222,13 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     pidObjBachelor->SetTPC(kTRUE);
     pidObjBachelor->SetTOF(kTRUE);
     pidObjBachelor->SetTOFdecide(kFALSE);
-    
+
     cutsLctoV0->SetPidHF(pidObjBachelor);
     Bool_t pidflag=kTRUE;
     cutsLctoV0->SetUsePID(pidflag);
-    
+
   }
-  
+
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);
   cutsLctoV0->SetTriggerClass("");
@@ -191,14 +238,12 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->SetMaxVtxZ(10.);
   cutsLctoV0->SetCutOnzVertexSPD(3);
   cutsLctoV0->SetMinVtxContr(1);
-  
+
   cout<<"This is the object I'm going to save:"<<endl;
   cutsLctoV0->SetName(nameCuts.Data());
   cutsLctoV0->SetTitle(nameCuts.Data());
   cutsLctoV0->PrintAll();
-  
+
   return cutsLctoV0;
-  
+
 }
-
-

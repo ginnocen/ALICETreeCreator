@@ -25,24 +25,12 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
 
 AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
 {
-    
+
     AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
-    
-    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-    esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-    //default
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetMinNClustersITS(2); // default for run 2
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
-    esdTrackCuts->SetEtaRange(-0.8,0.8);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
-    esdTrackCuts->SetMinDCAToVertexXY(0.);
-    
-    cuts->AddTrackCuts(esdTrackCuts);
+
+
 
     // cuts
     Int_t nptbins=2; Float_t ptlimits[2]={0.,1000000.};
@@ -51,13 +39,29 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     Float_t cutsArrayLctopKpi[13]={0.18,0.3,0.3,0.,0.,0.,0.06,0.,0.,-1.,0.,0.05,0.3};
     cuts->SetPtBins(nptbins,ptlimits);
     cuts->SetCuts(13,cutsArrayLctopKpi);
-    cuts->AddTrackCuts(esdTrackCuts);
     //cuts->SetMinPtCandidate(1.);
-    
+
     AliAODPidHF* pidObjp=new AliAODPidHF();
     AliAODPidHF* pidObjK=new AliAODPidHF();
     AliAODPidHF* pidObjpi=new AliAODPidHF();
     if(whichCuts==0 ){
+
+      // NOTE Moved into if branch whichCuts==0)
+      AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+      esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+      //default
+      esdTrackCuts->SetRequireTPCRefit(kTRUE);
+      esdTrackCuts->SetRequireITSRefit(kTRUE);
+      esdTrackCuts->SetMinNClustersTPC(70);
+      esdTrackCuts->SetMinNClustersITS(2); // default for run 2
+      esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
+      esdTrackCuts->SetEtaRange(-0.8,0.8);
+      esdTrackCuts->SetPtRange(0.3,1.e10);
+      esdTrackCuts->SetMinDCAToVertexXY(0.);
+
+      cuts->AddTrackCuts(esdTrackCuts);
+
+
       // PID
       // Set here since no default PIDHF object created in RDHF
       // 1. kaon
@@ -71,7 +75,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
       pidObjK->SetPLimit(plimK,2);
       pidObjK->SetTOFdecide(kTRUE);
 
-      //2. pion 
+      //2. pion
       AliAODPidHF* pidObjpi=new AliAODPidHF();
       pidObjpi->SetTPC(kTRUE);
       Double_t sigmaspi[5]={3.,0.,0.,0.,0.};
@@ -97,6 +101,27 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
       cuts->SetUsePID(kFALSE);
     }
     else if(whichCuts==1){
+
+      // NOTE Added track cuts for analysis, adapted from makeInputCutsLctoV0_PbPb_2018_Central
+      //single track cuts
+      AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+      esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+      esdTrackCuts->SetRequireTPCRefit(kTRUE);
+      esdTrackCuts->SetRequireITSRefit(kTRUE);
+      esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+      esdTrackCuts->SetMinNCrossedRowsTPC(70);
+      esdTrackCuts->SetMinNClustersITS(0);
+      esdTrackCuts->SetMinNClustersTPC(50); //filtering
+      esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
+      esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
+      esdTrackCuts->SetMinDCAToVertexXY(0.);
+      esdTrackCuts->SetMaxDCAToVertexXY(1.);
+      esdTrackCuts->SetMaxDCAToVertexZ(1.);
+      esdTrackCuts->SetPtRange(0.5,1.e10);
+      esdTrackCuts->SetEtaRange(-0.8,+0.8);
+
+      cuts->AddTrackCuts(esdTrackCuts);
+
       // PID
       cuts->SetUsePID(kTRUE);
       AliAODPidHF* pidObjp=new AliAODPidHF();
@@ -132,9 +157,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
     cuts->PrintAll();
-    
+
     return cuts;
-    
+
 }
-
-
