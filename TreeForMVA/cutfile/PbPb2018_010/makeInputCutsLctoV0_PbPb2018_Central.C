@@ -43,29 +43,41 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     if(whichCuts==0){
         
         AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts("AliESDtrackCuts","default");
+        esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
         esdTrackCuts->SetRequireTPCRefit(kTRUE);
         esdTrackCuts->SetRequireITSRefit(kTRUE);
-        esdTrackCuts->SetMinNClustersTPC(50);
-        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
-                                               AliESDtrackCuts::kAny);
-        // |d0|>25 micron for pt<2GeV, no cut above 2
-        esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+        esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+        esdTrackCuts->SetMinNCrossedRowsTPC(70);
+        esdTrackCuts->SetMinNClustersITS(0);
+        esdTrackCuts->SetMinNClustersTPC(50); //filtering
+        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
+        esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
+        esdTrackCuts->SetMinDCAToVertexXY(0.);
         esdTrackCuts->SetMaxDCAToVertexXY(1.);
         esdTrackCuts->SetMaxDCAToVertexZ(1.);
-        esdTrackCuts->SetPtRange(0.4,1.e10);
+        esdTrackCuts->SetPtRange(0.5,1.e10);
         esdTrackCuts->SetEtaRange(-0.8,+0.8);
-        cutsLctoV0->AddTrackCuts(esdTrackCuts);
+        esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
         
-        AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
-        esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
-        esdTrackCutsV0daughters->SetMinNClustersTPC(30);
-        esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);
-        esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
-        esdTrackCutsV0daughters->SetPtRange(0.05,1.e10);
-        esdTrackCutsV0daughters->SetEtaRange(-1.1,+1.1);
-        esdTrackCutsV0daughters->SetAcceptKinkDaughters(kTRUE);
+        // V0 daughters cuts
+        AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
         esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
+        esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
+        esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
+        esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
+        esdTrackCutsV0daughters->SetMinNClustersTPC(70);
+        esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+        esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
+        esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
+        esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
+        esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
+        
+        cutsLctoV0->SetUsePhysicsSelection(kTRUE);
+        cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+        cutsLctoV0->AddTrackCuts(esdTrackCuts);
         cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
+        
+        cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
         
         const Int_t nptbins=2;
         Float_t* ptbins;
@@ -86,7 +98,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
             }
         }
         
-        cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
         cutsLctoV0->SetMinPtCandidate(4.);
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
         
@@ -94,7 +105,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         //pid settings
         //1. bachelor: default one
         AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
         pidObjBachelor->SetSigma(sigmasBac);
         pidObjBachelor->SetAsym(kFALSE);
         pidObjBachelor->SetMatch(1);
