@@ -103,7 +103,7 @@ elif [ "$dataset" == "LHC18r_test" ]; then
   isMC=0
   ispp=0
   datasetwithchilds=0
-elif [ "$dataset" == "LHC2018_pp"]; then
+elif [ "$dataset" == "LHC2018_pp" ]; then
   inputpaths=(/alice/data/2018/LHC18b/000285064/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18d/000286313/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18e/000286653/pass1/PWGHF/HF_TreeCreator
