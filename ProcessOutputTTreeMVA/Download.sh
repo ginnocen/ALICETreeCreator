@@ -103,6 +103,31 @@ elif [ "$dataset" == "LHC18r_test" ]; then
   isMC=0
   ispp=0
   datasetwithchilds=0
+elif [ "$dataset" == "LHC2018_pp"]; then
+  inputpaths=(/alice/data/2018/LHC18b/000285064/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18d/000286313/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18e/000286653/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18f/000287784/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18f/000287208/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18g/000288750/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18h/000288806/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18i/000288908/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18j/000288943/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18k/000289177/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18l/000289931/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18l/000289444/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000290590/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000291397/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000292701/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000292430/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18n/000293359/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18o/000293741/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18p/000294011/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18p/000294925/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18p/000294152/pass1/PWGHF/HF_TreeCreator)
+  isMC=0
+  ispp=1
+  datasetwithchilds=1
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
@@ -179,25 +204,12 @@ rundownloader="sh ./utils/downloader.sh"
 printf "\n\n\n\nOutput downloading starts here\n\n" > "$stdoutputfile"
 printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 
-#run downloaders + progress bar. Not in parallel as writing time is the limiting factor here
-if [ $ninput -eq 1 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-elif [ $ninput -eq 2 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-elif [ $ninput -eq 3 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-elif [ $ninput -eq 4 ]; then
-  sh ./utils/run_downloader $rundownloader $inputpathchild1 1 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild2 2 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild3 3 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-  sh ./utils/run_downloader $rundownloader $inputpathchild4 4 "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
-else
-  printf "ERROR: More than 4 childs/runlist not yet supported, please implement. Returning..."
-  exit
-fi
+for input_index in ${!inputpaths[*]}
+do
+  ithinput=$(($input_index+1))
+  sh ./utils/run_downloader $rundownloader ${inputpaths[$input_index]} $ithinput "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+done
+  
 
 #give all permissions to all directories downloaded from the GRID
 chmod -R 777 $placetosave/$trainname/unmerged/
