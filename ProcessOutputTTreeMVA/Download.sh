@@ -68,38 +68,33 @@ fi
 
 #Hardcoded information about dataset
 if [ "$dataset" == "LHC17pq" ]; then
-  inputpathchild1=/alice/data/2017/LHC17p/000282341/pass1_FAST/PWGZZ/Devel_2
-  inputpathchild2=/alice/data/2017/LHC17p/000282341/pass1_CENT_wSDD/PWGZZ/Devel_2
-  inputpathchild3=/alice/data/2017/LHC17q/000282366/pass1_FAST/PWGZZ/Devel_2
-  inputpathchild4=/alice/data/2017/LHC17q/000282366/pass1_CENT_wSDD/PWGZZ/Devel_2
-  ninput=4
+  inputpaths=(/alice/data/2017/LHC17p/000282341/pass1_FAST/PWGZZ/Devel_2
+              /alice/data/2017/LHC17p/000282341/pass1_CENT_wSDD/PWGZZ/Devel_2
+              /alice/data/2017/LHC17q/000282366/pass1_FAST/PWGZZ/Devel_2
+              /alice/data/2017/LHC17q/000282366/pass1_CENT_wSDD/PWGZZ/Devel_2)
   isMC=0
   ispp=1
   datasetwithchilds=1
 elif [ "$dataset" == "LHC18a4a2" ]; then
-  inputpathchild1=/alice/sim/2018/LHC18a4a2_fast/282341/PWGZZ/Devel_2
-  inputpathchild2=/alice/sim/2018/LHC18a4a2_fast/282366/PWGZZ/Devel_2
-  inputpathchild3=/alice/sim/2018/LHC18a4a2_cent/282341/PWGZZ/Devel_2
-  inputpathchild4=/alice/sim/2018/LHC18a4a2_cent/282366/PWGZZ/Devel_2
-  ninput=4
+  inputpaths=(/alice/sim/2018/LHC18a4a2_fast/282341/PWGZZ/Devel_2
+              /alice/sim/2018/LHC18a4a2_fast/282366/PWGZZ/Devel_2
+              /alice/sim/2018/LHC18a4a2_cent/282341/PWGZZ/Devel_2
+              /alice/sim/2018/LHC18a4a2_cent/282366/PWGZZ/Devel_2)
   isMC=1
   ispp=1
   datasetwithchilds=1
 elif [ "$dataset" == "LHC16i2a" ]; then
-  inputpathchild1=/alice/sim/2016/LHC16i2a/246087/AOD198/PWGZZ/Devel_2
-  ninput=1
+  inputpaths=(/alice/sim/2016/LHC16i2a/246087/AOD198/PWGZZ/Devel_2)
   isMC=1
   ispp=0
   datasetwithchilds=0
 elif [ "$dataset" == "LHC18r" ]; then
-  inputpathchild1=/alice/data/2018/LHC18r/000296932/pass1/PWGZZ/Devel_2
-  ninput=1
+  inputpaths=(/alice/data/2018/LHC18r/000296932/pass1/PWGZZ/Devel_2)
   isMC=0
   ispp=0
   datasetwithchilds=0
 elif [ "$dataset" == "LHC18r_test" ]; then
-  inputpathchild1=/alice/data/2018/LHC18r/000296787/pass1/PWGZZ/Devel_2
-  ninput=1
+  inputpaths=(/alice/data/2018/LHC18r/000296787/pass1/PWGZZ/Devel_2)
   isMC=0
   ispp=0
   datasetwithchilds=0
@@ -128,6 +123,13 @@ elif [ "$dataset" == "LHC2018_pp" ]; then
   isMC=0
   ispp=1
   datasetwithchilds=1
+elif [ "$dataset" == "LHC2018_MC_pp" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l4b/285064/PWGHF/HF_TreeCreator
+              /alice/sim/2018/LHC18l4b_fast/285957/PWGHF/HF_TreeCreator
+              /alice/sim/2018/LHC18l4b_cent/285957/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
