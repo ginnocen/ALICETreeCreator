@@ -187,7 +187,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
   cutsD0toKpi->SetTriggerClass("");
   cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7);
   cutsD0toKpi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
-  cutsD0toKpi->ConfigurePileupCuts(5,0.8);
+  cutsD0toKpi->SetMinContribPileupMV(5);
   cutsD0toKpi->SetMaxVtxZ(10.);
   cutsD0toKpi->SetCutOnzVertexSPD(3);
   cutsD0toKpi->SetMinVtxContr(1);

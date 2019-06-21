@@ -172,10 +172,11 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
   }
   
   //event selection
+  cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);
   cutsDstartoKpipi->SetTriggerClass("");
   cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7);
   cutsDstartoKpipi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
-  cutsDstartoKpipi->ConfigurePileupCuts(5,0.8);
+  cutsDstartoKpipi->SetMinContribPileupMV(5);
   cutsDstartoKpipi->SetMaxVtxZ(10.);
   cutsDstartoKpipi->SetCutOnzVertexSPD(3);
   cutsDstartoKpipi->SetMinVtxContr(1);

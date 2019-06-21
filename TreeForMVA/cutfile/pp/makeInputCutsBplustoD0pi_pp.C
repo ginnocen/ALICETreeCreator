@@ -132,7 +132,7 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
     RDHFBPlustoD0Pi->SetTriggerClass("");
     RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kINT7);
     RDHFBPlustoD0Pi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
-    RDHFBPlustoD0Pi->ConfigurePileupCuts(5,0.8);
+    RDHFBPlustoD0Pi->SetMinContribPileupMV(5);
     RDHFBPlustoD0Pi->SetMaxVtxZ(10.);
     RDHFBPlustoD0Pi->SetCutOnzVertexSPD(3);
     RDHFBPlustoD0Pi->SetMinVtxContr(1);

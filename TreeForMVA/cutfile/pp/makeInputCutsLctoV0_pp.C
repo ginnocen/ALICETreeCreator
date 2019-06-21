@@ -212,7 +212,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->SetTriggerClass("");
   cutsLctoV0->SetTriggerMask(AliVEvent::kINT7);
   cutsLctoV0->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
-  cutsLctoV0->ConfigurePileupCuts(5,0.8);
+  cutsLctoV0->SetMinContribPileupMV(5);
   cutsLctoV0->SetMaxVtxZ(10.);
   cutsLctoV0->SetCutOnzVertexSPD(3);
   cutsLctoV0->SetMinVtxContr(1);

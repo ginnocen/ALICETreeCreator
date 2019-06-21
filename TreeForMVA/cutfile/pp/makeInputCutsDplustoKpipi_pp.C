@@ -231,10 +231,11 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString
   cuts->SetRemoveDaughtersFromPrim(kTRUE);
 
   //event selection
+  cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
   cuts->SetTriggerMask(AliVEvent::kINT7);
   cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
-  cuts->ConfigurePileupCuts(5,0.8);
+  cuts->SetMinContribPileupMV(5);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);
   cuts->SetMinVtxContr(1);
