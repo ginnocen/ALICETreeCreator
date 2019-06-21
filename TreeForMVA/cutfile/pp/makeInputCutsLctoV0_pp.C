@@ -91,7 +91,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
       }
     }
     
-    cutsLctoV0->SetMinPtCandidate(1.);
+    cutsLctoV0->SetMinPtCandidate(2.); //Update 21/06/2019. Important to set back to 1. after optimising the preselection cuts!
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
