@@ -7,9 +7,10 @@ DWNLDOUTPUTFILE=$4
 BASEDIR=$5
 TRAINNAME=$6
 DATASETWITHCHILDS=$7
-STAGE=$8
+LOCALCHILD=$8
+STAGE=$9
 
-SAVEDIR=$(printf "%s/%s/unmerged/child_%s" $BASEDIR $TRAINNAME $CHILD)
+SAVEDIR=$(printf "%s/%s/unmerged/child_%s" $BASEDIR $TRAINNAME $LOCALCHILD)
 mkdir -p -m 777 $SAVEDIR
 if [ $? -ne 0 ]; then
   printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"
@@ -18,11 +19,11 @@ else
   printf "Created directory: $SAVEDIR \n"
 fi
 
-if [ -z "$8" ]; then
+if [ -z "$9" ]; then
   #do nothing, if-statement to be reversed
   dummy=1
 else
-  SAVEDIR=$(printf "%s/%s/unmerged/child_%s/%s/" $BASEDIR $TRAINNAME $CHILD $STAGE)
+  SAVEDIR=$(printf "%s/%s/unmerged/child_%s/%s/" $BASEDIR $TRAINNAME $LOCALCHILD $STAGE)
   mkdir -p -m 777 $SAVEDIR
   if [ $? -ne 0 ]; then
     printf "Error: Could not create output directory. Is $SAVEDIR writable? Returning... \n\n"
@@ -46,7 +47,7 @@ $cmd
 exit
 EOF
 
-nameoutputlist=$(printf "listfiles_%s_child_%s%s.txt" $TRAINNAME $CHILD $STAGE)
+nameoutputlist=$(printf "listfiles_%s_child_%s%s.txt" $TRAINNAME $LOCALCHILD $STAGE)
 find $SAVEDIR/$NFILES/$DWNLDOUTPUTFILE.root -maxdepth 1 -not -type d> $nameoutputlist
 if [ $? -ne 0 ]; then
   printf "\r                         \e[1;31mWarning: No files where downloaded. Did you enter JAliEn environment before? Are you connected to internet? Did you set the correct path?\e[0m" > /dev/tty

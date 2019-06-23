@@ -103,21 +103,21 @@ elif [ "$dataset" == "LHC2018_pp" ]; then
               /alice/data/2018/LHC18d/000286313/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18e/000286653/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18f/000287784/pass1/PWGHF/HF_TreeCreator
-              /alice/data/2018/LHC18f/000287208/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18g/000288750/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18h/000288806/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18i/000288908/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18j/000288943/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18k/000289177/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18l/000289931/pass1/PWGHF/HF_TreeCreator
-              /alice/data/2018/LHC18l/000289444/pass1/PWGHF/HF_TreeCreator
-              /alice/data/2018/LHC18m/000290590/pass1_withTRDtracking/PWGHF/HF_TreeCreator
-              /alice/data/2018/LHC18m/000291397/pass1_withTRDtracking/PWGHF/HF_TreeCreator
-              /alice/data/2018/LHC18m/000292701/pass1_withTRDtracking/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18m/000292430/pass1_withTRDtracking/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18n/000293359/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18o/000293741/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18p/000294011/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18f/000287208/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18l/000289444/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000291397/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000292701/pass1_withTRDtracking/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18m/000292430/pass1_withTRDtracking/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18p/000294925/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18p/000294152/pass1/PWGHF/HF_TreeCreator)
   isMC=0
@@ -130,6 +130,14 @@ elif [ "$dataset" == "LHC2018_MC_pp" ]; then
   isMC=1
   ispp=1
   datasetwithchilds=0
+elif [ "$dataset" == "LHC17j4d2" ]; then
+  inputpaths=(/alice/sim/2017/LHC17j4d2_fast/265343/PWGHF/HF_TreeCreator
+              /alice/sim/2017/LHC17j4d2_fast/267163/PWGHF/HF_TreeCreator
+              /alice/sim/2017/LHC17j4d2_cent_wSDD/265343/PWGHF/HF_TreeCreator
+              /alice/sim/2017/LHC17j4d2_cent_wSDD/267163/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=1
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
@@ -209,9 +217,27 @@ printf "\n\n\n\nErrors downloading starts here\n\n" > "$stderrorfile"
 for input_index in ${!inputpaths[*]}
 do
   ithinput=$(($input_index+1))
-  sh ./utils/run_downloader $rundownloader ${inputpaths[$input_index]} $ithinput "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $stage >> "$stdoutputfile" 2>> "$stderrorfile"
+  localchild=$(($input_index+1))
+  if [ "$dataset" == "LHC2018_pp" ]; then
+    if [ $input_index -eq 14 ]; then
+      ithinput=4
+    elif [ $input_index -eq 15 ]; then
+      ithinput=10
+    elif [ $input_index -eq 16 ]; then
+      ithinput=11
+    elif [ $input_index -eq 17 ]; then
+      ithinput=11
+    elif [ $input_index -eq 18 ]; then
+      ithinput=11
+    elif [ $input_index -eq 19 ]; then
+      ithinput=14
+    elif [ $input_index -eq 20 ]; then
+      ithinput=14
+    fi
+  fi
+  sh ./utils/run_downloader $rundownloader ${inputpaths[$input_index]} $ithinput "$nfiles" $outputfile $placetosave $trainname $datasetwithchilds $localchild $stage >> "$stdoutputfile" 2>> "$stderrorfile"
 done
-  
+
 
 #give all permissions to all directories downloaded from the GRID
 chmod -R 777 $placetosave/$trainname/unmerged/
