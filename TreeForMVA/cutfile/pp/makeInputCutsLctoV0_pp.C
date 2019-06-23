@@ -80,8 +80,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[2]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-      1.0,1.0,0.05,0.05,0.0,0.0,0.0,1000.,1000.,0.99,3.,1000.,0.,0.,0.,0.,9999.,-9999.,-9999.,-9999.,0.0,
-      1.0,1.0,0.05,0.05,0.0,0.0,0.0,1000.,1000.,0.99,3.,1000.,0.,0.,0.,0.,9999.,-9999.,-9999.,-9999.,0.0};
+       0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,1000.,0.997,3.,1.5,0.,0.,0.,0.,9999.,-9999.,-0.8,-9999.,0.0,
+       0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,1000.,0.997,3.,1.5,0.,0.,0.,0.,9999.,-9999.,-0.8,-9999.,0.0};
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
     for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
