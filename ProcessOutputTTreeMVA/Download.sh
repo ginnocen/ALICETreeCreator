@@ -67,37 +67,22 @@ else
 fi
 
 #Hardcoded information about dataset
-if [ "$dataset" == "LHC17pq" ]; then
-  inputpaths=(/alice/data/2017/LHC17p/000282341/pass1_FAST/PWGZZ/Devel_2
-              /alice/data/2017/LHC17p/000282341/pass1_CENT_wSDD/PWGZZ/Devel_2
-              /alice/data/2017/LHC17q/000282366/pass1_FAST/PWGZZ/Devel_2
-              /alice/data/2017/LHC17q/000282366/pass1_CENT_wSDD/PWGZZ/Devel_2)
+if [ "$dataset" == "LHC17pq_woSDD" ]; then
+  inputpaths=(/alice/data/2017/LHC17p/000282341/pass1_FAST/PWGHF/HF_TreeCreator
+              /alice/data/2017/LHC17q/000282366/pass1_FAST/PWGHF/HF_TreeCreator
+              /alice/data/2017/LHC17p/000282341/pass1_CENT_woSDD/PWGHF/HF_TreeCreator
+              /alice/data/2017/LHC17q/000282366/pass1_CENT_woSDD/PWGHF/HF_TreeCreator)
   isMC=0
   ispp=1
   datasetwithchilds=1
 elif [ "$dataset" == "LHC18a4a2" ]; then
-  inputpaths=(/alice/sim/2018/LHC18a4a2_fast/282341/PWGZZ/Devel_2
-              /alice/sim/2018/LHC18a4a2_fast/282366/PWGZZ/Devel_2
-              /alice/sim/2018/LHC18a4a2_cent/282341/PWGZZ/Devel_2
-              /alice/sim/2018/LHC18a4a2_cent/282366/PWGZZ/Devel_2)
+  inputpaths=(/alice/sim/2018/LHC18a4a2_fast/282341/PWGHF/HF_TreeCreator
+              /alice/sim/2018/LHC18a4a2_fast/282366/PWGHF/HF_TreeCreator
+              /alice/sim/2018/LHC18a4a2_cent/282341/PWGHF/HF_TreeCreator
+              /alice/sim/2018/LHC18a4a2_cent/282366/PWGHF/HF_TreeCreator)
   isMC=1
   ispp=1
   datasetwithchilds=1
-elif [ "$dataset" == "LHC16i2a" ]; then
-  inputpaths=(/alice/sim/2016/LHC16i2a/246087/AOD198/PWGZZ/Devel_2)
-  isMC=1
-  ispp=0
-  datasetwithchilds=0
-elif [ "$dataset" == "LHC18r" ]; then
-  inputpaths=(/alice/data/2018/LHC18r/000296932/pass1/PWGZZ/Devel_2)
-  isMC=0
-  ispp=0
-  datasetwithchilds=0
-elif [ "$dataset" == "LHC18r_test" ]; then
-  inputpaths=(/alice/data/2018/LHC18r/000296787/pass1/PWGZZ/Devel_2)
-  isMC=0
-  ispp=0
-  datasetwithchilds=0
 elif [ "$dataset" == "LHC2018_pp" ]; then
   inputpaths=(/alice/data/2018/LHC18b/000285064/pass1/PWGHF/HF_TreeCreator
               /alice/data/2018/LHC18d/000286313/pass1/PWGHF/HF_TreeCreator
