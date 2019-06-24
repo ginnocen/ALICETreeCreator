@@ -57,10 +57,11 @@ fi
 
 #Checking argument 2, dataset
 if [ -z "$2" ]; then
-  printf "\nPlease enter dataset name (LHC17pq, LHC18a4a2, LHC16i2a, LHC18r, ...): "
+  printf "\nPlease enter dataset name (LHC17pq_woSDD, LHC2018_pp, "
+  printf "\n                           LHC2016[17][18]_pass1[2]_MC_pp, "
+  printf "\n                           or dataset name like 'LHC18r': "
   read dataset
   printf "  Chosen dataset: \e[1m$dataset\e[0m\n"
-#  printf "  \e[0;31mWarning: For now only the Devel_2 LEGO train is implemented.\e[0m\n"
 else
   dataset=$2
   printf "\nChosen dataset: \e[1m$dataset\e[0m\n"
@@ -108,14 +109,38 @@ elif [ "$dataset" == "LHC2018_pp" ]; then
   isMC=0
   ispp=1
   datasetwithchilds=1
+elif [ "$dataset" == "LHC2016_pass1_MC_pp" ]; then
+  inputpaths=(/alice/sim/2017/LHC17h8a/253529/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC2016_pass2_MC_pp" ]; then
+  inputpaths=(/alice/sim/2018/LHC18f4a/257630/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC2017_MC_pp" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l4a/272123/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
 elif [ "$dataset" == "LHC2018_MC_pp" ]; then
-  inputpaths=(/alice/sim/2018/LHC18l4b/285064/PWGHF/HF_TreeCreator
-              /alice/sim/2018/LHC18l4b_fast/285957/PWGHF/HF_TreeCreator
-              /alice/sim/2018/LHC18l4b_cent/285957/PWGHF/HF_TreeCreator)
+  inputpaths=(/alice/sim/2018/LHC18l4b/285064/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC17j4_adeghjop_MC_pp" ]; then
+  inputpaths=(/alice/sim/2017/LHC17j4a/253529/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=1
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC17j4_kl_MC_pp" ]; then
+  inputpaths=(/alice/sim/2017/LHC17j4a/257630/PWGHF/HF_TreeCreator)
   isMC=1
   ispp=1
   datasetwithchilds=0
 elif [ "$dataset" == "LHC17j4d2" ]; then
+  #Lc->pK0s enriched pPb MC (used for pp for now)
   inputpaths=(/alice/sim/2017/LHC17j4d2_fast/265343/PWGHF/HF_TreeCreator
               /alice/sim/2017/LHC17j4d2_fast/267163/PWGHF/HF_TreeCreator
               /alice/sim/2017/LHC17j4d2_cent_wSDD/265343/PWGHF/HF_TreeCreator
