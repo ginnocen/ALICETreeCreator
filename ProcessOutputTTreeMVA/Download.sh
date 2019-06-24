@@ -58,8 +58,8 @@ fi
 #Checking argument 2, dataset
 if [ -z "$2" ]; then
   printf "\nPlease enter dataset name (LHC17pq_woSDD, LHC2018_pp, "
-  printf "\n                           LHC2016[17][18]_pass1[2]_MC_pp, "
-  printf "\n                           or dataset name like 'LHC18r': "
+  printf "\n                           LHC20[16][17][18]_[pass1/2][][]_MC_pp, "
+  printf "\n                           or dataset name like 'LHC18r'): "
   read dataset
   printf "  Chosen dataset: \e[1m$dataset\e[0m\n"
 else
