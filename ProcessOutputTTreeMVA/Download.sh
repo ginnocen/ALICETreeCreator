@@ -138,6 +138,93 @@ elif [ "$dataset" == "LHC17j4d2" ]; then
   isMC=1
   ispp=1
   datasetwithchilds=1
+elif [ "$dataset" == "LHC19c2b_all_q" ]; then
+  inputpaths=(/alice/sim/2019/LHC19c2b/296433/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b2/296433/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b_extra/296433/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b2_extra/296433/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=1
+elif [ "$dataset" == "LHC19c2b_all_r" ]; then
+  inputpaths=(/alice/sim/2019/LHC19c2b/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b2/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b_extra/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2b2_extra/297481/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=1
+elif [ "$dataset" == "LHC19c2a_all_q" ]; then
+  inputpaths=(/alice/sim/2019/LHC19c2a/296433/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a2/296244/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a_extra/296433/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a2_extra/296244/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=1
+elif [ "$dataset" == "LHC19c2a_all_r" ]; then
+  inputpaths=(/alice/sim/2019/LHC19c2a/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a2/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a_extra/297481/PWGHF/HF_TreeCreator
+              /alice/sim/2019/LHC19c2a2_extra/297481/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=1
+elif [ "$dataset" == "LHC18l8b2_q" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l8b2/296433/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC18l8b2_r" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l8b2/297481/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC18l8c2_q" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l8c2/296433/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC18l8c2_r" ]; then
+  inputpaths=(/alice/sim/2018/LHC18l8c2/297481/PWGHF/HF_TreeCreator)
+  isMC=1
+  ispp=0
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC18r" ]; then
+  inputpaths=(/alice/data/2018/LHC18r/000296894/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297218/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297366/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297481/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297193/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297590/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000296899/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297415/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297479/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000296799/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297588/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297512/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000296851/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18r/000297413/pass1/PWGHF/HF_TreeCreator)
+  isMC=0
+  ispp=0
+  datasetwithchilds=0
+elif [ "$dataset" == "LHC18q" ]; then
+  inputpaths=(/alice/data/2018/LHC18q/000296415/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296549/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296377/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296197/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296244/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000295831/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296550/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296433/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296623/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000295826/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000295854/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296511/pass1/PWGHF/HF_TreeCreator
+              /alice/data/2018/LHC18q/000296424/pass1/PWGHF/HF_TreeCreator)
+  isMC=0
+  ispp=0
+  datasetwithchilds=0
 else
   printf "\e[1;31mError: Dataset not yet implemented. Returning...\e[0m\n\n"
   exit
@@ -218,6 +305,7 @@ for input_index in ${!inputpaths[*]}
 do
   ithinput=$(($input_index+1))
   localchild=$(($input_index+1))
+  #--TO BE WRITTEN IN A NICER WAY--
   if [ "$dataset" == "LHC2018_pp" ]; then
     if [ $input_index -eq 14 ]; then
       ithinput=4
