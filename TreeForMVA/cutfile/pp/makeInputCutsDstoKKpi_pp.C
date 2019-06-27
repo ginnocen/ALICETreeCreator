@@ -37,8 +37,12 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     
     Int_t nptbins=2;
     Float_t ptlimits[2]={1.,1000000.};
-    Float_t cutsArrayDstoKKpi[20]={0.35,0.3,0.3,0.,0.,0.005,0.06,0.,0.,0.7,0.,1000.,0.1,0.1,-1.,1.,0.,0.,0.,-1.};
-    
+    Float_t cutsArrayDstoKKpi[20]={0.3,0.3,0.3,0.,0.,0.005,0.06,0.,0.,0.7,0.,1000.,0.02,0.1,-1.,1.,0.,0.,0.,-1.};
+    //Reduce output possibilities even more:
+    //  - cosThetaPoint 0.7 -> 0.85 for pT<5
+    //  - PID 4sigma to 3sigma
+    //  - Turn on decLen (0.02)
+
     cuts->SetMinPtCandidate(0.);
     cuts->SetPtBins(nptbins,ptlimits);
     cuts->SetCuts(20,cutsArrayDstoKKpi);

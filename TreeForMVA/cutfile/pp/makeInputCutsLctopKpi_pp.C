@@ -49,7 +49,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
   Int_t nptbins=2;
   Float_t ptlimits[2]={0.,1000000.};
   cuts->SetPtBins(nptbins,ptlimits);
-  Float_t cutsArrayLctopKpi[13]={0.18,0.3,0.3,0.,0.,0.,0.06,0.,0.,-1.,0.,0.05,0.3};
+  Float_t cutsArrayLctopKpi[13]={0.13,0.3,0.3,0.,0.,0.,0.06,0.,0.,-1.,0.,0.05,0.3};
   
   cuts->SetMinPtCandidate(1.);
   cuts->SetCuts(13,cutsArrayLctopKpi);
