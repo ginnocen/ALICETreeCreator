@@ -62,7 +62,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     // PID
     // Set here since no default PIDHF object created in RDHF
     // 1. kaon
-    Double_t sigmasK[5]={4.,4.,4.,4.,4.};//{3.,1.,1.,3.,2.};
+    Double_t sigmasK[5]={3.,3.,3.,3.,3.};//{3.,1.,1.,3.,2.};
     pidObjK->SetSigma(sigmasK);
     pidObjK->SetAsym(kFALSE);//(kTRUE);
     pidObjK->SetMatch(1);
@@ -73,7 +73,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     pidObjK->SetTOFdecide(kFALSE);//(kTRUE);
     
     //2. pion
-    Double_t sigmaspi[5]={4.,4.,4.,4.,4.};//{3.,0.,0.,0.,0.};
+    Double_t sigmaspi[5]={3.,3.,3.,3.,3.};//{3.,0.,0.,0.,0.};
     pidObjpi->SetSigma(sigmaspi);
     pidObjpi->SetAsym(kFALSE);
     pidObjpi->SetMatch(1);
@@ -82,7 +82,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     pidObjpi->SetTOFdecide(kFALSE);
     
     // 3. proton
-    Double_t sigmasp[5]={4.,4.,4.,4.,4.};//{3.,1.,1.,3.,2.};
+    Double_t sigmasp[5]={3.,3.,3.,3.,3.};//{3.,1.,1.,3.,2.};
     pidObjp->SetSigma(sigmasp);
     pidObjp->SetAsym(kFALSE);//(kTRUE);
     pidObjp->SetMatch(1);

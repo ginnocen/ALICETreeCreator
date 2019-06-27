@@ -59,7 +59,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
     AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
     pidObj->SetSigma(sigmasBac);
     pidObj->SetAsym(kFALSE);
     pidObj->SetMatch(1);
