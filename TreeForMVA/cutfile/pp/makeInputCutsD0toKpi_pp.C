@@ -51,7 +51,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     Float_t ptlimitsD0[nptbinsD0+1]={0.,1000000.};
     Float_t cutsArrayD0toKpi[11]={0.25,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,-1,0.};
     
-    cutsD0toKpi->SetMinPtCandidate(0.);
+    cutsD0toKpi->SetMinPtCandidate(1.);
     cutsD0toKpi->SetPtBins(nptbinsD0+1,ptlimitsD0);
     cutsD0toKpi->SetCuts(11,cutsArrayD0toKpi);
     
@@ -143,7 +143,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     
     cutsD0toKpi->SetPtBins(nptbins+1,ptbins);
     cutsD0toKpi->SetGlobalIndex(nvars,nptbins);
-    cutsD0toKpi->SetMinPtCandidate(0.);
+    cutsD0toKpi->SetMinPtCandidate(1.);
     cutsD0toKpi->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
     
     cutsD0toKpi->SetUseSpecialCuts(kTRUE);
