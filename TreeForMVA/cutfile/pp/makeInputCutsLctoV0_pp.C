@@ -207,10 +207,15 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     
   }
   
+  //11/08/19:
+  //Not enabled for now because it is missing in AliRDHFCuts
+  //Also not sure if this is used for Lc in pp
+  cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);
   cutsLctoV0->SetTriggerClass("");
-  cutsLctoV0->SetTriggerMask(AliVEvent::kINT7);
+  cutsLctoV0->SetTriggerMask(AliVEvent::kAny);
   cutsLctoV0->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cutsLctoV0->SetMinContribPileupMV(5);
   cutsLctoV0->SetMaxVtxZ(10.);

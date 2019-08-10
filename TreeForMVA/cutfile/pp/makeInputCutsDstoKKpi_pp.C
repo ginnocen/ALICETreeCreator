@@ -231,7 +231,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cuts->SetMinContribPileupMV(5);
   cuts->SetMaxVtxZ(10.);

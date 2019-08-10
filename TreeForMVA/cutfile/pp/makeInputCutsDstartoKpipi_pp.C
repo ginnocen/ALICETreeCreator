@@ -167,14 +167,14 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;
     
-    //Do not recalculate the vertex
-    cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   }
-  
+  //Do not recalculate the vertex
+  cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
   //event selection
   cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);
   cutsDstartoKpipi->SetTriggerClass("");
-  cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7);
+  cutsDstartoKpipi->SetTriggerMask(AliVEvent::kAny);
   cutsDstartoKpipi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cutsDstartoKpipi->SetMinContribPileupMV(5);
   cutsDstartoKpipi->SetMaxVtxZ(10.);

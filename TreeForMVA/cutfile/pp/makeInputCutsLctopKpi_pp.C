@@ -125,10 +125,15 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
+  //11/08/19:
+  //Not enabled for now because it is missing in AliRDHFCuts
+  //Also not sure if this is used for Lc in pp
+  cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cuts->SetMinContribPileupMV(5);
   cuts->SetMaxVtxZ(10.);
