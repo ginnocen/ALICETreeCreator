@@ -4,22 +4,26 @@
 #include <AliRDHFCutsDstoKKpi.h>
 #include <AliRDHFCutsDplustoKpipi.h>
 #include <AliRDHFCutsBPlustoD0Pi.h>
+#include <AliRDHFCutsLctopKpi.h>
+#include <AliRDHFCutsLctoV0.h>
 #include <TClonesArray.h>
 #include <TParameter.h>
 
 #include "makeInputCutsD0toKpi_PbPb2018_Central.C"
 #include "makeInputCutsDstoKKpi_PbPb2018_Central.C"
 #include "makeInputCutsDplustoKpipi_PbPb2018_Central.C"
-#include "makeInputCutsBplustoD0pi_PbPb2018_Central.C"
-#include "makeInputCutsLctopKpi_PbPb2018_Central.C"
 #include "makeInputCutsDstartoKpipi_PbPb2018_Central.C"
+#include "makeInputCutsLctopKpi_PbPb2018_Central.C"
+#include "makeInputCutsBplustoD0pi_PbPb2018_Central.C"
+#include "makeInputCutsBstoDspi_PbPb2018_Central.C"
 #include "makeInputCutsLctoV0_PbPb2018_Central.C"
+#include "makeInputCutsLbtoLcpi_PbPb2018_Central.C"
 
 Float_t minCent=0.;
 Float_t maxCent=20.;
 
 
-void makeCutsTreeCreator()
+void makeCutsTreeCreator_PbPb2018_Central()
 {
     Printf("D0 filtering cuts");
     AliRDHFCutsD0toKpi  *looseCutsD0toKpi    = makeInputCutsD0toKpi(0,"D0toKpiFilteringCuts",minCent,maxCent);
@@ -42,31 +46,45 @@ void makeCutsTreeCreator()
     AliRDHFCutsDplustoKpipi  *analysisCutsDplustoKpipi = makeInputCutsDplustoKpipi(1,"DplustoKpipiAnalysisCuts",minCent,maxCent);
     Printf("\n\n");
     Printf("*************************************************************");
-    Printf("Bplus filtering cuts");
-    AliRDHFCutsBPlustoD0Pi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent);
-    Printf("\n\n");
-    Printf("Bplus analysis cuts");
-    AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
-    Printf("*************************************************************");
-    Printf("Lc filtering cuts");
-    AliRDHFCutsLctopKpi  *looseCutsLctopKpi    = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent);
-    Printf("\n\n");
-    Printf("Lc analysis cuts");
-    AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
-    Printf("*************************************************************");
     Printf("Dstar filtering cuts");
     AliRDHFCutsDStartoKpipi  *looseCutsDStartoKpipi    = makeInputCutsDstartoKpipi(0,"DstartoKpipiFilteringCuts",minCent,maxCent);
     Printf("\n\n");
     Printf("Dstar analysis cuts");
     AliRDHFCutsDStartoKpipi  *analysisCutsDStartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent);
     Printf("*************************************************************");
+    Printf("LctopKpi filtering cuts");
+    AliRDHFCutsLctopKpi  *looseCutsLctopKpi    = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("LctopKpi analysis cuts");
+    AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent);
+    Printf("*************************************************************");
+    Printf("Bplus filtering cuts");
+    AliRDHFCutsBPlustoD0Pi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("Bplus analysis cuts");
+    AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
+    Printf("*************************************************************");
     Printf("LctoV0bachelor filtering cuts");
     AliRDHFCutsLctoV0  *looseCutsLctoV0bachelor    = makeInputCutsLctoV0(0,"Lc2V0bachelorFilteringCuts",minCent,maxCent);
     Printf("\n\n");
     Printf("LctoV0bachelor analysis cuts");
     AliRDHFCutsLctoV0  *analysisCutsLctoV0bachelor = makeInputCutsLctoV0(1,"Lc2V0bachelorAnalysisCuts",minCent,maxCent);
-
-    TFile* fout=new TFile("D0DsDplusDstarLcBplusCuts_PbPb2018_Central.root","recreate");
+    Printf("*************************************************************");
+    Printf("\n\n");
+    Printf("Bs filtering cuts");
+    AliRDHFCutsDstoKKpi  *looseCutsBstoDspi    = makeInputCutsBstoDspi(0,"BstoDspiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("Bs analysis cuts");
+    AliRDHFCutsDstoKKpi  *analysisCutsBstoDspi = makeInputCutsBstoDspi(1,"BstoDspiAnalysisCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("*************************************************************");
+    Printf("LbtoLcpi filtering cuts");
+    AliRDHFCutsLctopKpi *looseCutsLbtoLcpi = makeInputCutsLbtoLcpi(0,"LbtoLcpiFilteringCuts",minCent,maxCent);
+    Printf("\n\n");
+    Printf("LbtoLcpi analysis cuts");
+    AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi(1,"LbtoLcpiAnalysisCuts",minCent,maxCent);
+  
+    TFile* fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_Central.root","recreate");
     fout->cd();
     looseCutsD0toKpi->Write();
     analysisCutsD0toKpi->Write();
@@ -74,14 +92,18 @@ void makeCutsTreeCreator()
     analysisCutsDstoKKpi->Write();
     looseCutsDplustoKpipi->Write();
     analysisCutsDplustoKpipi->Write();
-    looseCutsBplustoD0pi->Write();
-    analysisCutsBplustoD0pi->Write();
     looseCutsLctopKpi->Write();
     analysisCutsLctopKpi->Write();
+    looseCutsBplustoD0pi->Write();
+    analysisCutsBplustoD0pi->Write();
     looseCutsDStartoKpipi->Write();
     analysisCutsDStartoKpipi->Write();
     looseCutsLctoV0bachelor->Write();
     analysisCutsLctoV0bachelor->Write();
+    looseCutsBstoDspi->Write();
+    analysisCutsBstoDspi->Write();
+    looseCutsLbtoLcpi->Write();
+    analysisCutsLbtoLcpi->Write();
     fout->Close();
     
 }

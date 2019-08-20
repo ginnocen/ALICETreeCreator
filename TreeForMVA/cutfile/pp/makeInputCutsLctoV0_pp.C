@@ -32,45 +32,44 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100.)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
   cutsLctoV0->SetName(nameCuts.Data());
   cutsLctoV0->SetTitle(nameCuts.Data());
   
+  //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
+  //single track cuts
+  AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+  esdTrackCuts->SetRequireTPCRefit(kTRUE);
+  esdTrackCuts->SetRequireITSRefit(kTRUE);
+  esdTrackCuts->SetMinNClustersTPC(70);
+  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
+                                         AliESDtrackCuts::kAny);
+  esdTrackCuts->SetMaxDCAToVertexXY(1.e6);
+  esdTrackCuts->SetMinDCAToVertexXY(0.);
+  esdTrackCuts->SetMinDCAToVertexZ(0.);
+  esdTrackCuts->SetPtRange(0.3,1.e10);
+  esdTrackCuts->SetEtaRange(-0.8,+0.8);
+  esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
+  
+  AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
+  esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
+  esdTrackCutsV0daughters->SetMinNClustersTPC(70);
+  esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);
+  esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
+  esdTrackCutsV0daughters->SetMinDCAToVertexZ(0.);
+  esdTrackCutsV0daughters->SetPtRange(0.1,1.e10);
+  esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
+  esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
+  
+  cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+  cutsLctoV0->AddTrackCuts(esdTrackCuts);
+  cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
+  cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
   
   if(whichCuts==0){
-    
-    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
-    //single track cuts
-    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
-                                           AliESDtrackCuts::kAny);
-    esdTrackCuts->SetMaxDCAToVertexXY(1.e6);
-    esdTrackCuts->SetMinDCAToVertexXY(0.);
-    esdTrackCuts->SetMinDCAToVertexZ(0.);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
-    esdTrackCuts->SetEtaRange(-0.8,+0.8);
-    esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
-    
-    AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
-    esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
-    esdTrackCutsV0daughters->SetMinNClustersTPC(70);
-    esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);
-    esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
-    esdTrackCutsV0daughters->SetMinDCAToVertexZ(0.);
-    esdTrackCutsV0daughters->SetPtRange(0.1,1.e10);
-    esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
-    esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
-    
-    cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-    cutsLctoV0->AddTrackCuts(esdTrackCuts);
-    cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-    cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
     
     const Int_t nptbins=2;
     Float_t* ptbins;
@@ -114,35 +113,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     else cout<<"PID is not used for filtering cuts"<<endl;
   }
   else if(whichCuts==1){
-    
-    //single track cuts
-    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
-                                           AliESDtrackCuts::kAny);
-    esdTrackCuts->SetMaxDCAToVertexXY(1.e6);
-    esdTrackCuts->SetMinDCAToVertexXY(0.);
-    esdTrackCuts->SetMinDCAToVertexZ(0.);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
-    esdTrackCuts->SetEtaRange(-0.8,+0.8);
-    esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
-    
-    AliESDtrackCuts *esdTrackCutsV0daughters = new AliESDtrackCuts("AliESDtrackCutsForV0D","default cuts for V0 daughters");
-    esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
-    esdTrackCutsV0daughters->SetMinNClustersTPC(70);
-    esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);
-    esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
-    esdTrackCutsV0daughters->SetMinDCAToVertexZ(0.);
-    esdTrackCutsV0daughters->SetPtRange(0.1,1.e10);
-    esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
-    esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
-    
-    cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-    cutsLctoV0->AddTrackCuts(esdTrackCuts);
-    cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-    cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
     
     const Int_t nptbins=9;
     Float_t* ptbins;
@@ -215,6 +185,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);
   cutsLctoV0->SetTriggerClass("");
+  //Since X/08/19 we set the triggers in wagon code/runAnalysis script if needed
   cutsLctoV0->SetTriggerMask(AliVEvent::kAny);
   cutsLctoV0->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cutsLctoV0->SetMinContribPileupMV(5);

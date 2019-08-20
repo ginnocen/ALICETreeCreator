@@ -9,7 +9,7 @@
  whichCuts=1, nameCuts="DplustoKpipiAnalysisCuts"
  */
 
-AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100.)
 {
   
   AliRDHFCutsDplustoKpipi* cuts=new AliRDHFCutsDplustoKpipi();
@@ -40,7 +40,7 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
     AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
     pidObj->SetSigma(sigmasBac);
     pidObj->SetAsym(kFALSE);
     pidObj->SetMatch(1);
@@ -228,11 +228,12 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
-  cuts->SetRemoveDaughtersFromPrim(kTRUE);
+  cuts->SetRemoveDaughtersFromPrim(kTRUE); //activate for pp
 
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
+  //Since X/08/19 we set the triggers in wagon code/runAnalysis script if needed
   cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cuts->SetMinContribPileupMV(5);

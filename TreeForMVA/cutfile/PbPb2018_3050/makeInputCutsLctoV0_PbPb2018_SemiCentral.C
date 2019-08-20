@@ -17,48 +17,46 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
     cutsLctoV0->SetName(nameCuts.Data());
     cutsLctoV0->SetTitle(nameCuts.Data());
-    
-    
+  
+  //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
+  //single track cuts
+  AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+  esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+  esdTrackCuts->SetRequireTPCRefit(kTRUE);
+  esdTrackCuts->SetRequireITSRefit(kTRUE);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
+  esdTrackCuts->SetMinNClustersITS(0);
+  esdTrackCuts->SetMinNClustersTPC(50); //filtering
+  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
+  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
+  esdTrackCuts->SetMinDCAToVertexXY(0.);
+  esdTrackCuts->SetMaxDCAToVertexXY(1.);
+  esdTrackCuts->SetMaxDCAToVertexZ(1.);
+  esdTrackCuts->SetPtRange(0.3,1.e10);    //Changed from 0.5->0.3 for bin 2-4, for pT>4 effect countered with topo cuts
+  esdTrackCuts->SetEtaRange(-0.8,+0.8);
+  esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
+  
+  // V0 daughters cuts
+  AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
+  esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
+  esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
+  esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
+  esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
+  esdTrackCutsV0daughters->SetMinNClustersTPC(70);
+  esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
+  esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
+  esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
+  esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
+
+  cutsLctoV0->AddTrackCuts(esdTrackCuts);
+  cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
+  cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+  cutsLctoV0->SetUseTrackSelectionWithFilterBits();
+
     if(whichCuts==0){
-
-        //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
-        //single track cuts
-        AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-        esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-        esdTrackCuts->SetRequireTPCRefit(kTRUE);
-        esdTrackCuts->SetRequireITSRefit(kTRUE);
-        esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-        esdTrackCuts->SetMinNCrossedRowsTPC(70);
-        esdTrackCuts->SetMinNClustersITS(0);
-        esdTrackCuts->SetMinNClustersTPC(50); //filtering
-        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
-        esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
-        esdTrackCuts->SetMinDCAToVertexXY(0.);
-        esdTrackCuts->SetMaxDCAToVertexXY(1.);
-        esdTrackCuts->SetMaxDCAToVertexZ(1.);
-        esdTrackCuts->SetPtRange(0.3,1.e10);    //Changed from 0.5->0.3 for bin 2-4, for pT>4 effect countered with topo cuts
-        esdTrackCuts->SetEtaRange(-0.8,+0.8);
-        esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
       
-        // V0 daughters cuts
-        AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
-        esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
-        esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
-        esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
-        esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
-        esdTrackCutsV0daughters->SetMinNClustersTPC(70);
-        esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-        esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
-        esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
-        esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
-        esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
-      
-        cutsLctoV0->SetUsePhysicsSelection(kTRUE);
-        cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-        cutsLctoV0->SetUseTrackSelectionWithFilterBits();
-        cutsLctoV0->AddTrackCuts(esdTrackCuts);
-        cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-
 //        Lc inv. mass if K0S [GeV/c2]
 //        Lc inv. mass if Lambda [GeV/c2]
 //        K0S inv. mass [GeV/c2]
@@ -124,44 +122,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
 
            }
     else if(whichCuts==1){
-        
-        //single track cuts
-        AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-        esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-        esdTrackCuts->SetRequireTPCRefit(kTRUE);
-        esdTrackCuts->SetRequireITSRefit(kTRUE);
-        esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-        esdTrackCuts->SetMinNCrossedRowsTPC(70);
-        esdTrackCuts->SetMinNClustersITS(0);
-        esdTrackCuts->SetMinNClustersTPC(50); //filtering
-        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
-        esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
-        esdTrackCuts->SetMinDCAToVertexXY(0.);
-        esdTrackCuts->SetMaxDCAToVertexXY(1.);
-        esdTrackCuts->SetMaxDCAToVertexZ(1.);
-        esdTrackCuts->SetPtRange(0.5,1.e10);
-        esdTrackCuts->SetEtaRange(-0.8,+0.8);
-        esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
-
-        // V0 daughters cuts
-        AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
-        esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
-        esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
-        esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
-        esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
-        esdTrackCutsV0daughters->SetMinNClustersTPC(70);
-        esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-        esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
-        esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
-        esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
-        esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
-        
-        
-        cutsLctoV0->SetUsePhysicsSelection(kTRUE);
-        cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-        cutsLctoV0->AddTrackCuts(esdTrackCuts);
-        cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-        //cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);//(kTRUE);
+      
         cutsLctoV0->SetHighPtCut(999.);
         cutsLctoV0->SetLowPtCut(2.0);
         cutsLctoV0->SetPidSelectionFlag(10);
@@ -194,8 +155,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
             }
         }
         cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-        cutsLctoV0->SetUseTrackSelectionWithFilterBits();
-        
+      
         //pid settings
         //1. bachelor: default one
         AliAODPidHF* pidObjBachelor = new AliAODPidHF();
@@ -217,14 +177,17 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
         
         
     }
-    
+  
+  //Do not recalculate the vertex
+  cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
     //event selection
+    cutsLctoV0->SetUsePhysicsSelection(kTRUE);
     cutsLctoV0->SetTriggerClass("");
     cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
     cutsLctoV0->SetMinCentrality(minc);
     cutsLctoV0->SetMaxCentrality(maxc);
     cutsLctoV0->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
-
     cutsLctoV0->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
     cutsLctoV0->SetMaxVtxZ(10.);
     cutsLctoV0->SetCutOnzVertexSPD(3);

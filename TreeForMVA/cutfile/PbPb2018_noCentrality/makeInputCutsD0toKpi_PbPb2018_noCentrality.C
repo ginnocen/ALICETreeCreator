@@ -31,7 +31,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     AliRDHFCutsD0toKpi* cutsD0toKpi=new AliRDHFCutsD0toKpi();
     cutsD0toKpi->SetName(nameCuts.Data());
     cutsD0toKpi->SetTitle(nameCuts.Data());
-    
+  
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     //default
@@ -48,7 +48,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     if(whichCuts==0)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     if(whichCuts==1)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cutsD0toKpi->AddTrackCuts(esdTrackCuts);
-    
+  
     if(whichCuts==0){
         const Int_t nptbinsD0=2;
         Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
@@ -65,9 +65,9 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsArrayD0toKpi[4][0]=0.;
         cutsArrayD0toKpi[5][0]=999999.;
         cutsArrayD0toKpi[6][0]=999999.;
-        cutsArrayD0toKpi[7][0]=-0.00001;  // d0xd0
-        cutsArrayD0toKpi[8][0]=0.7;
-        cutsArrayD0toKpi[9][0]=0.7;
+        cutsArrayD0toKpi[7][0]=-0.00005;  // d0xd0
+        cutsArrayD0toKpi[8][0]=0.8;
+        cutsArrayD0toKpi[9][0]=0.8;
         cutsArrayD0toKpi[10][0]=0.;
         //5-inf
         cutsArrayD0toKpi[0][1]=0.4;  //D0 inv mass window
@@ -78,8 +78,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsArrayD0toKpi[5][1]=999999.;
         cutsArrayD0toKpi[6][1]=999999.;
         cutsArrayD0toKpi[7][1]=0.0001; // d0xd0
-        cutsArrayD0toKpi[8][1]=0.5;
-        cutsArrayD0toKpi[9][1]=-1.;
+        cutsArrayD0toKpi[8][1]=0.7;
+        cutsArrayD0toKpi[9][1]=0.7;
         cutsArrayD0toKpi[10][1]=0.;
 
         cutsD0toKpi->SetStandardCutsPbPb2011();
@@ -97,7 +97,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsD0toKpi->SetUsePID(pidflag);
         if(pidflag) cout<<"PID is used"<<endl;
         else cout<<"PID is not used"<<endl;
-        
+      
         //pid settings
         AliAODPidHF* pidObj=new AliAODPidHF();
         //pidObj->SetName("pid4D0");
@@ -114,20 +114,20 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         pidObj->SetCompat(compat);
         pidObj->SetTPC(kTRUE);
         pidObj->SetTOF(kTRUE);
-        
+      
         pidObj->SetPCompatTOF(2.);
         pidObj->SetSigmaForTPCCompat(3.);
         pidObj->SetSigmaForTOFCompat(3.);
-        
+      
         pidObj->SetOldPid(kFALSE);
-        
+      
         cutsD0toKpi->SetLowPt(kFALSE);
         cutsD0toKpi->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
-        
+      
         cutsD0toKpi->SetPidHF(pidObj);
     }
     else if(whichCuts==1){
-        
+      
         cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 5);
         const Int_t nvars=11;
         const Int_t nptbins=32;
@@ -166,9 +166,9 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         ptbins[30]=50.;
         ptbins[31]=100.;
         ptbins[32]=9999.;
-        
+      
         cutsD0toKpi->SetPtBins(nptbins+1,ptbins);
-        
+      
         const Int_t nvary=3;
         Float_t varyd0xd0[nptbins][nvary]={{-35000.*1E-8,-40000.*1E-8,-15000.*1E-8},/* pt<0.5*/
             {-35000.*1E-8,-40000.*1E-8,-15000.*1E-8},/* 0.5<pt<1*/
@@ -202,8 +202,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
             {5000.*1E-8,-5000.*1E-8,0.*1E-8},/* 36<pt<50 */
             {5000.*1E-8,-5000.*1E-8,0.*1E-8},/* 50<pt<100 */
             {5000.*1E-8,-5000.*1E-8,0.*1E-8}};/* pt>100 */
-        
-        
+      
+      
         Float_t varyCosPoint[nptbins][nvary]={{0.75,0.80,0.80},    /* 0<pt<0.5 */
             {0.75,0.80,0.9},    /* 0.5<pt<1*/
             {0.75,0.80,0.9},    /* 1<pt<1.5 */
@@ -236,8 +236,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
             {0.75,0.8,0.90},/* 36<pt<50 */
             {0.75,0.8,0.90},/* 50<pt<100 */
             {0.75,0.8,0.90}};/* pt>100 */
-        
-        
+      
+      
         Float_t d0MeasMinusExpCut[nptbins]={1.,/* 0<pt<0.5*/
             1.,/* 0.5<pt<1*/
             1.,/* 1<pt<1.5*/
@@ -270,8 +270,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
             2.,/*36<pt<50*/
             2.,/*50<pt<100*/
             2.,/*>100*/};
-        
-        
+      
+      
         Int_t varycuts = 22;
         Int_t vcd0xd0=varycuts/10;
         Int_t vccospoint=varycuts%10;
@@ -307,27 +307,27 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[29][vcd0xd0],varyCosPoint[29][vccospoint],0.995,5.},/*36< pt <50*/
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[30][vcd0xd0],varyCosPoint[30][vccospoint],0.995,5.},/*50< pt <100*/
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[31][vcd0xd0],varyCosPoint[31][vccospoint],0.995,5.}};/* pt > 100*/
-        
-        
+      
+      
         Float_t **cutsMatrixTransposeStand=new Float_t*[nvars];
         for(Int_t iv=0;iv<nvars;iv++)cutsMatrixTransposeStand[iv]=new Float_t[nptbins];
-        
+      
         for (Int_t ibin=0;ibin<nptbins;ibin++){
             for (Int_t ivar = 0; ivar<nvars; ivar++){
                 cutsMatrixTransposeStand[ivar][ibin]=cutsMatrixD0toKpiStand[ibin][ivar];
                 //printf("cutsMatrixD0toKpi[%d][%d] = %f\n",ibin, ivar,cutsMatrixD0toKpiStand[ibin][ivar]);
             }
         }
-        
-        
+      
+      
         cutsD0toKpi->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
         cutsD0toKpi->Setd0MeasMinusExpCut(nptbins,d0MeasMinusExpCut);
-        
+      
         Bool_t pidflag=kTRUE;
         cutsD0toKpi->SetUsePID(pidflag);
         if(pidflag) cout<<"PID is used"<<endl;
         else cout<<"PID is not used"<<endl;
-        
+      
         //pid settings
         AliAODPidHF* pidObj=new AliAODPidHF();
         //pidObj->SetName("pid4D0");
@@ -344,26 +344,25 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         pidObj->SetCompat(compat);
         pidObj->SetTPC(kTRUE);
         pidObj->SetTOF(kTRUE);
-        
+      
         pidObj->SetPCompatTOF(2.);
         pidObj->SetSigmaForTPCCompat(3.);
         pidObj->SetSigmaForTOFCompat(3.);
-        
+      
         pidObj->SetOldPid(kFALSE);
-        
+      
         cutsD0toKpi->SetLowPt(kFALSE);
         cutsD0toKpi->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
-        
+      
         //RDHFD0toKpi->SetMaximumPforPID(4.);
         cutsD0toKpi->SetPidHF(pidObj);
-        
+      
         //Do not recalculate the vertex
         cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
         cutsD0toKpi->SetUseSpecialCuts(kFALSE);
 
-        
-        
     }
+
     //To overwrite the centrality settings of SetStandardCutsPbPb2011()
     cutsD0toKpi->SetMinCentrality(0.);
     cutsD0toKpi->SetMaxCentrality(100.);

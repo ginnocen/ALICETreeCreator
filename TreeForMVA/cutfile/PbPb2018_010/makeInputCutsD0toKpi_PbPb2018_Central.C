@@ -31,24 +31,27 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     AliRDHFCutsD0toKpi* cutsD0toKpi=new AliRDHFCutsD0toKpi();
     cutsD0toKpi->SetName(nameCuts.Data());
     cutsD0toKpi->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     //default
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
+    esdTrackCuts->SetMinNClustersTPC(50);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
     esdTrackCuts->SetPtRange(0.5,1.e10);
     esdTrackCuts->SetMaxDCAToVertexXY(1.);
     esdTrackCuts->SetMaxDCAToVertexZ(1.);
-    if(whichCuts==1)esdTrackCuts->SetMinDCAToVertexXY(0.);
-    if(whichCuts==0)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-    if(whichCuts==1)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+    esdTrackCuts->SetMinDCAToVertexXY(0.);
+    esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cutsD0toKpi->AddTrackCuts(esdTrackCuts);
-    
+  
+    cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 5);
+    cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kFALSE);
+
     if(whichCuts==0){
         const Int_t nptbinsD0=2;
         Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
@@ -83,13 +86,9 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsArrayD0toKpi[10][1]=0.;
 
         cutsD0toKpi->SetStandardCutsPbPb2011();
-        cutsD0toKpi->SetMinPtCandidate(0.);
+        cutsD0toKpi->SetMinPtCandidate(1.);
         cutsD0toKpi->SetUsePID(kFALSE);
-        cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kFALSE);
         cutsD0toKpi->SetUseSpecialCuts(kFALSE);
-        //cutsD0toKpi->SetUsePhysicsSelection(kFALSE);
-        //cutsD0toKpi->SetMaxCentrality(101.);//90.);
-        //cutsD0toKpi->SetMaxVtxZ(1.e6);
         cutsD0toKpi->SetPtBins(nptbinsD0+1,ptlimitsD0);
         cutsD0toKpi->SetCuts(11,nptbinsD0,cutsArrayD0toKpi);
 
@@ -106,7 +105,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
         Bool_t compat=kTRUE; //effective only for this mode
         Bool_t asym=kTRUE;
-        Double_t sigmas[5]={2.,1.,0.,3.,0.}; //to be checked and to be modified with new implementation of setters by Rossella
+        Double_t sigmas[5]={3.,3.,3.,3.,3.}; //to be checked and to be modified with new implementation of setters by Rossella
         pidObj->SetAsym(asym);// if you want to use the asymmetric bands in TPC
         pidObj->SetMatch(mode);
         pidObj->SetPLimit(plims,nlims);
@@ -128,7 +127,6 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     }
     else if(whichCuts==1){
         
-        cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 5);
         const Int_t nvars=11;
         const Int_t nptbins=32;
         Float_t* ptbins;
@@ -307,8 +305,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[29][vcd0xd0],varyCosPoint[29][vccospoint],0.995,5.},/*36< pt <50*/
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[30][vcd0xd0],varyCosPoint[30][vccospoint],0.995,5.},/*50< pt <100*/
             {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[31][vcd0xd0],varyCosPoint[31][vccospoint],0.995,5.}};/* pt > 100*/
-        
-        
+      
         Float_t **cutsMatrixTransposeStand=new Float_t*[nvars];
         for(Int_t iv=0;iv<nvars;iv++)cutsMatrixTransposeStand[iv]=new Float_t[nptbins];
         
@@ -318,7 +315,6 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
                 //printf("cutsMatrixD0toKpi[%d][%d] = %f\n",ibin, ivar,cutsMatrixD0toKpiStand[ibin][ivar]);
             }
         }
-        
         
         cutsD0toKpi->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
         cutsD0toKpi->Setd0MeasMinusExpCut(nptbins,d0MeasMinusExpCut);
@@ -358,14 +354,14 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
         cutsD0toKpi->SetPidHF(pidObj);
         
         //Do not recalculate the vertex
-        cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
         cutsD0toKpi->SetUseSpecialCuts(kFALSE);
-
-        
-        
     }
-    
+  
+    //Do not recalculate the vertex
+    cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
     //event selection
+    cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
     cutsD0toKpi->SetTriggerClass("");
     cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
     cutsD0toKpi->SetMinCentrality(minc);
@@ -383,5 +379,3 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     return cutsD0toKpi;
     
 }
-
-

@@ -23,29 +23,29 @@
 //     printf("    |cosThetaPointXY| < %f\n",fD0toKpiCuts[9]);
 //     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
 
-AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0.,Float_t maxc=100.)
 {
   AliRDHFCutsD0toKpi* cutsD0toKpi=new AliRDHFCutsD0toKpi();
   cutsD0toKpi->SetName(nameCuts.Data());
   cutsD0toKpi->SetTitle(nameCuts.Data());
   
+  //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
+  //single track cuts
+  AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
+  esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+  esdTrackCuts->SetRequireTPCRefit(kTRUE);
+  esdTrackCuts->SetRequireITSRefit(kTRUE);
+  esdTrackCuts->SetMinNClustersTPC(70);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
+  esdTrackCuts->SetEtaRange(-0.8,0.8);
+  esdTrackCuts->SetMinDCAToVertexXY(0.);
+  esdTrackCuts->SetPtRange(0.3,1.e10);
+  cutsD0toKpi->AddTrackCuts(esdTrackCuts);
+  cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 3);
+  cutsD0toKpi->SetUseTrackSelectionWithFilterBits();
+  
   if(whichCuts==0){
-    
-    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
-    //single track cuts
-    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-    esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
-    esdTrackCuts->SetEtaRange(-0.8,0.8);
-    esdTrackCuts->SetMinDCAToVertexXY(0.);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
-    cutsD0toKpi->AddTrackCuts(esdTrackCuts);
-    cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 3);
-    cutsD0toKpi->SetUseTrackSelectionWithFilterBits();
     
     const Int_t nptbinsD0=1;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,1000000.};
@@ -73,20 +73,6 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     else cout<<"PID is not used for filtering cuts"<<endl;
   }
   else if(whichCuts==1){
-    
-    //single track cuts
-    AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-    esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
-    esdTrackCuts->SetEtaRange(-0.8,0.8);
-    esdTrackCuts->SetMinDCAToVertexXY(0.);
-    esdTrackCuts->SetPtRange(0.3,1.e10);
-    cutsD0toKpi->AddTrackCuts(esdTrackCuts);
-    cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 3);
     
     const Int_t nvars=11;
     
@@ -180,11 +166,12 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
-  cutsD0toKpi->SetRemoveDaughtersFromPrim(kTRUE);
+  cutsD0toKpi->SetRemoveDaughtersFromPrim(kTRUE); //activate for pp
   
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
   cutsD0toKpi->SetTriggerClass("");
+  //Since X/08/19 we set the triggers in wagon code/runAnalysis script if needed
   cutsD0toKpi->SetTriggerMask(AliVEvent::kAny);
   cutsD0toKpi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cutsD0toKpi->SetMinContribPileupMV(5);

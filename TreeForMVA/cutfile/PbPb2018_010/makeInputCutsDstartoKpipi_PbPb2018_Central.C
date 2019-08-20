@@ -36,34 +36,34 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
     AliRDHFCutsDStartoKpipi* cutsDstartoKpipi=new AliRDHFCutsDStartoKpipi();
     cutsDstartoKpipi->SetName(nameCuts.Data());
     cutsDstartoKpipi->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     //default
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinNClustersTPC(70);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
     esdTrackCuts->SetPtRange(0.4,1.e10);
     esdTrackCuts->SetMaxDCAToVertexXY(1.);
     esdTrackCuts->SetMaxDCAToVertexZ(1.);
-    if(whichCuts==0)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
     
     //soft pion selections
     AliESDtrackCuts* esdTrackCutsSoftPi=new AliESDtrackCuts();
     esdTrackCutsSoftPi->SetRequireSigmaToVertex(kFALSE);
-    if(whichCuts==0)esdTrackCutsSoftPi->SetRequireTPCRefit(kFALSE);
-    if(whichCuts==1)esdTrackCutsSoftPi->SetRequireTPCRefit(kTRUE);
+    esdTrackCutsSoftPi->SetRequireTPCRefit(kTRUE);
     esdTrackCutsSoftPi->SetRequireITSRefit(kTRUE);
     esdTrackCutsSoftPi->SetMinNClustersITS(2);
     esdTrackCutsSoftPi->SetEtaRange(-0.8,+0.8);
     esdTrackCutsSoftPi->SetPtRange(0.0,1.e10);
     cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
-    
+
+    cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
+
     if(whichCuts==0){
         const Int_t nvars=16;
         const Int_t nptbinsDstar=2;
@@ -115,11 +115,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
         rdcutsvalmine[14][1]=0.8;   // |cosThetaPointXY|
         rdcutsvalmine[15][1]=0.;    // NormDecayLenghtXY
       
-        cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
-        cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
-      
         cutsDstartoKpipi->SetMinPtCandidate(2.);
-        cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
         cutsDstartoKpipi->SetCuts(nvars,nptbinsDstar,rdcutsvalmine);
       
         Bool_t pidflag=kTRUE;
@@ -142,7 +138,6 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
         pidObj->SetOldPid(kFALSE);
       
         cutsDstartoKpipi->SetPidHF(pidObj);
-        cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
     }
     else if(whichCuts==1){
         
@@ -425,23 +420,24 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
         AliAODPidHF* pidObj=new AliAODPidHF();
         // pidObj->SetName("pid4DSatr");
         Int_t mode=1;
-	    Double_t priors[5]={0.01,0.001,0.3,0.3,0.3};
-	    pidObj->SetPriors(priors,5);
-	    pidObj->SetMatch(mode);
-	    pidObj->SetSigma(0,3); // TPC
-	    pidObj->SetSigma(3,3); // TOF
+	      Double_t priors[5]={0.01,0.001,0.3,0.3,0.3};
+	      pidObj->SetPriors(priors,5);
+	      pidObj->SetMatch(mode);
+	      pidObj->SetSigma(0,3); // TPC
+	      pidObj->SetSigma(3,3); // TOF
         pidObj->SetTPC(kTRUE);
         pidObj->SetTOF(kTRUE);
                
         pidObj->SetOldPid(kFALSE);
                
         cutsDstartoKpipi->SetPidHF(pidObj);
-        
-        //Do not recalculate the vertex
-        cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
     }
-    
+  
+    //Do not recalculate the vertex
+    cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+  
     //event selection
+    cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);
     cutsDstartoKpipi->SetTriggerClass("");
     cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
     cutsDstartoKpipi->SetMinCentrality(minc);

@@ -20,38 +20,35 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nam
     AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi = new AliRDHFCutsBPlustoD0Pi();
     RDHFBPlustoD0Pi->SetName(nameCuts.Data());
     RDHFBPlustoD0Pi->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinNClustersTPC(70);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
     esdTrackCuts->SetPtRange(0.5,1.e10);
     esdTrackCuts->SetMaxDCAToVertexXY(1.);
     esdTrackCuts->SetMaxDCAToVertexZ(1.);
-    if(whichCuts==1)esdTrackCuts->SetMinDCAToVertexXY(0.);
-    if(whichCuts==0)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-    if(whichCuts==1)esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+    esdTrackCuts->SetMinDCAToVertexXY(0.);
+    esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
 
     AliESDtrackCuts* esdTrackCutsBplusPion=new AliESDtrackCuts();
     esdTrackCutsBplusPion->SetRequireSigmaToVertex(kFALSE);
     esdTrackCutsBplusPion->SetRequireTPCRefit(kTRUE);
     esdTrackCutsBplusPion->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCutsBplusPion->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCutsBplusPion->SetMinNClustersTPC(70);
+    esdTrackCutsBplusPion->SetMinNClustersTPC(70);
     esdTrackCutsBplusPion->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
     esdTrackCutsBplusPion->SetEtaRange(-0.8,0.8);
     esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
     esdTrackCutsBplusPion->SetPtRange(0.5,1.e10);
     esdTrackCutsBplusPion->SetMaxDCAToVertexXY(1.);
     esdTrackCutsBplusPion->SetMaxDCAToVertexZ(1.);
-    if(whichCuts==1)esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
-    if(whichCuts==0)esdTrackCutsBplusPion->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-    if(whichCuts==1)esdTrackCutsBplusPion->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+    esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
+    esdTrackCutsBplusPion->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     
     RDHFBPlustoD0Pi->AddTrackCuts(esdTrackCuts);
     RDHFBPlustoD0Pi->AddTrackCutsSoftPi(esdTrackCutsBplusPion);
@@ -136,8 +133,12 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nam
         
         setAnalysisBplusCuts(RDHFBPlustoD0Pi);
     }
-    
+  
+    //Do not recalculate the vertex
+    RDHFBPlustoD0Pi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
     //event selection
+    RDHFBPlustoD0Pi->SetUsePhysicsSelection(kTRUE);
     RDHFBPlustoD0Pi->SetTriggerClass("");
     RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
     RDHFBPlustoD0Pi->SetMinCentrality(minc);

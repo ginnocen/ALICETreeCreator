@@ -5,8 +5,8 @@
 #include <TParameter.h>
 
 /*
- whichCuts=0, nameCuts="DplustoKpipiFilteringCuts"
- whichCuts=1, nameCuts="DplustoKpipiAnalysisCuts"
+ whichCuts=0, nameCuts="LctopKpiFilteringCuts"
+ whichCuts=1, nameCuts="LctopKpiAnalysisCuts"
  */
 
 void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
@@ -28,6 +28,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
 
+    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
@@ -41,11 +42,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     esdTrackCuts->SetMaxDCAToVertexZ(1.);
     esdTrackCuts->SetPtRange(0.4,1.e10);
     esdTrackCuts->SetEtaRange(-0.8,+0.8);
+    esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
 
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
-    if(whichCuts==1)esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
     cuts->AddTrackCuts(esdTrackCuts);
+    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+    cuts->SetKinkRejection(kTRUE);
 
     // cuts
     const Int_t nvars=13;
@@ -56,7 +58,6 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     ptbins[1]=999.;
   
     cuts->SetPtBins(nptbinsLc+1,ptbins);
-    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
     Float_t** rdcutsvalmine;
     rdcutsvalmine=new Float_t*[nvars];
@@ -95,7 +96,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     //{0.13,0.5,0.5,0.,0.,0.,0.06,0.,0.,0.,0.,0.05,0.5};
   
     cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
-    cuts->SetMinPtCandidate(4.);
+    cuts->SetMinPtCandidate(2.);
   
     AliAODPidHF* pidObjp=new AliAODPidHF();
     AliAODPidHF* pidObjK=new AliAODPidHF();
@@ -165,9 +166,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     SetupCombinedPID(cuts,0.);
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
   }
-    cuts->SetKinkRejection(kTRUE);
+  
+  //Do not recalculate the vertex
+  cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
     //event selection
+    cuts->SetUsePhysicsSelection(kTRUE);
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
     cuts->SetMinCentrality(minc);
@@ -185,5 +189,3 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     
     return cuts;
 }
-
-

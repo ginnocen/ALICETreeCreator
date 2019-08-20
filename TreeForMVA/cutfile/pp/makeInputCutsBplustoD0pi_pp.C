@@ -11,8 +11,8 @@ void setFilterBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi);
 void setAnalysisBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi);
 
 /*
- whichCuts=0, nameCuts="D0toKpiFilteringCuts"
- whichCuts=1, nameCuts="D0toKpiAnalysisCuts"
+ whichCuts=0, nameCuts="BplustoD0piFilteringCuts"
+ whichCuts=1, nameCuts="BplustoD0piAnalysisCuts"
  */
 
 AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString nameCuts="BplustoD0piFilteringCuts", Float_t minc=0.,Float_t maxc=100.){
@@ -20,13 +20,13 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
     AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi = new AliRDHFCutsBPlustoD0Pi();
     RDHFBPlustoD0Pi->SetName(nameCuts.Data());
     RDHFBPlustoD0Pi->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinNClustersTPC(70);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
@@ -37,8 +37,7 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
     esdTrackCutsBplusPion->SetRequireSigmaToVertex(kFALSE);
     esdTrackCutsBplusPion->SetRequireTPCRefit(kTRUE);
     esdTrackCutsBplusPion->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCutsBplusPion->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCutsBplusPion->SetMinNClustersTPC(70);
+    esdTrackCutsBplusPion->SetMinNClustersTPC(70);
     esdTrackCutsBplusPion->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
     esdTrackCutsBplusPion->SetEtaRange(-0.8,0.8);
     esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
@@ -47,6 +46,8 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
     
     RDHFBPlustoD0Pi->AddTrackCuts(esdTrackCuts);
     RDHFBPlustoD0Pi->AddTrackCutsSoftPi(esdTrackCutsBplusPion);
+
+    RDHFBPlustoD0Pi->SetUseTrackSelectionWithFilterBits(kFALSE);
 
     if(whichCuts==0){
         
@@ -69,8 +70,7 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
 
         RDHFBPlustoD0Pi->SetUsePID(kFALSE);
         RDHFBPlustoD0Pi->SetMinPtCandidate(ptlimitsBplus[0]);
-        RDHFBPlustoD0Pi->SetUseTrackSelectionWithFilterBits(kFALSE);
-        
+      
         setFilterBplusCuts(RDHFBPlustoD0Pi);
     } else if(whichCuts==1){
         
@@ -129,7 +129,9 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi_pp(Int_t whichCuts=0, TString 
     }
     
     //event selection
+    RDHFBPlustoD0Pi->SetUsePhysicsSelection(kTRUE);
     RDHFBPlustoD0Pi->SetTriggerClass("");
+    //Since X/08/19 we set the triggers in wagon code/runAnalysis script if needed
     RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kAny);
     RDHFBPlustoD0Pi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
     RDHFBPlustoD0Pi->SetMinContribPileupMV(5);

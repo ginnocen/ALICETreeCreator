@@ -5,8 +5,8 @@
 #include <TParameter.h>
 
 /*
- whichCuts=0, nameCuts="DplustoKpipiFilteringCuts"
- whichCuts=1, nameCuts="DplustoKpipiAnalysisCuts"
+ whichCuts=0, nameCuts="LctopKpiFilteringCuts"
+ whichCuts=1, nameCuts="LctopKpiAnalysisCuts"
  */
 
 void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
@@ -27,24 +27,25 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     //default
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
-    if(whichCuts==1)esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+    esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
     esdTrackCuts->SetPtRange(0.5,1.e10);
-    //esdTrackCuts->SetPtRange(0.3,1.e10);
     esdTrackCuts->SetMaxDCAToVertexXY(1.);
     esdTrackCuts->SetMaxDCAToVertexZ(1.);
     esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     cuts->AddTrackCuts(esdTrackCuts);
+    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+    cuts->SetKinkRejection(kTRUE);
 
     // cuts
     const Int_t nvars=13;
@@ -56,7 +57,6 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     ptbins[2]=999.;
   
     cuts->SetPtBins(nptbinsLc+1,ptbins);
-    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
     Float_t** rdcutsvalmine;
     rdcutsvalmine=new Float_t*[nvars];
@@ -164,9 +164,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     SetupCombinedPID(cuts,0.);
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
   }
-    cuts->SetKinkRejection(kTRUE);
+
+    //Do not recalculate the vertex
+    cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
 
     //event selection
+    cuts->SetUsePhysicsSelection(kTRUE);
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
     cuts->SetMinCentrality(minc);
@@ -183,5 +186,3 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     
     return cuts;
 }
-
-

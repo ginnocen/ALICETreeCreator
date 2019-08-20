@@ -16,15 +16,15 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     AliRDHFCutsDstoKKpi* cuts=new AliRDHFCutsDstoKKpi();
     cuts->SetName(nameCuts.Data());
     cuts->SetTitle(nameCuts.Data());
-    
+  
+    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
     AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
     esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
     //default
     esdTrackCuts->SetRequireTPCRefit(kTRUE);
     esdTrackCuts->SetRequireITSRefit(kTRUE);
-    if(whichCuts==0)esdTrackCuts->SetMinNClustersTPC(50);
-    if(whichCuts==1)esdTrackCuts->SetMinNClustersTPC(70);
-    if(whichCuts==1)esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+    esdTrackCuts->SetMinNClustersTPC(70);
+    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
     esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
     esdTrackCuts->SetEtaRange(-0.8,0.8);
     esdTrackCuts->SetMinDCAToVertexXY(0.);
@@ -34,16 +34,15 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
     
     cuts->AddTrackCuts(esdTrackCuts);    
-    
+    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+  
     if(whichCuts==0){
         const Int_t nptbins=2;
         Float_t ptlimits[nptbins+1]={0.,5.,1000000.};
         
         cuts->SetStandardCutsPbPb2010();
-        cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
         cuts->SetUsePID(kTRUE);
         cuts->SetPidOption(0); //0=kConservative,1=kStrong
-//        Float_t cutsArrayDstoKKpi[20]={0.3,0.3,0.3,0.,0.,0.,0.06,0.02,0.,0.9,0.,100000.,0.03,0.0001,-1.,1.,0.,0.,0.,-1.};
         cuts->SetPtBins(nptbins+1,ptlimits);
       
         Float_t** anacutsval=new Float_t*[20];
@@ -92,10 +91,8 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         anacutsval[19][1]=-1.;
 
         cuts->SetCuts(20,nptbins,anacutsval);
-        cuts->AddTrackCuts(esdTrackCuts);
         cuts->SetMinPtCandidate(2.);
     }
-    
     else if(whichCuts==1){
         
         const Int_t nptbins=9;
@@ -259,7 +256,6 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
 
         cuts->SetPtBins(nptbins+1,ptbins);
         cuts->SetCuts(nvars,nptbins,anacutsval);
-        cuts->AddTrackCuts(esdTrackCuts);
         cuts->Setd0MeasMinusExpCut(nptbins,topomCuts);
         cuts->Setd0Cut(nptbins,d0Cuts);
         
@@ -269,12 +265,14 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
         
         cuts->SetMinPtCandidate(2.);
         cuts->SetMaxPtCandidate(36.);
-        
-        //Do not recalculate the vertex
-        cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-        
+      
     }
+  
+    //Do not recalculate the vertex
+    cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+
     //event selection
+    cuts->SetUsePhysicsSelection(kTRUE);
     cuts->SetTriggerClass("");
     cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
     cuts->SetMinCentrality(minc);

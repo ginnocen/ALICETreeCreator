@@ -9,9 +9,9 @@
  whichCuts=1, nameCuts="LcpKpiAnalysisCuts"
  */
 
-void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
+void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
 
-void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
+void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   
   cutsObj->GetPidHF()->SetCombDetectors(AliAODPidHF::kTPCTOF);
   for (Int_t ispecies=0;ispecies<AliPID::kSPECIES;++ispecies)
@@ -23,7 +23,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
 
 
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCuts="LctopKpiFilteringCuts", Float_t minc=0.,Float_t maxc=100.)
+AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi_pp(Int_t whichCuts=0, TString nameCuts="LbtoLcpiFilteringCuts", Float_t minc=0.,Float_t maxc=100.)
 {
   
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
@@ -49,8 +49,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
   Int_t nptbins=2;
   Float_t ptlimits[2]={0.,1000000.};
   cuts->SetPtBins(nptbins,ptlimits);
-  Float_t cutsArrayLctopKpi[13]={0.13,0.3,0.3,0.,0.,0.,0.04,0.,0.,0.8,0.,0.05,0.3};
-  
+  Float_t cutsArrayLctopKpi[13]={0.06,0.3,0.3,0.,0.,0.,0.04,0.,0.,0.8,0.,0.05,0.3};
+  //Used values for Lc->pKpi analysis taken at 05/08/19 but tightened InvMass cut to 0.06
+
   cuts->SetMinPtCandidate(1.);
   cuts->SetCuts(13,cutsArrayLctopKpi);
   
@@ -116,7 +117,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     cuts->SetPidHF(pidObjK);
     cuts->SetPidpion(pidObjpi);
     
-    SetupCombinedPID(cuts,0.);
+    SetupCombinedPID2(cuts,0.);
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
     
     Bool_t pidflag=kFALSE;

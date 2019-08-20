@@ -30,7 +30,7 @@
 //printf(    "NormDecayLenghtXY" > %f\n",fCutsRD[15]);
 
 
-AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.)
+AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100.)
 {
   
   AliRDHFCutsDStartoKpipi* cutsDstartoKpipi=new AliRDHFCutsDStartoKpipi();
@@ -72,7 +72,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
     AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
     pidObj->SetSigma(sigmasBac);
     pidObj->SetAsym(kFALSE);
     pidObj->SetMatch(1);
@@ -128,22 +128,34 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
       fCutsRD[iv]=new Float_t[nptbins];
     }
     
-    fCutsRD[0][0] = 0.035; fCutsRD[0][1] = 0.032; fCutsRD[0][2] = 0.032; fCutsRD[0][3] = 0.032; fCutsRD[0][4] = 0.032; fCutsRD[0][5] = 0.036; fCutsRD[0][6] = 0.036; fCutsRD[0][7] = 0.04; fCutsRD[0][8] = 0.05; fCutsRD[0][9] = 0.074; fCutsRD[0][10] = 0.074; fCutsRD[0][11] = 0.074; fCutsRD[0][12] = 0.074; fCutsRD[0][13] = 0.074; fCutsRD[0][14] = 0.074;
-    fCutsRD[1][0] = 0.05; fCutsRD[1][1] = 0.038; fCutsRD[1][2] = 0.03; fCutsRD[1][3] = 0.033; fCutsRD[1][4] = 0.042; fCutsRD[1][5] = 0.05; fCutsRD[1][6] = 0.1; fCutsRD[1][7] = 0.1; fCutsRD[1][8] = 0.1; fCutsRD[1][9] = 0.1; fCutsRD[1][10] = 0.1; fCutsRD[1][11] = 10; fCutsRD[1][12] = 10; fCutsRD[1][13] = 10; fCutsRD[1][14] = 10;
-    fCutsRD[2][0] = 0.75; fCutsRD[2][1] = 0.9; fCutsRD[2][2] = 0.8; fCutsRD[2][3] = 0.8; fCutsRD[2][4] = 0.9; fCutsRD[2][5] = 1; fCutsRD[2][6] = 1; fCutsRD[2][7] = 1; fCutsRD[2][8] = 1; fCutsRD[2][9] = 1; fCutsRD[2][10] = 1; fCutsRD[2][11] = 10; fCutsRD[2][12] = 10; fCutsRD[2][13] = 10; fCutsRD[2][14] = 10;
-    fCutsRD[3][0] = 0.45; fCutsRD[3][1] = 0.6; fCutsRD[3][2] = 0.9; fCutsRD[3][3] = 0.9; fCutsRD[3][4] = 1; fCutsRD[3][5] = 1; fCutsRD[3][6] = 1; fCutsRD[3][7] = 0.6; fCutsRD[3][8] = 0.6; fCutsRD[3][9] = 0.6; fCutsRD[3][10] = 0.5; fCutsRD[3][11] = 0.2; fCutsRD[3][12] = 0.2; fCutsRD[3][13] = 0.2; fCutsRD[3][14] = 0.2;
-    fCutsRD[4][0] = 0.45; fCutsRD[4][1] = 0.6; fCutsRD[4][2] = 0.9; fCutsRD[4][3] = 0.9; fCutsRD[4][4] = 1; fCutsRD[4][5] = 1; fCutsRD[4][6] = 1; fCutsRD[4][7] = 0.6; fCutsRD[4][8] = 0.6; fCutsRD[4][9] = 0.6; fCutsRD[4][10] = 0.5; fCutsRD[4][11] = 0.2; fCutsRD[4][12] = 0.2; fCutsRD[4][13] = 0.2; fCutsRD[4][14] = 0.2;
-    fCutsRD[5][0] = 0.1; fCutsRD[5][1] = 0.1; fCutsRD[5][2] = 0.1; fCutsRD[5][3] = 0.1; fCutsRD[5][4] = 0.1; fCutsRD[5][5] = 0.1; fCutsRD[5][6] = 0.1; fCutsRD[5][7] = 0.1; fCutsRD[5][8] = 0.1; fCutsRD[5][9] = 0.1; fCutsRD[5][10] = 0.15; fCutsRD[5][11] = 0.5; fCutsRD[5][12] = 0.5; fCutsRD[5][13] = 0.5; fCutsRD[5][14] = 0.5;
-    fCutsRD[6][0] = 0.1; fCutsRD[6][1] = 0.1; fCutsRD[6][2] = 0.1; fCutsRD[6][3] = 0.1; fCutsRD[6][4] = 0.1; fCutsRD[6][5] = 0.1; fCutsRD[6][6] = 0.1; fCutsRD[6][7] = 0.1; fCutsRD[6][8] = 0.1; fCutsRD[6][9] = 0.1; fCutsRD[6][10] = 0.15; fCutsRD[6][11] = 0.5; fCutsRD[6][12] = 0.5; fCutsRD[6][13] = 0.5; fCutsRD[6][14] = 0.5;
-    fCutsRD[7][0] = 1; fCutsRD[7][1] = -0.000135; fCutsRD[7][2] = -0.00019; fCutsRD[7][3] = -0.000144; fCutsRD[7][4] = -2.8e-05; fCutsRD[7][5] = 5.5e-05; fCutsRD[7][6] = 0.0001; fCutsRD[7][7] = 0.0001; fCutsRD[7][8] = 0.001; fCutsRD[7][9] = 0.001; fCutsRD[7][10] = 0.001; fCutsRD[7][11] = 1; fCutsRD[7][12] = 1; fCutsRD[7][13] = 1; fCutsRD[7][14] = 1;
-    fCutsRD[8][0] = 0.7; fCutsRD[8][1] = 0.8; fCutsRD[8][2] = 0.9; fCutsRD[8][3] = 0.89; fCutsRD[8][4] = 0.81; fCutsRD[8][5] = 0.79; fCutsRD[8][6] = 0.7; fCutsRD[8][7] = 0.75; fCutsRD[8][8] = 0.7; fCutsRD[8][9] = 0.7; fCutsRD[8][10] = 0.7; fCutsRD[8][11] = 0.2; fCutsRD[8][12] = 0.2; fCutsRD[8][13] = 0.2; fCutsRD[8][14] = 0.2;
-    fCutsRD[9][0] = 0.3; fCutsRD[9][1] = 0.3; fCutsRD[9][2] = 0.3; fCutsRD[9][3] = 0.3; fCutsRD[9][4] = 0.3; fCutsRD[9][5] = 0.3; fCutsRD[9][6] = 0.3; fCutsRD[9][7] = 0.3; fCutsRD[9][8] = 0.3; fCutsRD[9][9] = 0.3; fCutsRD[9][10] = 0.3; fCutsRD[9][11] = 0.3; fCutsRD[9][12] = 0.3; fCutsRD[9][13] = 0.3; fCutsRD[9][14] = 0.3;
-    fCutsRD[10][0] = 0.3; fCutsRD[10][1] = 0.3; fCutsRD[10][2] = 0.3; fCutsRD[10][3] = 0.3; fCutsRD[10][4] = 0.3; fCutsRD[10][5] = 0.3; fCutsRD[10][6] = 0.3; fCutsRD[10][7] = 0.3; fCutsRD[10][8] = 0.3; fCutsRD[10][9] = 0.3; fCutsRD[10][10] = 0.3; fCutsRD[10][11] = 0.3; fCutsRD[10][12] = 0.3; fCutsRD[10][13] = 0.3; fCutsRD[10][14] = 0.3;
-    fCutsRD[11][0] = 0.03; fCutsRD[11][1] = 0.05; fCutsRD[11][2] = 0.05; fCutsRD[11][3] = 0.05; fCutsRD[11][4] = 0.05; fCutsRD[11][5] = 0.05; fCutsRD[11][6] = 0.05; fCutsRD[11][7] = 0.05; fCutsRD[11][8] = 0.05; fCutsRD[11][9] = 0.05; fCutsRD[11][10] = 0.05; fCutsRD[11][11] = 0.05; fCutsRD[11][12] = 0.05; fCutsRD[11][13] = 0.05; fCutsRD[11][14] = 0.05;
-    fCutsRD[12][0] = 0.2; fCutsRD[12][1] = 0.3; fCutsRD[12][2] = 0.4; fCutsRD[12][3] = 0.6; fCutsRD[12][4] = 100; fCutsRD[12][5] = 100; fCutsRD[12][6] = 100; fCutsRD[12][7] = 100; fCutsRD[12][8] = 100; fCutsRD[12][9] = 100; fCutsRD[12][10] = 100; fCutsRD[12][11] = 100; fCutsRD[12][12] = 100; fCutsRD[12][13] = 100; fCutsRD[12][14] = 100;
-    fCutsRD[13][0] = 1; fCutsRD[13][1] = 1; fCutsRD[13][2] = 1; fCutsRD[13][3] = 1; fCutsRD[13][4] = 1; fCutsRD[13][5] = 1; fCutsRD[13][6] = 1; fCutsRD[13][7] = 1; fCutsRD[13][8] = 1; fCutsRD[13][9] = 1; fCutsRD[13][10] = 1; fCutsRD[13][11] = 1; fCutsRD[13][12] = 1; fCutsRD[13][13] = 1; fCutsRD[13][14] = 1;
-    fCutsRD[14][0] = 0.85; fCutsRD[14][1] = 0.88; fCutsRD[14][2] = -1; fCutsRD[14][3] = -1; fCutsRD[14][4] = -1; fCutsRD[14][5] = -1; fCutsRD[14][6] = -1; fCutsRD[14][7] = -1; fCutsRD[14][8] = -1; fCutsRD[14][9] = -1; fCutsRD[14][10] = -1; fCutsRD[14][11] = -1; fCutsRD[14][12] = -1; fCutsRD[14][13] = -1; fCutsRD[14][14] = -1;
-    fCutsRD[15][0] = 0; fCutsRD[15][1] = 2.7; fCutsRD[15][2] = 3; fCutsRD[15][3] = 0; fCutsRD[15][4] = 0; fCutsRD[15][5] = 0; fCutsRD[15][6] = 0; fCutsRD[15][7] = 0; fCutsRD[15][8] = 0; fCutsRD[15][9] = 0; fCutsRD[15][10] = 0; fCutsRD[15][11] = 0; fCutsRD[15][12] = 0; fCutsRD[15][13] = 0; fCutsRD[15][14] = 0;
+    fCutsRD[0][0] = 0.035; fCutsRD[0][1] = 0.032; fCutsRD[0][3]= 0.032; fCutsRD[0][5]= 0.032; fCutsRD[0][7]= 0.032; fCutsRD[0][9]= 0.036; fCutsRD[0][11]= 0.036; fCutsRD[0][13]= 0.04; fCutsRD[0][15]= 0.05; fCutsRD[0][17]= 0.074; fCutsRD[0][19]= 0.074; fCutsRD[0][20]= 0.074; fCutsRD[0][21]= 0.074; fCutsRD[0][22]= 0.074; fCutsRD[0][23]= 0.074; fCutsRD[0][24]= 0.074;
+    fCutsRD[1][0] = 0.05; fCutsRD[1][1] = 0.038; fCutsRD[1][3]= 0.03; fCutsRD[1][5]= 0.033; fCutsRD[1][7]= 0.042; fCutsRD[1][9]= 0.05; fCutsRD[1][11]= 0.1; fCutsRD[1][13]= 0.1; fCutsRD[1][15]= 0.1; fCutsRD[1][17]= 0.1; fCutsRD[1][19]= 0.1; fCutsRD[1][20]= 10; fCutsRD[1][21]= 10; fCutsRD[1][22]= 10; fCutsRD[1][23]= 10; fCutsRD[1][24]= 10;
+    fCutsRD[2][0] = 0.75; fCutsRD[2][1] = 0.9; fCutsRD[2][3]= 0.8; fCutsRD[2][5]= 0.8; fCutsRD[2][7]= 0.9; fCutsRD[2][9]= 1; fCutsRD[2][11]= 1; fCutsRD[2][13]= 1; fCutsRD[2][15]= 1; fCutsRD[2][17]= 1; fCutsRD[2][19]= 1; fCutsRD[2][20]= 10; fCutsRD[2][21]= 10; fCutsRD[2][22]= 10; fCutsRD[2][23]= 10; fCutsRD[2][24]= 10;
+    fCutsRD[3][0] = 0.45; fCutsRD[3][1] = 0.6; fCutsRD[3][3]= 0.9; fCutsRD[3][5]= 0.9; fCutsRD[3][7]= 1; fCutsRD[3][9]= 1; fCutsRD[3][11]= 1; fCutsRD[3][13]= 0.6; fCutsRD[3][15]= 0.6; fCutsRD[3][17]= 0.6; fCutsRD[3][19]= 0.5; fCutsRD[3][20]= 0.2; fCutsRD[3][21]= 0.2; fCutsRD[3][22]= 0.2; fCutsRD[3][23]= 0.2; fCutsRD[3][24]= 0.2;
+    fCutsRD[4][0] = 0.45; fCutsRD[4][1] = 0.6; fCutsRD[4][3]= 0.9; fCutsRD[4][5]= 0.9; fCutsRD[4][7]= 1; fCutsRD[4][9]= 1; fCutsRD[4][11]= 1; fCutsRD[4][13]= 0.6; fCutsRD[4][15]= 0.6; fCutsRD[4][17]= 0.6; fCutsRD[4][19]= 0.5; fCutsRD[4][20]= 0.2; fCutsRD[4][21]= 0.2; fCutsRD[4][22]= 0.2; fCutsRD[4][23]= 0.2; fCutsRD[4][24]= 0.2;
+    fCutsRD[5][0] = 0.1; fCutsRD[5][1] = 0.1; fCutsRD[5][3]= 0.1; fCutsRD[5][5]= 0.1; fCutsRD[5][7]= 0.1; fCutsRD[5][9]= 0.1; fCutsRD[5][11]= 0.1; fCutsRD[5][13]= 0.1; fCutsRD[5][15]= 0.1; fCutsRD[5][17]= 0.1; fCutsRD[5][19]= 0.15; fCutsRD[5][20]= 0.5; fCutsRD[5][21]= 0.5; fCutsRD[5][22]= 0.5; fCutsRD[5][23]= 0.5; fCutsRD[5][24]= 0.5;
+    fCutsRD[6][0] = 0.1; fCutsRD[6][1] = 0.1; fCutsRD[6][3]= 0.1; fCutsRD[6][5]= 0.1; fCutsRD[6][7]= 0.1; fCutsRD[6][9]= 0.1; fCutsRD[6][11]= 0.1; fCutsRD[6][13]= 0.1; fCutsRD[6][15]= 0.1; fCutsRD[6][17]= 0.1; fCutsRD[6][19]= 0.15; fCutsRD[6][20]= 0.5; fCutsRD[6][21]= 0.5; fCutsRD[6][22]= 0.5; fCutsRD[6][23]= 0.5; fCutsRD[6][24]= 0.5;
+    fCutsRD[7][0] = 1; fCutsRD[7][1] = -0.000135; fCutsRD[7][3]= -0.00019; fCutsRD[7][5]= -0.000144; fCutsRD[7][7]= -2.8e-05; fCutsRD[7][9]= 5.5e-05; fCutsRD[7][11]= 0.0001; fCutsRD[7][13]= 0.0001; fCutsRD[7][15]= 0.001; fCutsRD[7][17]= 0.001; fCutsRD[7][19]= 0.001; fCutsRD[7][20]= 1; fCutsRD[7][21]= 1; fCutsRD[7][22]= 1; fCutsRD[7][23]= 1; fCutsRD[7][24]= 1;
+    fCutsRD[8][0] = 0.7; fCutsRD[8][1] = 0.8; fCutsRD[8][3]= 0.9; fCutsRD[8][5]= 0.89; fCutsRD[8][7]= 0.81; fCutsRD[8][9]= 0.79; fCutsRD[8][11]= 0.7; fCutsRD[8][13]= 0.75; fCutsRD[8][15]= 0.7; fCutsRD[8][17]= 0.7; fCutsRD[8][19]= 0.7; fCutsRD[8][20]= 0.2; fCutsRD[8][21]= 0.2; fCutsRD[8][22]= 0.2; fCutsRD[8][23]= 0.2; fCutsRD[8][24]= 0.2;
+    fCutsRD[9][0] = 0.3; fCutsRD[9][1] = 0.3; fCutsRD[9][3]= 0.3; fCutsRD[9][5]= 0.3; fCutsRD[9][7]= 0.3; fCutsRD[9][9]= 0.3; fCutsRD[9][11]= 0.3; fCutsRD[9][13]= 0.3; fCutsRD[9][15]= 0.3; fCutsRD[9][17]= 0.3; fCutsRD[9][19]= 0.3; fCutsRD[9][20]= 0.3; fCutsRD[9][21]= 0.3; fCutsRD[9][22]= 0.3; fCutsRD[9][23]= 0.3; fCutsRD[9][24]= 0.3;
+    fCutsRD[10][0] = 0.3; fCutsRD[10][1] = 0.3; fCutsRD[10][3]= 0.3; fCutsRD[10][5]= 0.3; fCutsRD[10][7]= 0.3; fCutsRD[10][9]= 0.3; fCutsRD[10][11]= 0.3; fCutsRD[10][13]= 0.3; fCutsRD[10][15]= 0.3; fCutsRD[10][17]= 0.3; fCutsRD[10][19]= 0.3; fCutsRD[10][20]= 0.3; fCutsRD[10][21]= 0.3; fCutsRD[10][22]= 0.3; fCutsRD[10][23]= 0.3; fCutsRD[10][24]= 0.3;
+    fCutsRD[11][0] = 0.03; fCutsRD[11][1] = 0.05; fCutsRD[11][3]= 0.05; fCutsRD[11][5]= 0.05; fCutsRD[11][7]= 0.05; fCutsRD[11][9]= 0.05; fCutsRD[11][11]= 0.05; fCutsRD[11][13]= 0.05; fCutsRD[11][15]= 0.05; fCutsRD[11][17]= 0.05; fCutsRD[11][19]= 0.05; fCutsRD[11][20]= 0.05; fCutsRD[11][21]= 0.05; fCutsRD[11][22]= 0.05; fCutsRD[11][23]= 0.05; fCutsRD[11][24]= 0.05;
+    fCutsRD[12][0] = 0.2; fCutsRD[12][1] = 0.3; fCutsRD[12][3]= 0.4; fCutsRD[12][5]= 0.6; fCutsRD[12][7]= 100; fCutsRD[12][9]= 100; fCutsRD[12][11]= 100; fCutsRD[12][13]= 100; fCutsRD[12][15]= 100; fCutsRD[12][17]= 100; fCutsRD[12][19]= 100; fCutsRD[12][20]= 100; fCutsRD[12][21]= 100; fCutsRD[12][22]= 100; fCutsRD[12][23]= 100; fCutsRD[12][24]= 100;
+    fCutsRD[13][0] = 1; fCutsRD[13][1] = 1; fCutsRD[13][3]= 1; fCutsRD[13][5]= 1; fCutsRD[13][7]= 1; fCutsRD[13][9]= 1; fCutsRD[13][11]= 1; fCutsRD[13][13]= 1; fCutsRD[13][15]= 1; fCutsRD[13][17]= 1; fCutsRD[13][19]= 1; fCutsRD[13][20]= 1; fCutsRD[13][21]= 1; fCutsRD[13][22]= 1; fCutsRD[13][23]= 1; fCutsRD[13][24]= 1;
+    fCutsRD[14][0] = 0.85; fCutsRD[14][1] = 0.88; fCutsRD[14][3]= -1; fCutsRD[14][5]= -1; fCutsRD[14][7]= -1; fCutsRD[14][9]= -1; fCutsRD[14][11]= -1; fCutsRD[14][13]= -1; fCutsRD[14][15]= -1; fCutsRD[14][17]= -1; fCutsRD[14][19]= -1; fCutsRD[14][20]= -1; fCutsRD[14][21]= -1; fCutsRD[14][22]= -1; fCutsRD[14][23]= -1; fCutsRD[14][24]= -1;
+    fCutsRD[15][0] = 0; fCutsRD[15][1] = 2.7; fCutsRD[15][3]= 3; fCutsRD[15][5]= 0; fCutsRD[15][7]= 0; fCutsRD[15][9]= 0; fCutsRD[15][11]= 0; fCutsRD[15][13]= 0; fCutsRD[15][15]= 0; fCutsRD[15][17]= 0; fCutsRD[15][19]= 0; fCutsRD[15][20]= 0; fCutsRD[15][21]= 0; fCutsRD[15][22]= 0; fCutsRD[15][23]= 0; fCutsRD[15][24]= 0;
+    
+    for(int ii = 0; ii < nvars; ii++){
+      fCutsRD[ii][2] = fCutsRD[ii][1];
+      fCutsRD[ii][4] = fCutsRD[ii][3];
+      fCutsRD[ii][6] = fCutsRD[ii][5];
+      fCutsRD[ii][8] = fCutsRD[ii][7];
+      fCutsRD[ii][10] = fCutsRD[ii][9];
+      fCutsRD[ii][12] = fCutsRD[ii][11];
+      fCutsRD[ii][14] = fCutsRD[ii][13];
+      fCutsRD[ii][16] = fCutsRD[ii][15];
+      fCutsRD[ii][18] = fCutsRD[ii][17];
+    }
     
     cutsDstartoKpipi->SetCuts(nvars,nptbins,fCutsRD);
     
@@ -168,12 +180,13 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
     else cout<<"PID is not used for analysis cuts"<<endl;
     
   }
-  //Do not recalculate the vertex
+  //Do not recalculate the vertex for Dstar (we don't do this in std analyses)
   cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
 
   //event selection
   cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);
   cutsDstartoKpipi->SetTriggerClass("");
+  //Since X/08/19 we set the triggers in wagon code/runAnalysis script if needed
   cutsDstartoKpipi->SetTriggerMask(AliVEvent::kAny);
   cutsDstartoKpipi->SetOptPileup(AliRDHFCuts::kRejectMVPileupEvent);
   cutsDstartoKpipi->SetMinContribPileupMV(5);
