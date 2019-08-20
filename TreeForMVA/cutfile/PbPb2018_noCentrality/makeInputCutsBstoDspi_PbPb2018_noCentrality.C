@@ -5,12 +5,12 @@
 #include <TParameter.h>
 
 /*
- whichCuts=0, nameCuts="DstoKKpiFilteringCuts"
- whichCuts=1, nameCuts="DstoKKpiAnalysisCuts"
+ whichCuts=0, nameCuts="BstoDspiFilteringCuts"
+ whichCuts=1, nameCuts="BstoDspiAnalysisCuts"
  */
 
 
-AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="DstoKKpiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
 {
   
   AliRDHFCutsDstoKKpi* cuts=new AliRDHFCutsDstoKKpi();
@@ -46,8 +46,9 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     
     Float_t** anacutsval=new Float_t*[20];
     for(Int_t ic=0;ic<20;ic++){anacutsval[ic]=new Float_t[nptbins];}
+    //Used values for Ds analysis taken at 20/08/19 but tightened InvMass cut (0.25/0.3->0.12)
     
-    anacutsval[0][0]=0.25;
+    anacutsval[0][0]=0.12;
     anacutsval[1][0]=0.6;
     anacutsval[2][0]=0.6;
     anacutsval[3][0]=0.;
@@ -68,7 +69,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[18][0]=3.;
     anacutsval[19][0]=0.98;
     
-    anacutsval[0][1]=0.3;
+    anacutsval[0][1]=0.12;
     anacutsval[1][1]=0.6;
     anacutsval[2][1]=0.6;
     anacutsval[3][1]=0.;
@@ -90,7 +91,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[19][1]=-1.;
     
     cuts->SetCuts(20,nptbins,anacutsval);
-    cuts->SetMinPtCandidate(2.);
+    cuts->SetMinPtCandidate(1.);
     
     Bool_t pidflag=usePID;
     cuts->SetUsePID(pidflag);
@@ -296,5 +297,3 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
   return cuts;
   
 }
-
-

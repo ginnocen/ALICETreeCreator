@@ -5,13 +5,13 @@
 #include <TParameter.h>
 
 /*
- whichCuts=0, nameCuts="LctopKpiFilteringCuts"
- whichCuts=1, nameCuts="LctopKpiAnalysisCuts"
+ whichCuts=0, nameCuts="LbtoLcpiFilteringCuts"
+ whichCuts=1, nameCuts="LbtoLcpiAnalysisCuts"
  */
 
-void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
+void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
 
-void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
+void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   
   cutsObj->GetPidHF()->SetCombDetectors(AliAODPidHF::kTPCTOF);
   for (Int_t ispecies=0;ispecies<AliPID::kSPECIES;++ispecies)
@@ -21,7 +21,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
 {
   
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
@@ -43,6 +43,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+  
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   cuts->SetKinkRejection(kTRUE);
@@ -65,7 +66,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   }
   
   //0-8
-  rdcutsvalmine[0][0]=0.13;   //inv mass window
+  rdcutsvalmine[0][0]=0.07;   //inv mass window
   rdcutsvalmine[1][0]=0.5;    // pTK
   rdcutsvalmine[2][0]=0.625;   // pTP
   rdcutsvalmine[3][0]=0.;      // d0K
@@ -79,7 +80,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[11][0]=0.0375; // dca cut
   rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
   //8-999
-  rdcutsvalmine[0][1]=0.13;   //inv mass window
+  rdcutsvalmine[0][1]=0.07;   //inv mass window
   rdcutsvalmine[1][1]=0.5;    // pTK
   rdcutsvalmine[2][1]=0.625;   // pTP
   rdcutsvalmine[3][1]=0.;      // d0K
@@ -92,9 +93,10 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[10][1]=0.;     // Sum d0^2
   rdcutsvalmine[11][1]=0.0375; // dca cut
   rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
+  //Used values for Lc->pKpi analysis taken at 20/08/19 but tightened InvMass cut to 0.07
   
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
-  cuts->SetMinPtCandidate(4.);
+  cuts->SetMinPtCandidate(1.);
   
   AliAODPidHF* pidObjp=new AliAODPidHF();
   AliAODPidHF* pidObjK=new AliAODPidHF();
@@ -104,37 +106,37 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     // PID
     // Set here since no default PIDHF object created in RDHF
     // 1. kaon
-    Double_t sigmasK[5]={3.,1.,1.,3.,2.};
+    Double_t sigmasK[5]={3.,3.,3.,3.,3.};
     pidObjK->SetSigma(sigmasK);
-    //    pidObjK->SetAsym(kTRUE);
+    pidObjK->SetAsym(kFALSE);
     pidObjK->SetMatch(1);
     pidObjK->SetTPC(kTRUE);
     pidObjK->SetTOF(kTRUE);
-    //    Double_t plimK[2]={0.5,0.8};
-    //    pidObjK->SetPLimit(plimK,2);
-    pidObjK->SetTOFdecide(kTRUE);
+    //Double_t plimK[2]={0.5,0.8};
+    //pidObjK->SetPLimit(plimK,2);
+    pidObjK->SetTOFdecide(kFALSE);
     
     //2. pion
     AliAODPidHF* pidObjpi=new AliAODPidHF();
+    Double_t sigmaspi[5]={3.,3.,3.,3.,3.};
+    pidObjpi->SetSigma(sigmaspi);
+    pidObjpi->SetAsym(kFALSE);
     pidObjpi->SetMatch(1);
     pidObjpi->SetTPC(kTRUE);
     pidObjpi->SetTOF(kTRUE);
-    Double_t sigmaspi[5]={3.,0.,0.,3.,0.};
-    pidObjpi->SetSigma(sigmaspi);
-    //  pidObjpi->SetTOFdecide(kTRUE);
     pidObjpi->SetTOFdecide(kTRUE);
     
     // 3. proton
     AliAODPidHF* pidObjp=new AliAODPidHF();
-    Double_t sigmasp[5]={3.,1.,1.,3.,2.};
+    Double_t sigmasp[5]={3.,3.,3.,3.,3.};
     pidObjp->SetSigma(sigmasp);
-    //    pidObjp->SetAsym(kTRUE);
+    pidObjp->SetAsym(kFALSE);
     pidObjp->SetMatch(1);
     pidObjp->SetTPC(kTRUE);
     pidObjp->SetTOF(kTRUE);
-    //    Double_t plimp[2]={1.,2.};
-    //    pidObjp->SetPLimit(plimp,2);
-    pidObjp->SetTOFdecide(kTRUE);
+    //Double_t plimp[2]={1.,2.};
+    //pidObjp->SetPLimit(plimp,2);
+    pidObjp->SetTOFdecide(kFALSE);
     
     cuts->SetPidprot(pidObjp);
     cuts->SetPidHF(pidObjK);
@@ -170,6 +172,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;
+
   }
   
   //Do not recalculate the vertex
