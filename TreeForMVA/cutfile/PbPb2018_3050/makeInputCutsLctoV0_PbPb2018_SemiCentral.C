@@ -11,7 +11,7 @@
 
 const Int_t nvars=21;
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=30.,Float_t maxc=50.)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=30.,Float_t maxc=50.,Bool_t isMC=kFALSE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -118,7 +118,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetPidHF(pidObjBachelor);
     Bool_t pidflag=kTRUE;
     cutsLctoV0->SetUsePID(pidflag);
-    cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
     
   }
   else if(whichCuts==1){
@@ -170,7 +169,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetPidHF(pidObjBachelor);
     Bool_t pidflag=kTRUE;
     cutsLctoV0->SetUsePID(pidflag);
-    cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
     
     cutsLctoV0->SetMinPtCandidate(1.0);
     cutsLctoV0->SetMaxPtCandidate(50.);
@@ -180,11 +178,15 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   
   //Do not recalculate the vertex
   cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-  
+
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC) cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
+
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);
   cutsLctoV0->SetTriggerClass("");
-  cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  if(!isMC) cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  else      cutsLctoV0->SetTriggerMask(AliVEvent::kAny);
   cutsLctoV0->SetMinCentrality(minc);
   cutsLctoV0->SetMaxCentrality(maxc);
   cutsLctoV0->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid

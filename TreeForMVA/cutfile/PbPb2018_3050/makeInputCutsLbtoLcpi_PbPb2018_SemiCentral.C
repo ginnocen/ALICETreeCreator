@@ -21,7 +21,7 @@ void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LbtoLcpiFilteringCuts", Float_t minc=30.,Float_t maxc=50.)
+AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LbtoLcpiFilteringCuts", Float_t minc=30.,Float_t maxc=50.,Bool_t isMC=kFALSE)
 {
   
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
@@ -155,10 +155,14 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
+
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  if(!isMC) cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  else      cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetMinCentrality(minc);
   cuts->SetMaxCentrality(maxc);
   cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid

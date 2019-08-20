@@ -15,7 +15,7 @@ void setAnalysisBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi);
  whichCuts=1, nameCuts="BplustoD0piAnalysisCuts"
  */
 
-AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts="BplustoD0piFilteringCuts", Float_t minc=30.,Float_t maxc=50.){
+AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts="BplustoD0piFilteringCuts", Float_t minc=30.,Float_t maxc=50.,Bool_t isMC=kFALSE){
   
   AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi = new AliRDHFCutsBPlustoD0Pi();
   RDHFBPlustoD0Pi->SetName(nameCuts.Data());
@@ -137,10 +137,14 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nam
   //Do not recalculate the vertex
   RDHFBPlustoD0Pi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC) RDHFBPlustoD0Pi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
+
   //event selection
   RDHFBPlustoD0Pi->SetUsePhysicsSelection(kTRUE);
   RDHFBPlustoD0Pi->SetTriggerClass("");
-  RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  if(!isMC) RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  else      RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kAny);
   RDHFBPlustoD0Pi->SetMinCentrality(minc);
   RDHFBPlustoD0Pi->SetMaxCentrality(maxc);
   RDHFBPlustoD0Pi->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid

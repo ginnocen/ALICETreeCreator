@@ -25,7 +25,7 @@
 //     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
 
 
-AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=30.,Float_t maxc=50.)
+AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=30.,Float_t maxc=50.,Bool_t isMC=kFALSE)
 {
   
   AliRDHFCutsD0toKpi* cutsD0toKpi=new AliRDHFCutsD0toKpi();
@@ -340,10 +340,14 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   //Do not recalculate the vertex
   cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb3050);
+
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
   cutsD0toKpi->SetTriggerClass("");
-  cutsD0toKpi->SetTriggerMask(AliVEvent::kSemiCentral | AliVEvent::kINT7);
+  if(!isMC) cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  else      cutsD0toKpi->SetTriggerMask(AliVEvent::kAny);
   cutsD0toKpi->SetMinCentrality(minc);
   cutsD0toKpi->SetMaxCentrality(maxc);
   cutsD0toKpi->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
