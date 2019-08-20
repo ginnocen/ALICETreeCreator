@@ -165,7 +165,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetPidHF(pidObjK);
     cuts->SetPidpion(pidObjpi);
     
-    SetupCombinedPID(cuts,0.);
+    SetupCombinedPID2(cuts,0.);
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
     
     Bool_t pidflag=usePID;
