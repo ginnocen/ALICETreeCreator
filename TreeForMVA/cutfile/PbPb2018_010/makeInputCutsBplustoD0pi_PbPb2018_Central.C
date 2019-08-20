@@ -138,7 +138,7 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nam
   RDHFBPlustoD0Pi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  if(!isMC) RDHFBPlustoD0Pi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   RDHFBPlustoD0Pi->SetUsePhysicsSelection(kTRUE);

@@ -361,7 +361,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  if(!isMC) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
