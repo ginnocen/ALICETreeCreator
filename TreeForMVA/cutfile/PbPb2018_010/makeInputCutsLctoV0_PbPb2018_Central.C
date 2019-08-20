@@ -34,10 +34,10 @@ const Int_t nvars=21;
 
 AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=20.)
 {
-    
-    AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
-    cutsLctoV0->SetName(nameCuts.Data());
-    cutsLctoV0->SetTitle(nameCuts.Data());
+  
+  AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
+  cutsLctoV0->SetName(nameCuts.Data());
+  cutsLctoV0->SetTitle(nameCuts.Data());
   
   //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
   //single track cuts
@@ -73,125 +73,125 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
-  cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());  
+  cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
   cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
-
-    if(whichCuts==0){
-        const Int_t nptbins=2;
-        Float_t* ptbins;
-        ptbins=new Float_t[nptbins+1];
-        ptbins[0]=0.;
-        ptbins[1]=4.;
-        ptbins[2]=999.;
-        cutsLctoV0->SetPtBins(nptbins+1,ptbins);
-        Float_t cuts[nptbins][nvars]={
-            0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
-            0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1};
-        Float_t** prodcutsval;
-        prodcutsval=new Float_t*[nvars];
-        for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
-        for(Int_t ipt=0; ipt<nptbins; ipt++){
-            for(Int_t ic=0; ic<nvars; ic++){
-                prodcutsval[ic][ipt]=cuts[ipt][ic];
-            }
-        }
-        
-        cutsLctoV0->SetMinPtCandidate(4.);
-        cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-        
-        cutsLctoV0->SetPidSelectionFlag(11);
-        //pid settings
-        //1. bachelor: default one
-        AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-        pidObjBachelor->SetSigma(sigmasBac);
-        pidObjBachelor->SetAsym(kFALSE);
-        pidObjBachelor->SetMatch(1);
-        pidObjBachelor->SetTPC(kTRUE);
-        pidObjBachelor->SetTOF(kTRUE);
-        pidObjBachelor->SetTOFdecide(kFALSE);
-        
-        cutsLctoV0->SetPidHF(pidObjBachelor);
-        Bool_t pidflag=kTRUE;
-        cutsLctoV0->SetUsePID(pidflag);
-        cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
-      
-    }
-    else if(whichCuts==1){
-
-        cutsLctoV0->SetHighPtCut(999.);
-        cutsLctoV0->SetLowPtCut(2.0);
-        cutsLctoV0->SetPidSelectionFlag(10);
-        
-        const Int_t nptbins=5;
-        Float_t* ptbins;
-        ptbins=new Float_t[nptbins+1];
-        ptbins[0]=2.;
-        ptbins[1]=4.;
-        ptbins[2]=6.;
-        ptbins[3]=12.;
-        ptbins[4]=25.;
-        ptbins[5]=35.;
-        cutsLctoV0->SetPtBins(nptbins+1,ptbins);
-       
-        Float_t cuts[nptbins][nvars]={
-            0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
-            0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
-            0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
-            0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
-            0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.
-        };
-        
-        Float_t** prodcutsval;
-        prodcutsval=new Float_t*[nvars];
-        for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
-        for(Int_t ipt=0; ipt<nptbins; ipt++){
-            for(Int_t ic=0; ic<nvars; ic++){
-                prodcutsval[ic][ipt]=cuts[ipt][ic];
-            }
-        }
-        cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-      
-        //pid settings
-        //1. bachelor: default one
-        AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-        Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-        pidObjBachelor->SetSigma(sigmasBac);
-        pidObjBachelor->SetAsym(kFALSE);
-        pidObjBachelor->SetMatch(1);
-        pidObjBachelor->SetTPC(kTRUE);
-        pidObjBachelor->SetTOF(kTRUE);
-        pidObjBachelor->SetTOFdecide(kFALSE);
-        
-        cutsLctoV0->SetPidHF(pidObjBachelor);
-        Bool_t pidflag=kTRUE;
-        cutsLctoV0->SetUsePID(pidflag);
-        cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
-
-        cutsLctoV0->SetMinPtCandidate(1.0);
-        cutsLctoV0->SetMaxPtCandidate(50.);
-      
-    }
   
-    //Do not recalculate the vertex
-    cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-
-    //event selection
-    cutsLctoV0->SetUsePhysicsSelection(kTRUE);
-    cutsLctoV0->SetTriggerClass("");
-    cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
-    cutsLctoV0->SetMinCentrality(minc);
-    cutsLctoV0->SetMaxCentrality(maxc);
-    cutsLctoV0->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
-    cutsLctoV0->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
-    cutsLctoV0->SetMaxVtxZ(10.);
-    cutsLctoV0->SetCutOnzVertexSPD(3);
+  if(whichCuts==0){
+    const Int_t nptbins=2;
+    Float_t* ptbins;
+    ptbins=new Float_t[nptbins+1];
+    ptbins[0]=0.;
+    ptbins[1]=4.;
+    ptbins[2]=999.;
+    cutsLctoV0->SetPtBins(nptbins+1,ptbins);
+    Float_t cuts[nptbins][nvars]={
+      0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
+      0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1};
+    Float_t** prodcutsval;
+    prodcutsval=new Float_t*[nvars];
+    for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
+    for(Int_t ipt=0; ipt<nptbins; ipt++){
+      for(Int_t ic=0; ic<nvars; ic++){
+        prodcutsval[ic][ipt]=cuts[ipt][ic];
+      }
+    }
     
-    cout<<"This is the object I'm going to save:"<<endl;
-    cutsLctoV0->SetName(nameCuts.Data());
-    cutsLctoV0->SetTitle(nameCuts.Data());
-    cutsLctoV0->PrintAll();
+    cutsLctoV0->SetMinPtCandidate(4.);
+    cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
-    return cutsLctoV0;
+    cutsLctoV0->SetPidSelectionFlag(11);
+    //pid settings
+    //1. bachelor: default one
+    AliAODPidHF* pidObjBachelor = new AliAODPidHF();
+    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    pidObjBachelor->SetSigma(sigmasBac);
+    pidObjBachelor->SetAsym(kFALSE);
+    pidObjBachelor->SetMatch(1);
+    pidObjBachelor->SetTPC(kTRUE);
+    pidObjBachelor->SetTOF(kTRUE);
+    pidObjBachelor->SetTOFdecide(kFALSE);
     
+    cutsLctoV0->SetPidHF(pidObjBachelor);
+    Bool_t pidflag=kTRUE;
+    cutsLctoV0->SetUsePID(pidflag);
+    cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+    
+  }
+  else if(whichCuts==1){
+    
+    cutsLctoV0->SetHighPtCut(999.);
+    cutsLctoV0->SetLowPtCut(2.0);
+    cutsLctoV0->SetPidSelectionFlag(10);
+    
+    const Int_t nptbins=5;
+    Float_t* ptbins;
+    ptbins=new Float_t[nptbins+1];
+    ptbins[0]=2.;
+    ptbins[1]=4.;
+    ptbins[2]=6.;
+    ptbins[3]=12.;
+    ptbins[4]=25.;
+    ptbins[5]=35.;
+    cutsLctoV0->SetPtBins(nptbins+1,ptbins);
+    
+    Float_t cuts[nptbins][nvars]={
+      0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
+      0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
+      0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
+      0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.,
+      0.2, 1000., 0.01, 9999., 1., 0.1, 0.1, 1., 0.4, 0.9998, 0.1, 1.5, 0., 0.005, 0.1, 1., 0.5, -1., 0.003, 0.15, 1.
+    };
+    
+    Float_t** prodcutsval;
+    prodcutsval=new Float_t*[nvars];
+    for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
+    for(Int_t ipt=0; ipt<nptbins; ipt++){
+      for(Int_t ic=0; ic<nvars; ic++){
+        prodcutsval[ic][ipt]=cuts[ipt][ic];
+      }
+    }
+    cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
+    
+    //pid settings
+    //1. bachelor: default one
+    AliAODPidHF* pidObjBachelor = new AliAODPidHF();
+    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    pidObjBachelor->SetSigma(sigmasBac);
+    pidObjBachelor->SetAsym(kFALSE);
+    pidObjBachelor->SetMatch(1);
+    pidObjBachelor->SetTPC(kTRUE);
+    pidObjBachelor->SetTOF(kTRUE);
+    pidObjBachelor->SetTOFdecide(kFALSE);
+    
+    cutsLctoV0->SetPidHF(pidObjBachelor);
+    Bool_t pidflag=kTRUE;
+    cutsLctoV0->SetUsePID(pidflag);
+    cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+    
+    cutsLctoV0->SetMinPtCandidate(1.0);
+    cutsLctoV0->SetMaxPtCandidate(50.);
+    
+  }
+  
+  //Do not recalculate the vertex
+  cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+  
+  //event selection
+  cutsLctoV0->SetUsePhysicsSelection(kTRUE);
+  cutsLctoV0->SetTriggerClass("");
+  cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+  cutsLctoV0->SetMinCentrality(minc);
+  cutsLctoV0->SetMaxCentrality(maxc);
+  cutsLctoV0->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
+  cutsLctoV0->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
+  cutsLctoV0->SetMaxVtxZ(10.);
+  cutsLctoV0->SetCutOnzVertexSPD(3);
+  
+  cout<<"This is the object I'm going to save:"<<endl;
+  cutsLctoV0->SetName(nameCuts.Data());
+  cutsLctoV0->SetTitle(nameCuts.Data());
+  cutsLctoV0->PrintAll();
+  
+  return cutsLctoV0;
+  
 }

@@ -48,7 +48,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     Float_t** anacutsval=new Float_t*[20];
     for(Int_t ic=0;ic<20;ic++){anacutsval[ic]=new Float_t[nptbins];}
     //Used values for Ds analysis taken at 20/08/19 but tightened InvMass cut (0.25/0.3->0.12)
-
+    
     anacutsval[0][0]=0.12;
     anacutsval[1][0]=0.4;
     anacutsval[2][0]=0.4;

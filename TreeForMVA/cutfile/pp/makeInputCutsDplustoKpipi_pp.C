@@ -229,7 +229,7 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi_pp(Int_t whichCuts=0, TString
   }
   
   cuts->SetRemoveDaughtersFromPrim(kTRUE); //activate for pp
-
+  
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");

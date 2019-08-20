@@ -12,7 +12,7 @@
 void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold);
 
 void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
-
+  
   cutsObj->GetPidHF()->SetCombDetectors(AliAODPidHF::kTPCTOF);
   for (Int_t ispecies=0;ispecies<AliPID::kSPECIES;++ispecies)
     cutsObj->SetPIDThreshold(static_cast<AliPID::EParticleType>(ispecies),threshold);
@@ -23,84 +23,84 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
 
 AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=30.,Float_t maxc=50.)
 {
-    
-    AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
-    cuts->SetName(nameCuts.Data());
-    cuts->SetTitle(nameCuts.Data());
-
-    //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
-    AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts();
-    esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-    esdTrackCuts->SetRequireTPCRefit(kTRUE);
-    esdTrackCuts->SetRequireITSRefit(kTRUE);
-    //esdTrackCuts->SetMinNClustersITS(4);
-    esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
-        AliESDtrackCuts::kAny);
-    // |d0|>25 micron for pt<2GeV, no cut above 2
-    esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-    esdTrackCuts->SetMaxDCAToVertexXY(1.);
-    esdTrackCuts->SetMaxDCAToVertexZ(1.);
-    esdTrackCuts->SetPtRange(0.4,1.e10);
-    esdTrackCuts->SetEtaRange(-0.8,+0.8);
-    esdTrackCuts->SetMinNClustersTPC(70);
-    esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-
-    cuts->AddTrackCuts(esdTrackCuts);
-    cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
-    cuts->SetKinkRejection(kTRUE);
-
-    // cuts
-    const Int_t nvars=13;
-    const Int_t nptbinsLc=1;
-    Float_t* ptbins;
-    ptbins=new Float_t[nptbinsLc+1];
-    ptbins[0]=0.;
-    ptbins[1]=999.;
   
-    cuts->SetPtBins(nptbinsLc+1,ptbins);
+  AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
+  cuts->SetName(nameCuts.Data());
+  cuts->SetTitle(nameCuts.Data());
   
-    Float_t** rdcutsvalmine;
-    rdcutsvalmine=new Float_t*[nvars];
-    for(Int_t iv=0;iv<nvars;iv++){
-      rdcutsvalmine[iv]=new Float_t[nptbinsLc];
-    }
+  //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
+  AliESDtrackCuts *esdTrackCuts = new AliESDtrackCuts();
+  esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+  esdTrackCuts->SetRequireTPCRefit(kTRUE);
+  esdTrackCuts->SetRequireITSRefit(kTRUE);
+  //esdTrackCuts->SetMinNClustersITS(4);
+  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,
+                                         AliESDtrackCuts::kAny);
+  // |d0|>25 micron for pt<2GeV, no cut above 2
+  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+  esdTrackCuts->SetMaxDCAToVertexXY(1.);
+  esdTrackCuts->SetMaxDCAToVertexZ(1.);
+  esdTrackCuts->SetPtRange(0.4,1.e10);
+  esdTrackCuts->SetEtaRange(-0.8,+0.8);
+  esdTrackCuts->SetMinNClustersTPC(70);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   
-//    //0-8
-//    rdcutsvalmine[0][0]=0.13;   //inv mass window
-//    rdcutsvalmine[1][0]=0.5;    // pTK
-//    rdcutsvalmine[2][0]=0.625;   // pTP
-//    rdcutsvalmine[3][0]=0.;      // d0K
-//    rdcutsvalmine[4][0]=0.;      // d0Pi
-//    rdcutsvalmine[5][0]=0.025;  // dist12
-//    rdcutsvalmine[6][0]=0.035;   // sigmavert
-//    rdcutsvalmine[7][0]=0.00625; // dist prim-sec
-//    rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
-//    rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
-//    rdcutsvalmine[10][0]=0.;     // Sum d0^2
-//    rdcutsvalmine[11][0]=0.0375; // dca cut
-//    rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
-//    //8-999
-    rdcutsvalmine[0][0]=0.13;   //inv mass window
-    rdcutsvalmine[1][0]=0.5;    // pTK
-    rdcutsvalmine[2][0]=0.5;   // pTP
-    rdcutsvalmine[3][0]=0.;      // d0K
-    rdcutsvalmine[4][0]=0.;      // d0Pi
-    rdcutsvalmine[5][0]=0.0;  // dist12
-    rdcutsvalmine[6][0]=0.06;   // sigmavert
-    rdcutsvalmine[7][0]=0.00; // dist prim-sec
-    rdcutsvalmine[8][0]=0.;     // pM=Max{pT1,pT2,pT3}
-    rdcutsvalmine[9][0]=0.;    // cosThetaPoint
-    rdcutsvalmine[10][0]=0.;     // Sum d0^2
-    rdcutsvalmine[11][0]=0.05; // dca cut
-    rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
-    //{0.13,0.5,0.5,0.,0.,0.,0.06,0.,0.,0.,0.,0.05,0.5};
+  cuts->AddTrackCuts(esdTrackCuts);
+  cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+  cuts->SetKinkRejection(kTRUE);
   
-    cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
-    cuts->SetMinPtCandidate(2.);
+  // cuts
+  const Int_t nvars=13;
+  const Int_t nptbinsLc=1;
+  Float_t* ptbins;
+  ptbins=new Float_t[nptbinsLc+1];
+  ptbins[0]=0.;
+  ptbins[1]=999.;
   
-    AliAODPidHF* pidObjp=new AliAODPidHF();
-    AliAODPidHF* pidObjK=new AliAODPidHF();
-    AliAODPidHF* pidObjpi=new AliAODPidHF();
+  cuts->SetPtBins(nptbinsLc+1,ptbins);
+  
+  Float_t** rdcutsvalmine;
+  rdcutsvalmine=new Float_t*[nvars];
+  for(Int_t iv=0;iv<nvars;iv++){
+    rdcutsvalmine[iv]=new Float_t[nptbinsLc];
+  }
+  
+  //    //0-8
+  //    rdcutsvalmine[0][0]=0.13;   //inv mass window
+  //    rdcutsvalmine[1][0]=0.5;    // pTK
+  //    rdcutsvalmine[2][0]=0.625;   // pTP
+  //    rdcutsvalmine[3][0]=0.;      // d0K
+  //    rdcutsvalmine[4][0]=0.;      // d0Pi
+  //    rdcutsvalmine[5][0]=0.025;  // dist12
+  //    rdcutsvalmine[6][0]=0.035;   // sigmavert
+  //    rdcutsvalmine[7][0]=0.00625; // dist prim-sec
+  //    rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
+  //    rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
+  //    rdcutsvalmine[10][0]=0.;     // Sum d0^2
+  //    rdcutsvalmine[11][0]=0.0375; // dca cut
+  //    rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
+  //    //8-999
+  rdcutsvalmine[0][0]=0.13;   //inv mass window
+  rdcutsvalmine[1][0]=0.5;    // pTK
+  rdcutsvalmine[2][0]=0.5;   // pTP
+  rdcutsvalmine[3][0]=0.;      // d0K
+  rdcutsvalmine[4][0]=0.;      // d0Pi
+  rdcutsvalmine[5][0]=0.0;  // dist12
+  rdcutsvalmine[6][0]=0.06;   // sigmavert
+  rdcutsvalmine[7][0]=0.00; // dist prim-sec
+  rdcutsvalmine[8][0]=0.;     // pM=Max{pT1,pT2,pT3}
+  rdcutsvalmine[9][0]=0.;    // cosThetaPoint
+  rdcutsvalmine[10][0]=0.;     // Sum d0^2
+  rdcutsvalmine[11][0]=0.05; // dca cut
+  rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
+  //{0.13,0.5,0.5,0.,0.,0.,0.06,0.,0.,0.,0.,0.05,0.5};
+  
+  cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
+  cuts->SetMinPtCandidate(2.);
+  
+  AliAODPidHF* pidObjp=new AliAODPidHF();
+  AliAODPidHF* pidObjK=new AliAODPidHF();
+  AliAODPidHF* pidObjpi=new AliAODPidHF();
   
   if(whichCuts==0 ){
     // PID
@@ -108,12 +108,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     // 1. kaon
     Double_t sigmasK[5]={4.,1.,1.,4.,2.};
     pidObjK->SetSigma(sigmasK);
-//    pidObjK->SetAsym(kTRUE);
+    //    pidObjK->SetAsym(kTRUE);
     pidObjK->SetMatch(1);
     pidObjK->SetTPC(kTRUE);
     pidObjK->SetTOF(kTRUE);
-//    Double_t plimK[2]={0.5,0.8};
-//    pidObjK->SetPLimit(plimK,2);
+    //    Double_t plimK[2]={0.5,0.8};
+    //    pidObjK->SetPLimit(plimK,2);
     pidObjK->SetTOFdecide(kTRUE);
     
     //2. pion
@@ -125,17 +125,17 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     pidObjpi->SetSigma(sigmaspi);
     //  pidObjpi->SetTOFdecide(kTRUE);
     pidObjpi->SetTOFdecide(kTRUE);
-
+    
     // 3. proton
     AliAODPidHF* pidObjp=new AliAODPidHF();
     Double_t sigmasp[5]={4.,1.,1.,4.,2.};
     pidObjp->SetSigma(sigmasp);
-//    pidObjp->SetAsym(kTRUE);
+    //    pidObjp->SetAsym(kTRUE);
     pidObjp->SetMatch(1);
     pidObjp->SetTPC(kTRUE);
     pidObjp->SetTOF(kTRUE);
-//    Double_t plimp[2]={1.,2.};
-//    pidObjp->SetPLimit(plimp,2);
+    //    Double_t plimp[2]={1.,2.};
+    //    pidObjp->SetPLimit(plimp,2);
     pidObjp->SetTOFdecide(kTRUE);
     
     cuts->SetPidprot(pidObjp);
@@ -170,22 +170,22 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
-    //event selection
-    cuts->SetUsePhysicsSelection(kTRUE);
-    cuts->SetTriggerClass("");
-    cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
-    cuts->SetMinCentrality(minc);
-    cuts->SetMaxCentrality(maxc);
-    cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
-
-    cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
-    cuts->SetMaxVtxZ(10.);
-    cuts->SetCutOnzVertexSPD(3);
-
-    cout<<"This is the object I'm going to save:"<<endl;
-    cuts->SetName(nameCuts.Data());
-    cuts->SetTitle(nameCuts.Data());
-    cuts->PrintAll();
-    
-    return cuts;
+  //event selection
+  cuts->SetUsePhysicsSelection(kTRUE);
+  cuts->SetTriggerClass("");
+  cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  cuts->SetMinCentrality(minc);
+  cuts->SetMaxCentrality(maxc);
+  cuts->SetUseCentrality(AliRDHFCuts::kCentV0M); //kCentOff,kCentV0M,kCentTRK,kCentTKL,kCentCL1,kCentInvalid
+  
+  cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
+  cuts->SetMaxVtxZ(10.);
+  cuts->SetCutOnzVertexSPD(3);
+  
+  cout<<"This is the object I'm going to save:"<<endl;
+  cuts->SetName(nameCuts.Data());
+  cuts->SetTitle(nameCuts.Data());
+  cuts->PrintAll();
+  
+  return cuts;
 }

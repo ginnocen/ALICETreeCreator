@@ -39,7 +39,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi_pp(Int_t whichCuts=0, TString nameCut
     Float_t ptlimits[2]={1.,1009.};
     Float_t cutsArrayDstoKKpi[20]={0.09,0.3,0.3,0.,0.,0.005,0.06,0.,0.,0.7,0.,1000.,0.02,0.1,-1.,1.,0.,0.,0.,-1.};
     //Used values for Ds analysis taken at 05/08/19 but tightened InvMass cut (0.3->0.09)
-
+    
     cuts->SetMinPtCandidate(0.);
     cuts->SetPtBins(nptbins,ptlimits);
     cuts->SetCuts(20,cutsArrayDstoKKpi);
@@ -84,7 +84,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi_pp(Int_t whichCuts=0, TString nameCut
     anacutsval=new Float_t*[nvars];
     
     for(Int_t ic=0;ic<nvars;ic++){anacutsval[ic]=new Float_t[nptbins];}
-
+    
     //0 inv. mass [GeV]
     for(Int_t ipt=0;ipt<nptbins;ipt++) { anacutsval[0][ipt]=0.35; }
     //1 pTK [GeV/c]

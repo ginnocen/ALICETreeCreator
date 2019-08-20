@@ -42,7 +42,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     //  - cosThetaPoint 0.7 -> 0.85 for pT<5
     //  - PID 4sigma to 3sigma
     //  - Turn on decLen (0.02)
-
+    
     cuts->SetMinPtCandidate(0.);
     cuts->SetPtBins(nptbins,ptlimits);
     cuts->SetCuts(20,cutsArrayDstoKKpi);
@@ -64,7 +64,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     
   }
   else if(whichCuts==1){
-        
+    
     const Int_t nptbins=10;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];

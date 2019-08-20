@@ -15,7 +15,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   
   cutsObj->GetPidHF()->SetCombDetectors(AliAODPidHF::kTPCTOF);
   for (Int_t ispecies=0;ispecies<AliPID::kSPECIES;++ispecies)
-  cutsObj->SetPIDThreshold(static_cast<AliPID::EParticleType>(ispecies),threshold);
+    cutsObj->SetPIDThreshold(static_cast<AliPID::EParticleType>(ispecies),threshold);
   cutsObj->GetPidHF()->SetUseCombined(kTRUE);
   cutsObj->GetPidHF()->SetUpCombinedPID();
   return;
@@ -129,7 +129,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
   //Not enabled for now because it is missing in AliRDHFCuts
   //Also not sure if this is used for Lc in pp
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-
+  
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");

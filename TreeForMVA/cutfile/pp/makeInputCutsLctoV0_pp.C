@@ -79,8 +79,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[2]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-       0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0,
-       0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0};
+      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0,
+      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0};
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
     for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -181,7 +181,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   //Not enabled for now because it is missing in AliRDHFCuts
   //Also not sure if this is used for Lc in pp
   cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-
+  
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);
   cutsLctoV0->SetTriggerClass("");

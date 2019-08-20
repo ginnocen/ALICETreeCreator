@@ -94,7 +94,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[11][1]=0.0375; // dca cut
   rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
   //Used values for Lc->pKpi analysis taken at 20/08/19 but tightened InvMass cut to 0.07
-
+  
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
   cuts->SetMinPtCandidate(4.);
   

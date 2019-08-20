@@ -15,7 +15,7 @@ void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   
   cutsObj->GetPidHF()->SetCombDetectors(AliAODPidHF::kTPCTOF);
   for (Int_t ispecies=0;ispecies<AliPID::kSPECIES;++ispecies)
-  cutsObj->SetPIDThreshold(static_cast<AliPID::EParticleType>(ispecies),threshold);
+    cutsObj->SetPIDThreshold(static_cast<AliPID::EParticleType>(ispecies),threshold);
   cutsObj->GetPidHF()->SetUseCombined(kTRUE);
   cutsObj->GetPidHF()->SetUpCombinedPID();
   return;
@@ -51,7 +51,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi_pp(Int_t whichCuts=0, TString nameCut
   cuts->SetPtBins(nptbins,ptlimits);
   Float_t cutsArrayLctopKpi[13]={0.06,0.3,0.3,0.,0.,0.,0.04,0.,0.,0.8,0.,0.05,0.3};
   //Used values for Lc->pKpi analysis taken at 05/08/19 but tightened InvMass cut to 0.06
-
+  
   cuts->SetMinPtCandidate(1.);
   cuts->SetCuts(13,cutsArrayLctopKpi);
   
@@ -130,7 +130,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi_pp(Int_t whichCuts=0, TString nameCut
   //Not enabled for now because it is missing in AliRDHFCuts
   //Also not sure if this is used for Lc in pp
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
-
+  
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
   cuts->SetTriggerClass("");
