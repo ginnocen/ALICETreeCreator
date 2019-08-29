@@ -3,7 +3,6 @@
 #include <AliRDHFCutsD0toKpi.h>
 #include <AliRDHFCutsDstoKKpi.h>
 #include <AliRDHFCutsDplustoKpipi.h>
-#include <AliRDHFCutsBPlustoD0Pi.h>
 #include <AliRDHFCutsLctopKpi.h>
 #include <AliRDHFCutsLctoV0.h>
 #include <TClonesArray.h>
@@ -60,10 +59,10 @@ void makeCutsTreeCreator_pp()
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Bplus filtering cuts");
-  AliRDHFCutsBPlustoD0Pi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi_pp(0,"BplustoD0piFilteringCuts",minCent,maxCent);
+  AliRDHFCutsD0toKpi *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi_pp(0,"BplustoD0piFilteringCuts",minCent,maxCent);
   Printf("\n\n");
   Printf("Bplus analysis cuts");
-  AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi_pp(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
+  AliRDHFCutsD0toKpi *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi_pp(1,"BplustoD0piAnalysisCuts",minCent,maxCent);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctoV0bachelor filtering cuts");

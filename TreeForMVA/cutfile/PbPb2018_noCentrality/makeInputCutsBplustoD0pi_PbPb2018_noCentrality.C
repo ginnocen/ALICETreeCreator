@@ -1,33 +1,45 @@
 #include <Riostream.h>
 #include <TFile.h>
-#include "AliRDHFCutsBPlustoD0Pi.h"
+#include <AliRDHFCutsD0toKpi.h>
 #include <TClonesArray.h>
 #include <TParameter.h>
-#include <ctime>
-#include <time.h>
-#include <TSystem.h>
-
-void setFilterBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi);
-void setAnalysisBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi);
 
 /*
- whichCuts=0, nameCuts="D0toKpiFilteringCuts"
- whichCuts=1, nameCuts="D0toKpiAnalysisCuts"
+ whichCuts=0, nameCuts="BplustoD0piFilteringCuts"
+ whichCuts=1, nameCuts="BplustoD0piAnalysisCuts"
  */
 
-AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts="BplustoD0piFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE){
+
+//setting my cut values
+//cuts order
+//     printf("    |M-MD0| [GeV]    < %f\n",fD0toKpiCuts[0]);
+//     printf("    dca    [cm]  < %f\n",fD0toKpiCuts[1]);
+//     printf("    cosThetaStar     < %f\n",fD0toKpiCuts[2]);
+//     printf("    pTK     [GeV/c]    > %f\n",fD0toKpiCuts[3]);
+//     printf("    pTpi    [GeV/c]    > %f\n",fD0toKpiCuts[4]);
+//     printf("    |d0K|  [cm]  < %f\n",fD0toKpiCuts[5]);
+//     printf("    |d0pi| [cm]  < %f\n",fD0toKpiCuts[6]);
+//     printf("    d0d0  [cm^2] < %f\n",fD0toKpiCuts[7]);
+//     printf("    cosThetaPoint    > %f\n",fD0toKpiCuts[8]);
+//     printf("    |cosThetaPointXY| < %f\n",fD0toKpiCuts[9]);
+//     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
+
+
+AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts="BplustoD0piFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+{
   
-  AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi = new AliRDHFCutsBPlustoD0Pi();
-  RDHFBPlustoD0Pi->SetName(nameCuts.Data());
-  RDHFBPlustoD0Pi->SetTitle(nameCuts.Data());
+  AliRDHFCutsD0toKpi* cuts=new AliRDHFCutsD0toKpi();
+  cuts->SetName(nameCuts.Data());
+  cuts->SetTitle(nameCuts.Data());
   
-  //UPDATE 07/05/19, use the same track quality cuts for filtering and analysis cuts
+  //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
   AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
   esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
+  //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(70);
-  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
+  esdTrackCuts->SetMinNClustersTPC(50);
+  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
   esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetPtRange(0.5,1.e10);
@@ -35,454 +47,331 @@ AliRDHFCutsBPlustoD0Pi * makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nam
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+  cuts->AddTrackCuts(esdTrackCuts);
   
-  AliESDtrackCuts* esdTrackCutsBplusPion=new AliESDtrackCuts();
-  esdTrackCutsBplusPion->SetRequireSigmaToVertex(kFALSE);
-  esdTrackCutsBplusPion->SetRequireTPCRefit(kTRUE);
-  esdTrackCutsBplusPion->SetRequireITSRefit(kTRUE);
-  esdTrackCutsBplusPion->SetMinNClustersTPC(70);
-  esdTrackCutsBplusPion->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
-  esdTrackCutsBplusPion->SetEtaRange(-0.8,0.8);
-  esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
-  esdTrackCutsBplusPion->SetPtRange(0.5,1.e10);
-  esdTrackCutsBplusPion->SetMaxDCAToVertexXY(1.);
-  esdTrackCutsBplusPion->SetMaxDCAToVertexZ(1.);
-  esdTrackCutsBplusPion->SetMinDCAToVertexXY(0.);
-  esdTrackCutsBplusPion->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-  
-  RDHFBPlustoD0Pi->AddTrackCuts(esdTrackCuts);
-  RDHFBPlustoD0Pi->AddTrackCutsSoftPi(esdTrackCutsBplusPion);
+  cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
   if(whichCuts==0){
-    //Bplus pt bins
-    const Int_t nptbinsBplus=1;
-    Float_t* ptlimitsBplus;
-    ptlimitsBplus=new Float_t[nptbinsBplus+1];
-    ptlimitsBplus[0]=0.;
-    ptlimitsBplus[1]=1000000.;
-    RDHFBPlustoD0Pi->SetPtBins(nptbinsBplus+1,ptlimitsBplus);
+    const Int_t nptbinsD0=2;
+    Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
+    Float_t** cutsArrayD0toKpi;
+    cutsArrayD0toKpi=new Float_t*[11];
+    for(Int_t iv=0;iv<11;iv++){
+      cutsArrayD0toKpi[iv]=new Float_t[nptbinsD0];
+    }
+    //Used values for D0 analysis taken at 28/08/19 but tightened InvMass cut (0.25/0.4->0.15/0.2)
+    //0-5
+    cutsArrayD0toKpi[0][0]=0.15;  //D0 inv mass window
+    cutsArrayD0toKpi[1][0]=999999.;
+    cutsArrayD0toKpi[2][0]=1.1;
+    cutsArrayD0toKpi[3][0]=0.;
+    cutsArrayD0toKpi[4][0]=0.;
+    cutsArrayD0toKpi[5][0]=999999.;
+    cutsArrayD0toKpi[6][0]=999999.;
+    cutsArrayD0toKpi[7][0]=-0.00005;  // d0xd0
+    cutsArrayD0toKpi[8][0]=0.8;
+    cutsArrayD0toKpi[9][0]=0.8;
+    cutsArrayD0toKpi[10][0]=0.;
+    //5-inf
+    cutsArrayD0toKpi[0][1]=0.2;  //D0 inv mass window
+    cutsArrayD0toKpi[1][1]=999999.;
+    cutsArrayD0toKpi[2][1]=1.1;
+    cutsArrayD0toKpi[3][1]=0.;
+    cutsArrayD0toKpi[4][1]=0.;
+    cutsArrayD0toKpi[5][1]=999999.;
+    cutsArrayD0toKpi[6][1]=999999.;
+    cutsArrayD0toKpi[7][1]=0.0001; // d0xd0
+    cutsArrayD0toKpi[8][1]=0.7;
+    cutsArrayD0toKpi[9][1]=0.7;
+    cutsArrayD0toKpi[10][1]=0.;
     
-    // D0 with D0 pt bins
-    const Int_t nptbinsD0forD0ptbin=1;
-    Float_t* ptbinsD0forD0ptbin;
-    ptbinsD0forD0ptbin =new Float_t[nptbinsD0forD0ptbin+1];
-    ptbinsD0forD0ptbin[0]=0.;
-    ptbinsD0forD0ptbin[1]=9999999.;
-    RDHFBPlustoD0Pi->SetNPtBinsD0forD0ptbin(nptbinsD0forD0ptbin);
-    RDHFBPlustoD0Pi->SetPtBinsD0forD0ptbin(nptbinsD0forD0ptbin+1,ptbinsD0forD0ptbin);
+    //cuts->SetStandardCutsPbPb2011();
+    cuts->SetMinPtCandidate(1.);
+    cuts->SetUseSpecialCuts(kFALSE);
+    cuts->SetPtBins(nptbinsD0+1,ptlimitsD0);
+    cuts->SetCuts(11,nptbinsD0,cutsArrayD0toKpi);
     
-    //Ds sets cuts->SetStandardCutsPbPb2010();, TODO: Check what is set
+    //pid settings
+    AliAODPidHF* pidObj=new AliAODPidHF();
+    //pidObj->SetName("pid4D0");
+    Int_t mode=1;
+    const Int_t nlims=2;
+    Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
+    Bool_t compat=kTRUE; //effective only for this mode
+    Bool_t asym=kTRUE;
+    Double_t sigmas[5]={3.,3.,3.,3.,3.}; //to be checked and to be modified with new implementation of setters by Rossella
+    pidObj->SetAsym(asym);// if you want to use the asymmetric bands in TPC
+    pidObj->SetMatch(mode);
+    pidObj->SetPLimit(plims,nlims);
+    pidObj->SetSigma(sigmas);
+    pidObj->SetCompat(compat);
+    pidObj->SetTPC(kTRUE);
+    pidObj->SetTOF(kTRUE);
     
-    RDHFBPlustoD0Pi->SetMinPtCandidate(ptlimitsBplus[0]);
-    RDHFBPlustoD0Pi->SetUseTrackSelectionWithFilterBits(kFALSE);
+    pidObj->SetPCompatTOF(2.);
+    pidObj->SetSigmaForTPCCompat(3.);
+    pidObj->SetSigmaForTOFCompat(3.);
     
-    setFilterBplusCuts(RDHFBPlustoD0Pi);
+    pidObj->SetOldPid(kFALSE);
+    
+    cuts->SetLowPt(kFALSE);
+    cuts->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
+    
+    cuts->SetPidHF(pidObj);
     
     Bool_t pidflag=usePID;
-    RDHFBPlustoD0Pi->SetUsePID(pidflag);
+    cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
-  } else if(whichCuts==1){
+  }
+  else if(whichCuts==1){
     
-    //main BPlus pt bins
-    const Int_t nptbins=31;
+    const Int_t nvars=11;
+    const Int_t nptbins=32;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
     ptbins[0]=0.;
-    ptbins[1]=1.;
-    ptbins[2]=2.;
-    ptbins[3]=3.;
-    ptbins[4]=4.;
-    ptbins[5]=5.;
-    ptbins[6]=6.;
-    ptbins[7]=7.;
-    ptbins[8]=8.;
-    ptbins[9]=9.;
-    ptbins[10]=10.;
-    ptbins[11]=11.;
-    ptbins[12]=12.;
-    ptbins[13]=13.;
-    ptbins[14]=14.;
-    ptbins[15]=15.;
-    ptbins[16]=16.;
-    ptbins[17]=17.;
-    ptbins[18]=18.;
-    ptbins[19]=19.;
-    ptbins[20]=20.;
-    ptbins[21]=21.;
-    ptbins[22]=22.;
-    ptbins[23]=23.;
-    ptbins[24]=24.;
-    ptbins[25]=25.;
-    ptbins[26]=26.;
-    ptbins[27]=27.;
-    ptbins[28]=28.;
-    ptbins[29]=29.;
-    ptbins[30]=30.;
-    ptbins[31]=9999999.;
-    RDHFBPlustoD0Pi->SetPtBins(nptbins+1,ptbins);
+    ptbins[1]=0.5;
+    ptbins[2]=1.;
+    ptbins[3]=1.5;
+    ptbins[4]=2.;
+    ptbins[5]=2.25;
+    ptbins[6]=2.5;
+    ptbins[7]=2.75;
+    ptbins[8]=3.;
+    ptbins[9]=3.25;
+    ptbins[10]=3.5;
+    ptbins[11]=3.75;
+    ptbins[12]=4.;
+    ptbins[13]=4.5;
+    ptbins[14]=5.;
+    ptbins[15]=5.5;
+    ptbins[16]=6.;
+    ptbins[17]=6.5;
+    ptbins[18]=7.;
+    ptbins[19]=7.5;
+    ptbins[20]=8.;
+    ptbins[21]=8.5;
+    ptbins[22]=9.;
+    ptbins[23]=10.;
+    ptbins[24]=12.;
+    ptbins[25]=14.;
+    ptbins[26]=16.;
+    ptbins[27]=20.;
+    ptbins[28]=24.;
+    ptbins[29]=36.;
+    ptbins[30]=50.;
+    ptbins[31]=100.;
+    ptbins[32]=9999.;
     
-    // D0 with D0 pt bins
-    const Int_t nptbinsD0forD0ptbin=1;
-    Float_t* ptbinsD0forD0ptbin;
-    ptbinsD0forD0ptbin =new Float_t[nptbinsD0forD0ptbin+1];
-    ptbinsD0forD0ptbin[0]=0.;
-    ptbinsD0forD0ptbin[1]=9999999.;
-    RDHFBPlustoD0Pi->SetNPtBinsD0forD0ptbin(nptbinsD0forD0ptbin);
-    RDHFBPlustoD0Pi->SetPtBinsD0forD0ptbin(nptbinsD0forD0ptbin+1,ptbinsD0forD0ptbin);
+    cuts->SetPtBins(nptbins+1,ptbins);
     
-    RDHFBPlustoD0Pi->SetMinPtCandidate(ptbins[0]);
-    RDHFBPlustoD0Pi->SetMaxPtCandidate(ptbins[nptbins]);
+    const Int_t nvary=3;
+    //Used values for D0 analysis taken at 28/08/19
+    Float_t varyd0xd0[nptbins][nvary]={{-35000.*1E-8,-40000.*1E-8,-15000.*1E-8},/* pt<0.5*/
+      {-35000.*1E-8,-40000.*1E-8,-15000.*1E-8},/* 0.5<pt<1*/
+      {-30000.*1E-8,-36000.*1E-8,-30000.*1E-8},/* 1<pt<1.5 */
+      {-30000.*1E-8,-36000.*1E-8,-30000.*1E-8},/* 1.5<pt<2 */
+      {-30000.*1E-8,-36000.*1E-8,-36000.*1E-8},/* 2<pt<2.25 */
+      {-28000.*1E-8,-31000.*1E-8,-36000.*1E-8},/* 2.25<pt<2.5 */
+      {-28000.*1E-8,-31000.*1E-8,-36000.*1E-8},/* 2.5<pt<2.75 */
+      {-28000.*1E-8,-31000.*1E-8,-36000.*1E-8},/* 2.75<pt<3 */
+      {-28000.*1E-8,-31000.*1E-8,-36000.*1E-8},/* 3<pt<3.25 */
+      {-25000.*1E-8,-28000.*1E-8,-36000.*1E-8},/* 3.25<pt<3.5 */
+      {-25000.*1E-8,-28000.*1E-8,-36000.*1E-8},/* 3.5<pt<3.75 */
+      {-25000.*1E-8,-28000.*1E-8,-36000.*1E-8},/* 3.75<pt<4 */
+      {-12000.*1E-8,-18000.*1E-8,-36000.*1E-8},/* 4<pt<4.5 */
+      {-12000.*1E-8,-18000.*1E-8,-36000.*1E-8},/* 4.5<pt<5 */
+      {-5000.*1E-8,-15000.*1E-8,-23000.*1E-8},/* 5<pt<5.5 */
+      {-5000.*1E-8,-15000.*1E-8,-23000.*1E-8},/* 5.5<pt<6 */
+      {-5000.*1E-8,-10000.*1E-8,-23000.*1E-8},/* 6<pt<6.5 */
+      {-5000.*1E-8,-10000.*1E-8,-23000.*1E-8},/* 6.5<pt<7 */
+      {-5000.*1E-8,-10000.*1E-8,-23000.*1E-8},/* 7<pt<7.5 */
+      {-5000.*1E-8,-10000.*1E-8,-23000.*1E-8},/* 7.5<pt<8 */
+      {-0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 8<pt<8.5 */
+      {-0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 8.5<pt<9*/
+      {-0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 9<pt<10*/
+      {-0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 10<pt<12 */
+      {0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 12<pt<14 */
+      {0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 14<pt<16 */
+      {0.*1E-8,-5000.*1E-8,-10000.*1E-8},/* 16<pt<20 */
+      {5000.*1E-8,-5000.*1E-8,-5000.*1E-8},/* 20<pt<24 */
+      {5000.*1E-8,-5000.*1E-8,0.*1E-8},/* 24<pt<36 */
+      {5000.*1E-8,-5000.*1E-8,0.*1E-8},/* 36<pt<50 */
+      {5000.*1E-8,-5000.*1E-8,0.*1E-8},/* 50<pt<100 */
+      {5000.*1E-8,-5000.*1E-8,0.*1E-8}};/* pt>100 */
     
-    setAnalysisBplusCuts(RDHFBPlustoD0Pi);
+    
+    Float_t varyCosPoint[nptbins][nvary]={{0.75,0.80,0.80},    /* 0<pt<0.5 */
+      {0.75,0.80,0.9},    /* 0.5<pt<1*/
+      {0.75,0.80,0.9},    /* 1<pt<1.5 */
+      {0.75,0.80,0.9},    /* 1.5<pt<2 */
+      {0.92,0.94,0.92},    /* 2<pt<2.25 */
+      {0.92,0.94,0.92},    /* 2.25<pt<2.5 */
+      {0.92,0.94,0.92},    /* 2.5<pt<2.75 */
+      {0.92,0.94,0.92},    /* 2.75<pt<3 */
+      {0.92,0.94,0.92},    /* 3<pt<3.25 */
+      {0.90,0.92,0.92},    /* 3.25<pt<3.5 */
+      {0.90,0.92,0.92},    /* 3.5<pt<3.75 */
+      {0.90,0.92,0.92},    /* 3.75<pt<4 */
+      {0.85,0.90,0.92},    /* 4<pt<4.5 */
+      {0.85,0.90,0.92},    /* 4.5<pt<5 */
+      {0.88,0.88,0.90},    /* 5<pt<5.5 */
+      {0.88,0.88,0.90},    /* 5.5<pt<6 */
+      {0.83,0.85,0.90},    /* 6<pt<6.5 */
+      {0.83,0.85,0.90},    /* 6.5<pt<7 */
+      {0.83,0.85,0.90},    /* 7<pt<7.5 */
+      {0.83,0.85,0.90},    /* 7.5<pt<8 */
+      {0.8,0.83,0.90},/* 8<pt<8.5 */
+      {0.8,0.83,0.90},/* 8.5<pt<9 */
+      {0.8,0.83,0.90},/* 9<pt<10 */
+      {0.8,0.83,0.90},/* 10<pt<12 */
+      {0.78,0.8,0.90},/* 12<pt<14 */
+      {0.78,0.8,0.90},/* 14<pt<16 */
+      {0.78,0.8,0.90},/* 16<pt<20 */
+      {0.76,0.78,0.90},/* 20<pt<24 */
+      {0.75,0.8,0.90},/*24<pt<36 */
+      {0.75,0.8,0.90},/* 36<pt<50 */
+      {0.75,0.8,0.90},/* 50<pt<100 */
+      {0.75,0.8,0.90}};/* pt>100 */
+    
+    
+    Float_t d0MeasMinusExpCut[nptbins]={1.,/* 0<pt<0.5*/
+      1.,/* 0.5<pt<1*/
+      1.,/* 1<pt<1.5*/
+      1.,/* 1.5<pt<2*/
+      1.,/*2<pt<2.25*/
+      1.,/*2.25<pt<2.5*/
+      1.,/*2.5<pt<2.75*/
+      1.,/*2.75<pt<3*/
+      1.,/*3<pt<3.25*/
+      1.,/*3.25<pt<3.5*/
+      1.,/*3.5<pt<3.75*/
+      1.,/*3.75<pt<4*/
+      1.5,/*4<pt<4.5*/
+      1.5,/*4.5<pt<5*/
+      1.5,/*5<pt<5.5*/
+      1.5,/*5.5<pt<6*/
+      1.5,/*6<pt<6.5*/
+      1.5,/*6.5<pt<7*/
+      1.5,/*7<pt<7.5*/
+      1.5,/*7.5<pt<8*/
+      1.5,/*8<pt<8.5*/
+      1.5,/*8.5<pt<9*/
+      1.5,/*9<pt<10*/
+      1.5,/*10<pt<12*/
+      2.,/*12<pt<14*/
+      2.,/*14<pt<16*/
+      2.,/*16<pt<20*/
+      2.,/*20<pt<24*/
+      2.,/*24<pt<36*/
+      2.,/*36<pt<50*/
+      2.,/*50<pt<100*/
+      2.,/*>100*/};
+    
+    
+    Int_t varycuts = 22;
+    Int_t vcd0xd0=varycuts/10;
+    Int_t vccospoint=varycuts%10;
+    Float_t cutsMatrixD0toKpiStand[nptbins][nvars]={{0.400,400.*1E-4,0.6,0.5,0.5,1000.*1E-4,1000.*1E-4,varyd0xd0[0][vcd0xd0],varyCosPoint[0][vccospoint],0.99,7.},/* 0<pt<0.5*/
+      {0.400,400.*1E-4,0.6,0.5,0.5,1000.*1E-4,1000.*1E-4,varyd0xd0[1][vcd0xd0],varyCosPoint[1][vccospoint],0.993,7.},/* 0.5<pt<1*/
+      {0.400,400.*1E-4,0.8,0.5,0.5,1000.*1E-4,1000.*1E-4,varyd0xd0[2][vcd0xd0],varyCosPoint[2][vccospoint],0.991,4.},/* 1<pt<1.5 */
+      {0.400,400.*1E-4,0.8,0.5,0.5,1000.*1E-4,1000.*1E-4,varyd0xd0[3][vcd0xd0],varyCosPoint[3][vccospoint],0.991,4.},/* 1.5<pt<2 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[4][vcd0xd0],varyCosPoint[4][vccospoint],0.997,6.},/* 2<pt<2.25 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[5][vcd0xd0],varyCosPoint[5][vccospoint],0.997,6.},/* 2.25<pt<2.5 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[6][vcd0xd0],varyCosPoint[6][vccospoint],0.997,6.},/* 2.5<pt<2.75 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[7][vcd0xd0],varyCosPoint[7][vccospoint],0.997,6.},/* 2.75<pt<3 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[8][vcd0xd0],varyCosPoint[8][vccospoint],0.997,6.},/* 3<pt<3.25 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[9][vcd0xd0],varyCosPoint[9][vccospoint],0.997,6.},/* 3.25<pt<3.5 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[10][vcd0xd0],varyCosPoint[10][vccospoint],0.997,6.},/* 3.5<pt<3.75 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[11][vcd0xd0],varyCosPoint[11][vccospoint],0.997,6.},/* 3.75<pt<4 */
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[12][vcd0xd0],varyCosPoint[12][vccospoint],0.997,7.},/* 4<pt<4.5*/
+      {0.400,300.*1E-4,0.8,0.6,0.6,1000.*1E-4,1000.*1E-4,varyd0xd0[13][vcd0xd0],varyCosPoint[13][vccospoint],0.997,7.},/* 4.5<pt<5*/
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[14][vcd0xd0],varyCosPoint[14][vccospoint],0.998,7.},/* 5<pt<5.5 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[15][vcd0xd0],varyCosPoint[15][vccospoint],0.998,7.},/* 5.5<pt<6 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[16][vcd0xd0],varyCosPoint[16][vccospoint],0.998,7.},/* 6<pt<6.5 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[17][vcd0xd0],varyCosPoint[17][vccospoint],0.998,7.},/* 6.5<pt<7 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[18][vcd0xd0],varyCosPoint[18][vccospoint],0.998,7.},/* 7<pt<7.5 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[19][vcd0xd0],varyCosPoint[19][vccospoint],0.998,7.},/* 7.5<pt<8 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[20][vcd0xd0],varyCosPoint[20][vccospoint],0.998,6.},/* 8<pt<8.5 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[21][vcd0xd0],varyCosPoint[21][vccospoint],0.998,6.},/* 8.5<pt<9 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[22][vcd0xd0],varyCosPoint[22][vccospoint],0.998,6.},/* 9<pt<10 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[23][vcd0xd0],varyCosPoint[23][vccospoint],0.998,5.},/* 10<pt<12 */
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[24][vcd0xd0],varyCosPoint[24][vccospoint],0.998,5.},/*12< pt <14*/
+      {0.400,300.*1E-4,0.8,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[25][vcd0xd0],varyCosPoint[25][vccospoint],0.998,5.},/*14< pt <16*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[26][vcd0xd0],varyCosPoint[26][vccospoint],0.995,5.},/*16< pt <20*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[27][vcd0xd0],varyCosPoint[27][vccospoint],0.995,5.},/*20< pt <24*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[28][vcd0xd0],varyCosPoint[28][vccospoint],0.995,5.},/*24< pt <36*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[29][vcd0xd0],varyCosPoint[29][vccospoint],0.995,5.},/*36< pt <50*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[30][vcd0xd0],varyCosPoint[30][vccospoint],0.995,5.},/*50< pt <100*/
+      {0.400,400.*1E-4,1.0,0.7,0.7,1000.*1E-4,1000.*1E-4,varyd0xd0[31][vcd0xd0],varyCosPoint[31][vccospoint],0.995,5.}};/* pt > 100*/
+    
+    Float_t **cutsMatrixTransposeStand=new Float_t*[nvars];
+    for(Int_t iv=0;iv<nvars;iv++)cutsMatrixTransposeStand[iv]=new Float_t[nptbins];
+    
+    for (Int_t ibin=0;ibin<nptbins;ibin++){
+      for (Int_t ivar = 0; ivar<nvars; ivar++){
+        cutsMatrixTransposeStand[ivar][ibin]=cutsMatrixD0toKpiStand[ibin][ivar];
+        //printf("cutsMatrixD0toKpi[%d][%d] = %f\n",ibin, ivar,cutsMatrixD0toKpiStand[ibin][ivar]);
+      }
+    }
+    
+    cuts->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
+    cuts->Setd0MeasMinusExpCut(nptbins,d0MeasMinusExpCut);
+    
+    //pid settings
+    AliAODPidHF* pidObj=new AliAODPidHF();
+    //pidObj->SetName("pid4D0");
+    Int_t mode=1;
+    const Int_t nlims=2;
+    Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
+    Bool_t compat=kTRUE; //effective only for this mode
+    Bool_t asym=kTRUE;
+    Double_t sigmas[5]={2.,1.,0.,3.,0.}; //to be checked and to be modified with new implementation of setters by Rossella
+    pidObj->SetAsym(asym);// if you want to use the asymmetric bands in TPC
+    pidObj->SetMatch(mode);
+    pidObj->SetPLimit(plims,nlims);
+    pidObj->SetSigma(sigmas);
+    pidObj->SetCompat(compat);
+    pidObj->SetTPC(kTRUE);
+    pidObj->SetTOF(kTRUE);
+    
+    pidObj->SetPCompatTOF(2.);
+    pidObj->SetSigmaForTPCCompat(3.);
+    pidObj->SetSigmaForTOFCompat(3.);
+    
+    pidObj->SetOldPid(kFALSE);
+    
+    cuts->SetLowPt(kFALSE);
+    cuts->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
+    
+    //RDHFD0toKpi->SetMaximumPforPID(4.);
+    cuts->SetPidHF(pidObj);
+    
+    //Do not recalculate the vertex
+    cuts->SetUseSpecialCuts(kFALSE);
     
     Bool_t pidflag=usePID;
-    RDHFBPlustoD0Pi->SetUsePID(pidflag);
+    cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
   //Do not recalculate the vertex
-  RDHFBPlustoD0Pi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
+  cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //event selection
-  RDHFBPlustoD0Pi->SetUsePhysicsSelection(kTRUE);
-  RDHFBPlustoD0Pi->SetTriggerClass("");
-  RDHFBPlustoD0Pi->SetTriggerMask(AliVEvent::kINT7);
-  RDHFBPlustoD0Pi->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
-  RDHFBPlustoD0Pi->SetMaxVtxZ(10.);
-  RDHFBPlustoD0Pi->SetCutOnzVertexSPD(3);
+  cuts->SetUsePhysicsSelection(kTRUE);
+  cuts->SetTriggerClass("");
+  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
+  cuts->SetMaxVtxZ(10.);
+  cuts->SetCutOnzVertexSPD(3);
   
   cout<<"This is the object I'm going to save:"<<endl;
-  RDHFBPlustoD0Pi->SetName(nameCuts.Data());
-  RDHFBPlustoD0Pi->SetTitle(nameCuts.Data());
-  RDHFBPlustoD0Pi->PrintAll();
+  cuts->SetName(nameCuts.Data());
+  cuts->SetTitle(nameCuts.Data());
+  cuts->PrintAll();
   
-  return RDHFBPlustoD0Pi;
-}
-
-void setFilterBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi){
-  //Partly changed Lennarts filtering cuts (commented ones), to be discussed with him
-  //For now same as *_pp.C
-  
-  //---------------------------------------------------------------
-  //
-  //  SET BASIC DAUGHTER CUTS
-  //
-  // --------------------------------------------------------------
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaD0FirstDaughter(0.8);
-  Bool_t bHardSelectionArrayITSD0FirstDaughter[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSD0FirstDaughter(bHardSelectionArrayITSD0FirstDaughter);
-  Bool_t bSoftSelectionArrayITSD0FirstDaughter[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSD0FirstDaughter(bSoftSelectionArrayITSD0FirstDaughter);
-  RDHFBPlustoD0Pi->SetNSoftITSCutD0FirstDaughter(1);
-  
-  //RDHFBPlustoD0Pi->SetMinITSNclsD0FirstDaughter(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsD0FirstDaughter(50);//70);
-  RDHFBPlustoD0Pi->SetUseITSRefitD0FirstDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitD0FirstDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitD0FirstDaughter(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitD0FirstDaughter(0);
-  RDHFBPlustoD0Pi->SetMinPtD0FirstDaughter(0.3);
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaD0SecondDaughter(0.8);
-  Bool_t bHardSelectionArrayITSD0SecondDaughter[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSD0SecondDaughter(bHardSelectionArrayITSD0SecondDaughter);
-  Bool_t bSoftSelectionArrayITSD0SecondDaughter[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSD0SecondDaughter(bSoftSelectionArrayITSD0SecondDaughter);
-  RDHFBPlustoD0Pi->SetNSoftITSCutD0SecondDaughter(1);
-  
-  //RDHFBPlustoD0Pi->SetMinITSNclsD0SecondDaughter(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsD0SecondDaughter(50);//70);
-  RDHFBPlustoD0Pi->SetUseITSRefitD0SecondDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitD0SecondDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitD0SecondDaughter(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitD0SecondDaughter(0);
-  RDHFBPlustoD0Pi->SetMinPtD0SecondDaughter(0.3);
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaBPlusPion(0.8);
-  Bool_t bHardSelectionArrayITSBPlusPion[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSBPlusPion(bHardSelectionArrayITSBPlusPion);
-  Bool_t bSoftSelectionArrayITSBPlusPion[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSBPlusPion(bSoftSelectionArrayITSBPlusPion);
-  RDHFBPlustoD0Pi->SetNSoftITSCutBPlusPion(1);
-  
-  //RDHFBPlustoD0Pi->SetMinITSNclsBPlusPion(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsBPlusPion(50);//70);
-  RDHFBPlustoD0Pi->SetUseITSRefitBPlusPion(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitBPlusPion(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitBPlusPion(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitBPlusPion(0);
-  RDHFBPlustoD0Pi->SetMinPtBPlusPion(0.3);
-  
-  //RDHFBPlustoD0Pi->SetMind0D0FirstDaughter(0.0); //is off, default=0
-  //RDHFBPlustoD0Pi->SetMind0D0SecondDaughter(0.0); //is off, default=0
-  //RDHFBPlustoD0Pi->SetMind0BPlusPion(0.0); //is off, default=0
-  
-  //---------------------------------------------------------------
-  //
-  //  SET CUTS
-  //
-  // --------------------------------------------------------------
-  
-  // we initialize the cuts by creating a cut array of which all cuts are set to zero and set to unused.
-  RDHFBPlustoD0Pi->InitializeCuts();
-  Int_t nptbins = RDHFBPlustoD0Pi->GetNPtBins();
-  Int_t nptbinsD0forD0ptbin = RDHFBPlustoD0Pi->GetNPtBinsD0forD0ptbin();
-  // We set cuts for all candidates
-  // These can have a large effect on the CPU time of the analysis
-  
-  for (int i = 0; i < nptbins; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.06); // 71 - "inv. mass width[GeV] D0";
-    //Needed to delete the hardcoded invariant mass window
-    RDHFBPlustoD0Pi->SetCut(39, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 1.1);  // 39 - "inv. mass width[GeV]" (Bplus);
-    //        RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
-    //        RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.05); // 71 - "dca [cm]";
-    //        RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 75 - "d0 BPlus [cm]";
-    //        RDHFBPlustoD0Pi->SetCut(49, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0); // 78 - "d0d0 [cm^2]";
-    //        RDHFBPlustoD0Pi->SetCut(56, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0); // 85 - "pseudoProperDecayTime";
-    //        RDHFBPlustoD0Pi->SetCut(64, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.96); // 93 - "pointing angle XY [Cos(theta)]";
-  }
-  
-  // We set cuts for all D0 candidates
-  // These can have a large effect on the CPU time of the analysis
-  
-  for (int i = 0; i < nptbinsD0forD0ptbin; ++i){
-    //A bit looser (0.07 vs 0.06) than when D0/D0bar issue is solved, to be on the safe side.
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07); // 00 - "inv. mass width[GeV]" (D0);
-    //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(2, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.7);  // 02 - "pointing angle [Cos(theta)]";
-    //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(3, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 03 - "dca [cm]";
-    //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(4, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 2.5);  // 04 - "Pt D0 [GeV/c]";
-    //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(12, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.5);  // 12 "angle between both daughters";
-    //        RDHFBPlustoD0Pi->SetCutD0forD0ptbin(17, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.0);  // 17 - "pseudoProperDecayTime";
-  }
-  //TODO: decide wrt to what D0 is doing for filtering:
-  // 00 - "inv. mass width[GeV]"         --> 0.4 instead of 0.7
-  // 02 - "pointing angle [Cos(theta)]"; --> 0. instead of 0.7
-  // 03 - "dca [cm]";                    --> 999999. instead of 0.02
-  // 04 - "Pt D0 [GeV/c]";               --> 0. instead of 2.5
-  // 12 "angle between both daughters";  --> 0. instead of 0.5
-  // 17 - "pseudoProperDecayTime";       --> No cut instead of 0.0 (can be negative?)
-  
-  //AliAODPidHF* pidObj = new AliAODPidHF();
-  //Int_t mode=1;
-  //Double_t priors[5]={0.01,0.001,0.3,0.3,0.3};
-  //pidObj->SetPriors(priors,5);
-  //pidObj->SetMatch(mode);
-  //pidObj->SetSigma(0,3); // TPC
-  //pidObj->SetSigma(3,3); // TOF
-  //pidObj->SetTPC(kTRUE);
-  //pidObj->SetTOF(kTRUE);
-  //pidObj->SetMaxTrackMomForCombinedPID(3.);
-  //RDHFBPlustoD0Pi->SetPidHF(pidObj);
-  
-  //RDHFBPlustoD0Pi->SetOffHighPtPIDinTPC(4);
-  
-  return;
-}
-
-void setAnalysisBplusCuts(AliRDHFCutsBPlustoD0Pi* RDHFBPlustoD0Pi){
-  //Cuts coming from makeTFile4CutsBPlustoD0Pi_Cut_0024.C
-  //For now same as *_pp.C
-  
-  //---------------------------------------------------------------
-  //
-  //  SET BASIC DAUGHTER CUTS
-  //
-  // --------------------------------------------------------------
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaD0FirstDaughter(0.8);
-  Bool_t bHardSelectionArrayITSD0FirstDaughter[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSD0FirstDaughter(bHardSelectionArrayITSD0FirstDaughter);
-  Bool_t bSoftSelectionArrayITSD0FirstDaughter[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSD0FirstDaughter(bSoftSelectionArrayITSD0FirstDaughter);
-  RDHFBPlustoD0Pi->SetNSoftITSCutD0FirstDaughter(1);
-  
-  RDHFBPlustoD0Pi->SetMinITSNclsD0FirstDaughter(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsD0FirstDaughter(70);
-  RDHFBPlustoD0Pi->SetUseITSRefitD0FirstDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitD0FirstDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitD0FirstDaughter(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitD0FirstDaughter(0);
-  RDHFBPlustoD0Pi->SetMinPtD0FirstDaughter(1.0);
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaD0SecondDaughter(0.8);
-  Bool_t bHardSelectionArrayITSD0SecondDaughter[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSD0SecondDaughter(bHardSelectionArrayITSD0SecondDaughter);
-  Bool_t bSoftSelectionArrayITSD0SecondDaughter[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSD0SecondDaughter(bSoftSelectionArrayITSD0SecondDaughter);
-  RDHFBPlustoD0Pi->SetNSoftITSCutD0SecondDaughter(1);
-  
-  RDHFBPlustoD0Pi->SetMinITSNclsD0SecondDaughter(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsD0SecondDaughter(70);
-  RDHFBPlustoD0Pi->SetUseITSRefitD0SecondDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitD0SecondDaughter(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitD0SecondDaughter(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitD0SecondDaughter(0);
-  RDHFBPlustoD0Pi->SetMinPtD0SecondDaughter(1.0);
-  
-  RDHFBPlustoD0Pi->SetMaxAbsEtaBPlusPion(0.8);
-  Bool_t bHardSelectionArrayITSBPlusPion[7] = {kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetHardSelectionArrayITSBPlusPion(bHardSelectionArrayITSBPlusPion);
-  Bool_t bSoftSelectionArrayITSBPlusPion[7] = {kTRUE,kTRUE,kFALSE,kFALSE,kFALSE,kFALSE,kFALSE};
-  RDHFBPlustoD0Pi->SetSoftSelectionArrayITSBPlusPion(bSoftSelectionArrayITSBPlusPion);
-  RDHFBPlustoD0Pi->SetNSoftITSCutBPlusPion(1);
-  
-  RDHFBPlustoD0Pi->SetMinITSNclsBPlusPion(2);
-  RDHFBPlustoD0Pi->SetMinTPCNclsBPlusPion(70);
-  RDHFBPlustoD0Pi->SetUseITSRefitBPlusPion(kTRUE);
-  RDHFBPlustoD0Pi->SetUseTPCRefitBPlusPion(kTRUE);
-  RDHFBPlustoD0Pi->SetUseFilterBitBPlusPion(kFALSE);
-  RDHFBPlustoD0Pi->SetFilterBitBPlusPion(0);
-  RDHFBPlustoD0Pi->SetMinPtBPlusPion(1.0);
-  
-  RDHFBPlustoD0Pi->SetMind0D0FirstDaughter(0.002);
-  RDHFBPlustoD0Pi->SetMind0D0SecondDaughter(0.002);
-  RDHFBPlustoD0Pi->SetMind0BPlusPion(0.006);
-  
-  //---------------------------------------------------------------
-  //
-  //  SET CUTS
-  //
-  // --------------------------------------------------------------
-  
-  // we initialize the cuts by creating a cut array of which all cuts are set to zero and set to unused.
-  RDHFBPlustoD0Pi->InitializeCuts();
-  Int_t nptbins = RDHFBPlustoD0Pi->GetNPtBins();
-  Int_t nptbinsD0forD0ptbin = RDHFBPlustoD0Pi->GetNPtBinsD0forD0ptbin();
-  
-  // We set cuts for all candidates
-  // These can have a large effect on the CPU time of the analysis
-  
-  for (int i = 0; i < nptbins; ++i){
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.015); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(49, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0); // 78 - "d0d0 [cm^2]";
-    
-    RDHFBPlustoD0Pi->SetCut(55, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.01); // 84 - "vertexDistance";
-    RDHFBPlustoD0Pi->SetCut(56, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0); // 85 - "pseudoProperDecayTime";
-    RDHFBPlustoD0Pi->SetCut(59, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 2.0); // 88 - "normDecayLength";
-    
-    RDHFBPlustoD0Pi->SetCut(64, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.99); // 93 - "pointing angle XY [Cos(theta)]";
-  }
-  for (int i = 0; i < 3; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.04); // 71 - "inv. mass width[GeV] D0";
-    RDHFBPlustoD0Pi->SetCut(5, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(6, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.006); // 71 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCut(8, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(9, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 second daughter D0";
-    
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.03); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.01); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(59, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 3.5); // 88 - "normDecayLength";
-  }
-  for (int i = 3; i < 6; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.045); // 71 - "inv. mass width[GeV] D0";
-    RDHFBPlustoD0Pi->SetCut(5, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(6, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.006); // 71 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCut(8, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(9, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(16, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.07); // 84 - "vertexDistance D0";
-    
-    
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.92); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.025); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.01); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(59, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 3.5); // 88 - "normDecayLength";
-  }
-  for (int i = 6; i < 10; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.05); // 71 - "inv. mass width[GeV] D0";
-    RDHFBPlustoD0Pi->SetCut(5, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(6, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.006); // 71 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCut(8, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(9, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(16, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.07); // 84 - "vertexDistance D0";
-    
-    
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.94); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.025); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.01); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(55, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistance";
-    RDHFBPlustoD0Pi->SetCut(59, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 3.5); // 88 - "normDecayLength";
-    RDHFBPlustoD0Pi->SetCut(65, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistanceXY";
-  }
-  for (int i = 10; i < 18; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.06); // 71 - "inv. mass width[GeV] D0";
-    RDHFBPlustoD0Pi->SetCut(5, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(6, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.004); // 71 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCut(8, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(9, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 71 - "d0 second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(16, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.07); // 84 - "vertexDistance D0";
-    
-    
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.94); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(45, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.5); // 84 - "pt pion B0";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.01); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(55, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistance";
-    RDHFBPlustoD0Pi->SetCut(65, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistanceXY";
-  }
-  for (int i = 18; i < 30; ++i){
-    RDHFBPlustoD0Pi->SetCut(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07); // 71 - "inv. mass width[GeV] D0";
-    RDHFBPlustoD0Pi->SetCut(2, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.94); // 71 - "pointing angle [Cos(theta)] D0";
-    RDHFBPlustoD0Pi->SetCut(5, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(6, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.0); // 71 - "pt second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.004); // 71 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCut(8, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.004); // 71 - "d0 first daughter D0";
-    RDHFBPlustoD0Pi->SetCut(9, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.004); // 71 - "d0 second daughter D0";
-    RDHFBPlustoD0Pi->SetCut(16, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.07); // 84 - "vertexDistance D0";
-    
-    
-    RDHFBPlustoD0Pi->SetCut(41, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.98); // 70 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(45, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 1.5); // 84 - "pt pion B0";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.01); // 75 - "d0 BPlus [cm]";
-    RDHFBPlustoD0Pi->SetCut(55, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistance";
-    RDHFBPlustoD0Pi->SetCut(65, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.03); // 84 - "vertexDistanceXY";
-  }
-  for (int i = 30; i < 31; ++i){
-    RDHFBPlustoD0Pi->SetCut(42, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.05); // 71 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCut(46, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.03); // 75 - "d0 BPlus [cm]";
-  }
-  
-  // We set cuts for all D0 candidates
-  // These can have a large effect on the CPU time of the analysis
-  
-  for (int i = 0; i < nptbinsD0forD0ptbin; ++i)
-  {
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(0, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.07);   // 00 - "inv. mass width[GeV]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(2, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.8);    // 02 - "pointing angle [Cos(theta)]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(3, i, AliRDHFCutsBPlustoD0Pi::kCutAboveValue, 0.02);   // 03 - "dca [cm]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(4, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 2.5);    // 04 - "Pt D0 [GeV/c]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(7, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.002); // 07 - "d0 D0 [cm]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(12, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.005);    // 11 "d0d0 XY [cm^2]";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(12, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.5);    // 12 "angle between both daughters";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(16, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.05);   // 16 - "vertexDistance";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(17, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.0);    // 17 - "pseudoProperDecayTime";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(18, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.1e-9);    // 18 - "DecayTime";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(26, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 0.05);    // 26 - "vertexDistanceXY";
-    RDHFBPlustoD0Pi->SetCutD0forD0ptbin(27, i, AliRDHFCutsBPlustoD0Pi::kCutBelowValue, 4.0);    // 27 - "normDecayLength XY";
-  }
-  
-  AliAODPidHF* pidObj = new AliAODPidHF();
-  Int_t mode=1;
-  Double_t priors[5]={0.01,0.001,0.3,0.3,0.3};
-  pidObj->SetPriors(priors,5);
-  pidObj->SetMatch(mode);
-  pidObj->SetSigma(0,3); // TPC
-  pidObj->SetSigma(3,3); // TOF
-  pidObj->SetTPC(kTRUE);
-  pidObj->SetTOF(kTRUE);
-  pidObj->SetMaxTrackMomForCombinedPID(3.);
-  RDHFBPlustoD0Pi->SetPidHF(pidObj);
-  
-  RDHFBPlustoD0Pi->SetOffHighPtPIDinTPC(4);
-  
-  return;
+  return cuts;
 }

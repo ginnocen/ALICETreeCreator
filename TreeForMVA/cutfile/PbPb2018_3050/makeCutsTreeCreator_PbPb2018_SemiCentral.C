@@ -3,7 +3,6 @@
 #include <AliRDHFCutsD0toKpi.h>
 #include <AliRDHFCutsDstoKKpi.h>
 #include <AliRDHFCutsDplustoKpipi.h>
-#include <AliRDHFCutsBPlustoD0Pi.h>
 #include <AliRDHFCutsLctopKpi.h>
 #include <AliRDHFCutsLctoV0.h>
 #include <TClonesArray.h>
@@ -59,10 +58,10 @@ void makeCutsTreeCreator_PbPb2018_SemiCentral(Bool_t isMC = kFALSE)
   AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent,isMC);
   Printf("*************************************************************");
   Printf("Bplus filtering cuts");
-  AliRDHFCutsBPlustoD0Pi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent,isMC);
+  AliRDHFCutsD0toKpi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent,isMC);
   Printf("\n\n");
   Printf("Bplus analysis cuts");
-  AliRDHFCutsBPlustoD0Pi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent,isMC);
+  AliRDHFCutsD0toKpi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent,isMC);
   Printf("*************************************************************");
   Printf("\n\n");
   Printf("LctoV0bachelor filtering cuts");
