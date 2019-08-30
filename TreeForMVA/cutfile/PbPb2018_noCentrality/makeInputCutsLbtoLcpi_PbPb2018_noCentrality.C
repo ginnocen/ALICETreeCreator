@@ -54,7 +54,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   Float_t* ptbins;
   ptbins=new Float_t[nptbinsLc+1];
   ptbins[0]=0.;
-  ptbins[1]=8.;
+  ptbins[1]=5.;
   ptbins[2]=999.;
   
   cuts->SetPtBins(nptbinsLc+1,ptbins);
@@ -64,8 +64,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   for(Int_t iv=0;iv<nvars;iv++){
     rdcutsvalmine[iv]=new Float_t[nptbinsLc];
   }
-  
-  //0-8
+
+  //UPDATE 30/08: Changed pT limit from 8 -> 5 Gev/c, so ITS2 productions have same filtering cuts for most interesting pT range  
+  //0-5
   rdcutsvalmine[0][0]=0.07;   //inv mass window
   rdcutsvalmine[1][0]=0.5;    // pTK
   rdcutsvalmine[2][0]=0.625;   // pTP
@@ -79,7 +80,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[10][0]=0.;     // Sum d0^2
   rdcutsvalmine[11][0]=0.0375; // dca cut
   rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
-  //8-999
+  //5-999
   rdcutsvalmine[0][1]=0.07;   //inv mass window
   rdcutsvalmine[1][1]=0.5;    // pTK
   rdcutsvalmine[2][1]=0.625;   // pTP
