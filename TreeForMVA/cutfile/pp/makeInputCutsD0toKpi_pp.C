@@ -49,7 +49,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     
     const Int_t nptbinsD0=1;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,1000000.};
-    Float_t cutsArrayD0toKpi[11]={0.25,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,-1,0.};
+    Float_t cutsArrayD0toKpi[11]={0.25,0.05,1.1,0.,0.,0.5,0.5,0.1,0.6,-1,0.};
     
     cutsD0toKpi->SetMinPtCandidate(1.);
     cutsD0toKpi->SetPtBins(nptbinsD0+1,ptlimitsD0);
