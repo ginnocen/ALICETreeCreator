@@ -58,14 +58,15 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi_pp(Int_t whichCuts=0, TString
   esdTrackCutsSoftPi->SetRequireITSRefit(kTRUE);
   esdTrackCutsSoftPi->SetMinNClustersITS(2);
   esdTrackCutsSoftPi->SetEtaRange(-0.8,+0.8);
-  esdTrackCutsSoftPi->SetPtRange(0.0,1.e10);
+  esdTrackCutsSoftPi->SetPtRange(0.05,1.e10);
   cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
   
   if(whichCuts==0){
     const Int_t nptbinsDstar=1;
     Float_t ptlimitsDstar[nptbinsDstar+1]={0.,1000000.};
-    Float_t cutsArrayDstartoKpipi[16]={0.3,999999.,1.1,0.,0.,999999.,999999.,999999.,0.,0.3, 0.1, 0.05, 100000000000.0, 0.5,-1.,0.}; // first 9 for D0 from D*, next 5 for D*, last 2 for D0 again
-    
+    Float_t cutsArrayDstartoKpipi[16]={0.1, 0.1, 1.1, 0.3, 0.3, 0.5, 0.5, 1.0, 0.2, 0.3, 0.025, 0.05, 100000000000.0, 0.5,-1.,0.}; // first 9 for D0 from D*, next 5 for D*, last 2 for D0 again
+    //Update 16/09: Same filtering as D0 pp (some a bit looser & tighter D0 mass cut) + reduced mass window Dstar
+
     cutsDstartoKpipi->SetMinPtCandidate(0.);
     cutsDstartoKpipi->SetPtBins(nptbinsDstar+1,ptlimitsDstar);
     cutsDstartoKpipi->SetCuts(16,cutsArrayDstartoKpipi);
