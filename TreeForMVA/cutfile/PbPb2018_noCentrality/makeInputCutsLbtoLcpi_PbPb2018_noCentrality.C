@@ -39,7 +39,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
   esdTrackCuts->SetMinDCAToVertexXY(0.);
-  esdTrackCuts->SetPtRange(0.1,1.e10);
+  esdTrackCuts->SetPtRange(0.3,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
@@ -70,33 +70,15 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[2][0]=0.5;    // pTP
   rdcutsvalmine[3][0]=0.0;    // d0K
   rdcutsvalmine[4][0]=0.0;    // d0Pi
-  rdcutsvalmine[5][0]=0.0;    // dist12
-  rdcutsvalmine[6][0]=0.06;  // sigmavert
-  rdcutsvalmine[7][0]=0.0;    // dist prim-sec
+  rdcutsvalmine[5][0]=0.025;  // dist12
+  rdcutsvalmine[6][0]=0.035;  // sigmavert
+  rdcutsvalmine[7][0]=0.00625;// dist prim-sec
   rdcutsvalmine[8][0]=0.0;    // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][0]=0.0;    // cosThetaPoint
+  rdcutsvalmine[9][0]=0.7;    // cosThetaPoint
   rdcutsvalmine[10][0]=0.0;   // Sum d0^2
-  rdcutsvalmine[11][0]=0.05;  // dca cut
+  rdcutsvalmine[11][0]=0.025; // dca cut
   rdcutsvalmine[12][0]=0.5;   // cut on pTpion [GeV/c]
-  //Used values are filtering cuts used for LHC13d19 for Lc->pKpi (but tightened InvMass cut to 0.07)
-/*
-  //UPDATE 30/08: Changed pT limit from 8 -> 5 Gev/c, so ITS2 productions have same filtering cuts for most interesting pT range  
-  //5-999
-  rdcutsvalmine[0][1]=0.07;   //inv mass window
-  rdcutsvalmine[1][1]=0.5;    // pTK
-  rdcutsvalmine[2][1]=0.625;   // pTP
-  rdcutsvalmine[3][1]=0.;      // d0K
-  rdcutsvalmine[4][1]=0.;      // d0Pi
-  rdcutsvalmine[5][1]=0.0125;  // dist12
-  rdcutsvalmine[6][1]=0.045;   // sigmavert
-  rdcutsvalmine[7][1]=0.00625; // dist prim-sec
-  rdcutsvalmine[8][1]=0.8;     // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][1]=0.25;    // cosThetaPoint
-  rdcutsvalmine[10][1]=0.;     // Sum d0^2
-  rdcutsvalmine[11][1]=0.0375; // dca cut
-  rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
-  //Used values for Lc->pKpi analysis taken at 20/08/19 but tightened InvMass cut to 0.07
-*/  
+
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
   cuts->SetMinPtCandidate(1.);
   
@@ -181,9 +163,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //event selection
-  cuts->SetUsePhysicsSelection(kTRUE);
+  cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);
