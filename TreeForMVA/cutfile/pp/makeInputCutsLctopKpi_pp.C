@@ -59,10 +59,11 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
   AliAODPidHF* pidObjpi=new AliAODPidHF();
   if(whichCuts==0 ){
     //UPDATE 21/06/19, enable PID selection to reduce output size
+    //UPDATE 03/10/19, set 4 sigma instead of 3 to select more signal
     // PID
     // Set here since no default PIDHF object created in RDHF
     // 1. kaon
-    Double_t sigmasK[5]={3.,3.,3.,3.,3.};//{3.,1.,1.,3.,2.};
+    Double_t sigmasK[5]={4.,4.,4.,4.,4.};//{3.,1.,1.,3.,2.};
     pidObjK->SetSigma(sigmasK);
     pidObjK->SetAsym(kFALSE);//(kTRUE);
     pidObjK->SetMatch(1);
@@ -73,7 +74,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     pidObjK->SetTOFdecide(kFALSE);//(kTRUE);
     
     //2. pion
-    Double_t sigmaspi[5]={3.,3.,3.,3.,3.};//{3.,0.,0.,0.,0.};
+    Double_t sigmaspi[5]={4.,4.,4.,4.,4.};//{3.,0.,0.,0.,0.};
     pidObjpi->SetSigma(sigmaspi);
     pidObjpi->SetAsym(kFALSE);
     pidObjpi->SetMatch(1);
@@ -82,7 +83,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi_pp(Int_t whichCuts=0, TString nameCut
     pidObjpi->SetTOFdecide(kFALSE);
     
     // 3. proton
-    Double_t sigmasp[5]={3.,3.,3.,3.,3.};//{3.,1.,1.,3.,2.};
+    Double_t sigmasp[5]={4.,4.,4.,4.,4.};//{3.,1.,1.,3.,2.};
     pidObjp->SetSigma(sigmasp);
     pidObjp->SetAsym(kFALSE);//(kTRUE);
     pidObjp->SetMatch(1);

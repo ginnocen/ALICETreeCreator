@@ -48,8 +48,9 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     cuts->SetCuts(20,cutsArrayDstoKKpi);
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
+    //UPDATE 03/10/19, set 4 sigma instead of 3 to select more signal
     AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
     pidObj->SetSigma(sigmasBac);
     pidObj->SetAsym(kFALSE);
     pidObj->SetMatch(1);

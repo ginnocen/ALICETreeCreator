@@ -94,11 +94,12 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
+    //UPDATE 03/10/19, set 4 sigma instead of 3 to select more signal
     cutsLctoV0->SetPidSelectionFlag(11);
     //pid settings
     //1. bachelor: default one
     AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
     pidObjBachelor->SetSigma(sigmasBac);
     pidObjBachelor->SetAsym(kFALSE);
     pidObjBachelor->SetMatch(1);

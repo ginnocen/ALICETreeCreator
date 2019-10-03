@@ -58,13 +58,23 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     cutsD0toKpi->SetUseSpecialCuts(kFALSE);
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
+    //UPDATE 03/10/19, set std PID selection as it is looser
     AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-    pidObj->SetSigma(sigmasBac);
-    pidObj->SetAsym(kFALSE);
+    //pidObj->SetName("pid4D0");
+    const Int_t nlims=2;
+    Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
+    Double_t sigmas[5]={2.,1.,0.,3.,0.}; //to be checked and to be modified with new implementation of setters by Rossella
+    pidObj->SetAsym(kTRUE);// if you want to use the asymmetric bands in TPC
     pidObj->SetMatch(1);
+    pidObj->SetPLimit(plims,nlims);
+    pidObj->SetSigma(sigmas);
+    pidObj->SetCompat(kTRUE);
     pidObj->SetTPC(kTRUE);
     pidObj->SetTOF(kTRUE);
+    pidObj->SetPCompatTOF(1.5);
+    pidObj->SetSigmaForTPCCompat(3.);
+    pidObj->SetSigmaForTOFCompat(3.);
+    pidObj->SetOldPid(kFALSE);
     
     cutsD0toKpi->SetPidHF(pidObj);
     Bool_t pidflag=kTRUE;
