@@ -34,24 +34,22 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   
   //UPDATE 21/06/19, use the same track quality cuts for filtering and analysis cuts
   AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
-  esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
-  //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
   esdTrackCuts->SetMinNClustersTPC(50);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
-  esdTrackCuts->SetMinDCAToVertexXY(0.);
-  esdTrackCuts->SetPtRange(0.5,1.e10);
+  esdTrackCuts->SetPtRange(0.3,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
-  esdTrackCuts->SetMinDCAToVertexXY(0.);
-  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-  cuts->AddTrackCuts(esdTrackCuts);
+  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
+  cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
   if(whichCuts==0){
+    cuts->SetStandardCutsPbPb2010();
+
     const Int_t nptbinsD0=2;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
     Float_t** cutsArrayD0toKpi;
@@ -68,9 +66,9 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cutsArrayD0toKpi[4][0]=0.;
     cutsArrayD0toKpi[5][0]=999999.;
     cutsArrayD0toKpi[6][0]=999999.;
-    cutsArrayD0toKpi[7][0]=-0.00005;  // d0xd0
-    cutsArrayD0toKpi[8][0]=0.8;
-    cutsArrayD0toKpi[9][0]=0.8;
+    cutsArrayD0toKpi[7][0]=0.;  // d0xd0
+    cutsArrayD0toKpi[8][0]=0.5;
+    cutsArrayD0toKpi[9][0]=-1;
     cutsArrayD0toKpi[10][0]=0.;
     //5-inf
     cutsArrayD0toKpi[0][1]=0.2;  //D0 inv mass window
@@ -81,8 +79,8 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cutsArrayD0toKpi[5][1]=999999.;
     cutsArrayD0toKpi[6][1]=999999.;
     cutsArrayD0toKpi[7][1]=0.0001; // d0xd0
-    cutsArrayD0toKpi[8][1]=0.7;
-    cutsArrayD0toKpi[9][1]=0.7;
+    cutsArrayD0toKpi[8][1]=0.5;
+    cutsArrayD0toKpi[9][1]=-1;
     cutsArrayD0toKpi[10][1]=0.;
     
     //cuts->SetStandardCutsPbPb2011();
@@ -123,6 +121,8 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
+    
+    cuts->AddTrackCuts(esdTrackCuts);
   }
   else if(whichCuts==1){
     
@@ -361,7 +361,7 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //event selection
-  cuts->SetUsePhysicsSelection(kTRUE);
+  cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
   cuts->SetTriggerMask(AliVEvent::kINT7);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);

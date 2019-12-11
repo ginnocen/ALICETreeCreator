@@ -34,19 +34,18 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(70);
-  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNClustersTPC(50);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
-  esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetPtRange(0.3,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
-  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
-  cuts->SetKinkRejection(kTRUE);
+  
+  cuts->SetStandardCutsPbPb2010();
   
   // cuts
   const Int_t nvars=13;
@@ -66,18 +65,18 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
 
   //0-999
   rdcutsvalmine[0][0]=0.07;   //inv mass window
-  rdcutsvalmine[1][0]=0.5;    // pTK
-  rdcutsvalmine[2][0]=0.5;    // pTP
+  rdcutsvalmine[1][0]=0.3;    // pTK
+  rdcutsvalmine[2][0]=0.3;    // pTP
   rdcutsvalmine[3][0]=0.0;    // d0K
   rdcutsvalmine[4][0]=0.0;    // d0Pi
-  rdcutsvalmine[5][0]=0.025;  // dist12
-  rdcutsvalmine[6][0]=0.035;  // sigmavert
-  rdcutsvalmine[7][0]=0.00625;// dist prim-sec
+  rdcutsvalmine[5][0]=0.0;  // dist12
+  rdcutsvalmine[6][0]=0.06;  // sigmavert
+  rdcutsvalmine[7][0]=0.0;// dist prim-sec
   rdcutsvalmine[8][0]=0.0;    // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][0]=0.7;    // cosThetaPoint
+  rdcutsvalmine[9][0]=0.0;    // cosThetaPoint
   rdcutsvalmine[10][0]=0.0;   // Sum d0^2
-  rdcutsvalmine[11][0]=0.025; // dca cut
-  rdcutsvalmine[12][0]=0.5;   // cut on pTpion [GeV/c]
+  rdcutsvalmine[11][0]=0.05; // dca cut
+  rdcutsvalmine[12][0]=0.3;   // cut on pTpion [GeV/c]
 
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
   cuts->SetMinPtCandidate(1.);
@@ -130,6 +129,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
+
+    cuts->AddTrackCuts(esdTrackCuts);
   }
   else if(whichCuts==1){
     // PID

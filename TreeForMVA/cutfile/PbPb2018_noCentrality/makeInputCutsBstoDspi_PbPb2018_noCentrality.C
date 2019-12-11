@@ -23,16 +23,18 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(70);
-  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNClustersTPC(50);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
-  esdTrackCuts->SetMinDCAToVertexXY(0.);
-  esdTrackCuts->SetPtRange(0.6,1.e10);
+  esdTrackCuts->SetPtRange(0.3,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
-  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-  
+  esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+
+  //New wrt filtering
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
+
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
@@ -47,31 +49,32 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     Float_t** anacutsval=new Float_t*[20];
     for(Int_t ic=0;ic<20;ic++){anacutsval[ic]=new Float_t[nptbins];}
     //Used values for Ds analysis taken at 20/08/19 but tightened InvMass cut (0.25/0.3->0.12)
+    //04-12-20: Used filtering cuts for Ds, tightening Ds and phi mass window, set min pT to 2
     
     anacutsval[0][0]=0.12;
-    anacutsval[1][0]=0.6;
-    anacutsval[2][0]=0.6;
+    anacutsval[1][0]=0.3;
+    anacutsval[2][0]=0.3;
     anacutsval[3][0]=0.;
     anacutsval[4][0]=0.;
     anacutsval[5][0]=0.;
-    anacutsval[6][0]=0.04;
-    anacutsval[7][0]=0.05;
+    anacutsval[6][0]=0.06;
+    anacutsval[7][0]=0.02;
     anacutsval[8][0]=0.;
-    anacutsval[9][0]=0.98;
+    anacutsval[9][0]=0.9;
     anacutsval[10][0]=0.;
-    anacutsval[11][0]=1000.0;
+    anacutsval[11][0]=100000.;
     anacutsval[12][0]=0.010;
-    anacutsval[13][0]=0.001;
-    anacutsval[14][0]=0.;
+    anacutsval[13][0]=0.0001;
+    anacutsval[14][0]=-1;
     anacutsval[15][0]=1.;
     anacutsval[16][0]=0.;
     anacutsval[17][0]=0.;
-    anacutsval[18][0]=3.;
-    anacutsval[19][0]=0.98;
+    anacutsval[18][0]=0.;
+    anacutsval[19][0]=-1;
     
     anacutsval[0][1]=0.12;
-    anacutsval[1][1]=0.6;
-    anacutsval[2][1]=0.6;
+    anacutsval[1][1]=0.3;
+    anacutsval[2][1]=0.3;
     anacutsval[3][1]=0.;
     anacutsval[4][1]=0.;
     anacutsval[5][1]=0.;
@@ -87,16 +90,18 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[15][1]=1.;
     anacutsval[16][1]=0.;
     anacutsval[17][1]=0.;
-    anacutsval[18][1]=3.;
+    anacutsval[18][1]=0.;
     anacutsval[19][1]=-1.;
     
     cuts->SetCuts(20,nptbins,anacutsval);
-    cuts->SetMinPtCandidate(1.);
+    cuts->SetMinPtCandidate(2.);
     
     Bool_t pidflag=usePID;
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
+    
+    cuts->AddTrackCuts(esdTrackCuts);
   }
   else if(whichCuts==1){
     
@@ -282,7 +287,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //event selection
-  cuts->SetUsePhysicsSelection(kTRUE);
+  cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
   cuts->SetTriggerMask(AliVEvent::kINT7);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
