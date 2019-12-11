@@ -36,6 +36,22 @@ Two options: data and MC (because of trigger and PID correction).
 | &Lambda;<sub>c</sub> &rarr; pK&pi; | :heavy_check_mark: | 20-08-2019 | :heavy_check_mark: | 20-08-2019 |
 | &Lambda;<sub>b</sub> | :heavy_check_mark: | 20-08-2019 | :heavy_check_mark: | 20-08-2019 |
 
+### Centrality 0-80
+
+Two options: data and MC (because of trigger and PID correction). Trigger for data is kCentral|kSemiCentral|kINT7, datadriven PID correction turned off
+
+| Particle | Pre-filtering | Updated | Std analysis | Updated |
+|:-:|:-:|:-:|:-:|:-:|
+| B<sup>+ | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| B<sub>s | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| D<sup>0 | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| D<sup>+ | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| D<sup>* | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| D<sub>s | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| &Lambda;<sub>c</sub> &rarr; pK<sup>0</sup><sub>s | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| &Lambda;<sub>c</sub> &rarr; pK&pi; | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+| &Lambda;<sub>b</sub> | :heavy_check_mark: | 11-12-2019 | :heavy_check_mark: | 11-12-2019 |
+
 ### No Centrality
 
 Two options: PID and no PID (for ITS Upgrade studies)
