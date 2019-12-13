@@ -34,7 +34,11 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(50);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(50);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
   esdTrackCuts->SetPtRange(0.3,1.e10);
@@ -42,10 +46,9 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
+  cuts->SetStandardCutsPbPb2010();
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
-  
-  cuts->SetStandardCutsPbPb2010();
   
   // cuts
   const Int_t nvars=13;
@@ -131,8 +134,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     else cout<<"PID is not used for filtering cuts"<<endl;
 
     cuts->AddTrackCuts(esdTrackCuts);
-  }
-  else if(whichCuts==1){
+  } else if(whichCuts==1){
     // PID
     AliAODPidHF* pidObjp=new AliAODPidHF();
     AliAODPidHF* pidObjK=new AliAODPidHF();
@@ -157,7 +159,6 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;
-
   }
   
   //Do not recalculate the vertex

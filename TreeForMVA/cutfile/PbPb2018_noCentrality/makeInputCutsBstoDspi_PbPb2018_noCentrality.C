@@ -23,10 +23,14 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   //default
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(50);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(50);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
-  esdTrackCuts->SetPtRange(0.3,1.e10);
+  esdTrackCuts->SetPtRange(0.5,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
@@ -39,11 +43,11 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
   if(whichCuts==0){
-    const Int_t nptbins=2;
-    Float_t ptlimits[nptbins+1]={0.,5.,1000000.};
-    
     cuts->SetStandardCutsPbPb2010();
-    cuts->SetPidOption(0); //0=kConservative,1=kStrong
+    cuts->AddTrackCuts(esdTrackCuts);
+
+    const Int_t nptbins=3;
+    Float_t ptlimits[nptbins+1]={0.,10.,1000000.};
     cuts->SetPtBins(nptbins+1,ptlimits);
     
     Float_t** anacutsval=new Float_t*[20];
@@ -51,59 +55,84 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     //Used values for Ds analysis taken at 20/08/19 but tightened InvMass cut (0.25/0.3->0.12)
     //04-12-20: Used filtering cuts for Ds, tightening Ds and phi mass window, set min pT to 2
     
-    anacutsval[0][0]=0.12;
-    anacutsval[1][0]=0.3;
-    anacutsval[2][0]=0.3;
+    /*
+     Cut list                                           rejection condition
+     0      "inv. mass [GeV]",                          invmassDS-massDspdg>fCutsRD
+     1      "pTK [GeV/c]",                              pTK<fCutsRd
+     2      "pTPi [GeV/c]",                             pTPi<fCutsRd
+     3      "d0K [cm]",                                 d0K<fCutsRd
+     4      "d0Pi [cm]",                                d0Pi<fCutsRd
+     5      "dist12 [cm]",                              dist12<fCutsRd
+     6      "sigmavert [cm]",                           sigmavert>fCutsRd
+     7      "decLen [cm]",                              decLen<fCutsRD
+     8      "ptMax [GeV/c]",                            ptMax<fCutsRD
+     9      "cosThetaPoint",                            CosThetaPoint<fCutsRD
+     10     "Sum d0^2 (cm^2)",                          sumd0<fCutsRD
+     11     "dca [cm]",                                 dca(i)>fCutsRD
+     12     "inv. mass (Mphi-MKK) [GeV]",               invmass-pdg>fCutsRD
+     13     "inv. mass (MKo*-MKpi) [GeV]"};             invmass-pdg>fCutsRD
+     14     "Abs(CosineKpiPhiRFrame)^3",
+     15     "CosPiDsLabFrame"};
+     16     "DecLengthXY
+     17     "NormDecayLength"};
+     18     "NormDecayLengthXY"};
+     19     "cosThetaPointXY"};
+     */
+    
+    //Filtering ITS3 MC
+    //Float_t cutsArrayDstoKKpi[20]={0.3,0.3,0.3,0.,0.,0.,0.06,0.,0.,0.9,0.,100000.,0.02,0.0001,-1.,1.,0.,0.,0.,-1.};
+
+    anacutsval[0][0]=0.12; //tighter than filtering
+    anacutsval[1][0]=0.5; //tighter than filtering
+    anacutsval[2][0]=0.5; //tighter than filtering
     anacutsval[3][0]=0.;
     anacutsval[4][0]=0.;
     anacutsval[5][0]=0.;
-    anacutsval[6][0]=0.06;
-    anacutsval[7][0]=0.02;
+    anacutsval[6][0]=0.035; //tighter than filtering
+    anacutsval[7][0]=0.; //=Looser than first trial, check size
     anacutsval[8][0]=0.;
-    anacutsval[9][0]=0.9;
+    anacutsval[9][0]=0.9; //filtering
     anacutsval[10][0]=0.;
-    anacutsval[11][0]=100000.;
-    anacutsval[12][0]=0.010;
-    anacutsval[13][0]=0.0001;
-    anacutsval[14][0]=-1;
-    anacutsval[15][0]=1.;
-    anacutsval[16][0]=0.;
-    anacutsval[17][0]=0.;
-    anacutsval[18][0]=0.;
-    anacutsval[19][0]=-1;
+    anacutsval[11][0]=0.05; //tighter than filtering
+    anacutsval[12][0]=0.01; //tighter than filtering
+    anacutsval[13][0]=0.0001; //filtering
+    anacutsval[14][0]=-1; //Open for ML optimisation
+    anacutsval[15][0]=1.; //Open for ML optimisation
+    anacutsval[16][0]=0.; //Open for ML optimisation
+    anacutsval[17][0]=0.; //Open for ML optimisation
+    anacutsval[18][0]=0.; //Open for ML optimisation
+    anacutsval[19][0]=-1; //Open for ML optimisation
     
-    anacutsval[0][1]=0.12;
-    anacutsval[1][1]=0.3;
-    anacutsval[2][1]=0.3;
+    anacutsval[0][1]=0.12; //tighter than filtering
+    anacutsval[1][1]=0.5; //tighter than filtering
+    anacutsval[2][1]=0.5; //tighter than filtering
     anacutsval[3][1]=0.;
     anacutsval[4][1]=0.;
     anacutsval[5][1]=0.;
-    anacutsval[6][1]=0.06;
-    anacutsval[7][1]=0.02;
+    anacutsval[6][1]=0.035; //tighter than filtering
+    anacutsval[7][1]=0.; //=Looser than first trial, check size
     anacutsval[8][1]=0.;
-    anacutsval[9][1]=0.9;
+    anacutsval[9][1]=0.9; //filtering
     anacutsval[10][1]=0.;
-    anacutsval[11][1]=100000.;
-    anacutsval[12][1]=0.015;
-    anacutsval[13][1]=0.0001;
-    anacutsval[14][1]=-1.;
-    anacutsval[15][1]=1.;
-    anacutsval[16][1]=0.;
-    anacutsval[17][1]=0.;
-    anacutsval[18][1]=0.;
-    anacutsval[19][1]=-1.;
+    anacutsval[11][1]=0.1; //tighter than filtering
+    anacutsval[12][1]=0.15; //tighter than filtering
+    anacutsval[13][1]=0.0001; //filtering
+    anacutsval[14][1]=-1; //Open for ML optimisation
+    anacutsval[15][1]=1.; //Open for ML optimisation
+    anacutsval[16][1]=0.; //Open for ML optimisation
+    anacutsval[17][1]=0.; //Open for ML optimisation
+    anacutsval[18][1]=0.; //Open for ML optimisation
+    anacutsval[19][1]=-1; //Open for ML optimisation
     
     cuts->SetCuts(20,nptbins,anacutsval);
     cuts->SetMinPtCandidate(2.);
     
+    cuts->SetPidOption(0); //0=kConservative,1=kStrong
     Bool_t pidflag=usePID;
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
-    
-    cuts->AddTrackCuts(esdTrackCuts);
-  }
-  else if(whichCuts==1){
+  } else if(whichCuts==1){
     
     const Int_t nptbins=9;
     Float_t* ptbins;
@@ -138,30 +167,6 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
       anacutsval[11][ipt]=1000.0;
       anacutsval[13][ipt]=0.001;
     }
-    /*
-     
-     Cut list                                                rejection condition
-     0           "inv. mass [GeV]",                          invmassDS-massDspdg>fCutsRD
-     1      "pTK [GeV/c]",                              pTK<fCutsRd
-     2      "pTPi [GeV/c]",                             pTPi<fCutsRd
-     3      "d0K [cm]",                                 d0K<fCutsRd
-     4      "d0Pi [cm]",                                d0Pi<fCutsRd
-     5      "dist12 [cm]",                              dist12<fCutsRd
-     6      "sigmavert [cm]",                           sigmavert>fCutsRd
-     7      "decLen [cm]",                              decLen<fCutsRD
-     8      "ptMax [GeV/c]",                            ptMax<fCutsRD
-     9      "cosThetaPoint",                            CosThetaPoint<fCutsRD
-     10      "Sum d0^2 (cm^2)",                          sumd0<fCutsRD
-     11      "dca [cm]",                                 dca(i)>fCutsRD
-     12      "inv. mass (Mphi-MKK) [GeV]",               invmass-pdg>fCutsRD
-     13      "inv. mass (MKo*-MKpi) [GeV]"};             invmass-pdg>fCutsRD
-     14        "Abs(CosineKpiPhiRFrame)^3",
-     15      "CosPiDsLabFrame"};
-     16      "DecLengthXY
-     17      "NormDecayLength"};
-     18      "NormDecayLengthXY"};
-     19      "cosThetaPointXY"};
-     */
     
     anacutsval[6][0]=0.020;   //sigmavert
     anacutsval[7][0]=0.05;   //decay length
@@ -289,7 +294,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   //event selection
   cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);

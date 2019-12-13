@@ -50,18 +50,21 @@ void makeCutsTreeCreator_PbPb2018_noCentrality(Bool_t usePID = kTRUE)
   Printf("\n\n");
   Printf("Dstar analysis cuts");
   AliRDHFCutsDStartoKpipi  *analysisCutsDStartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent,usePID);
+  Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctopKpi filtering cuts");
   AliRDHFCutsLctopKpi  *looseCutsLctopKpi    = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent,usePID);
   Printf("\n\n");
   Printf("LctopKpi analysis cuts");
   AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent,usePID);
+  Printf("\n\n");
   Printf("*************************************************************");
   Printf("Bplus filtering cuts");
   AliRDHFCutsD0toKpi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent,usePID);
   Printf("\n\n");
   Printf("Bplus analysis cuts");
   AliRDHFCutsD0toKpi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent,usePID);
+  Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctoV0bachelor filtering cuts");
   AliRDHFCutsLctoV0  *looseCutsLctoV0bachelor    = makeInputCutsLctoV0(0,"Lc2V0bachelorFilteringCuts",minCent,maxCent,usePID);
@@ -84,8 +87,8 @@ void makeCutsTreeCreator_PbPb2018_noCentrality(Bool_t usePID = kTRUE)
   AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi(1,"LbtoLcpiAnalysisCuts",minCent,maxCent,usePID);
   
   TFile* fout;
-  if(usePID) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_noCentrality.root","recreate");
-  else fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_noPID_PbPb2018_noCentrality.root","recreate");
+  if(usePID) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPS.root","recreate");
+  else       fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPSnoPID.root","recreate");
   fout->cd();
   looseCutsD0toKpi->Write();
   analysisCutsD0toKpi->Write();

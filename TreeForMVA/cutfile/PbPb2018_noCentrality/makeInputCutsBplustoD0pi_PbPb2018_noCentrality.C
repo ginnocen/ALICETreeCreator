@@ -36,7 +36,11 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   AliESDtrackCuts* esdTrackCuts=new AliESDtrackCuts();
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersTPC(50);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(50);
+  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
   esdTrackCuts->SetPtRange(0.3,1.e10);
@@ -49,6 +53,7 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   
   if(whichCuts==0){
     cuts->SetStandardCutsPbPb2010();
+    cuts->AddTrackCuts(esdTrackCuts);
 
     const Int_t nptbinsD0=2;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
@@ -83,7 +88,6 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cutsArrayD0toKpi[9][1]=-1;
     cutsArrayD0toKpi[10][1]=0.;
     
-    //cuts->SetStandardCutsPbPb2011();
     cuts->SetMinPtCandidate(1.);
     cuts->SetUseSpecialCuts(kFALSE);
     cuts->SetPtBins(nptbinsD0+1,ptlimitsD0);
@@ -121,8 +125,6 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
-    
-    cuts->AddTrackCuts(esdTrackCuts);
   }
   else if(whichCuts==1){
     
@@ -363,7 +365,7 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   //event selection
   cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kINT7);
+  cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);
