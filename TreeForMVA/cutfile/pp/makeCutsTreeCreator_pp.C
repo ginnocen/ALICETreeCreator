@@ -50,6 +50,7 @@ void makeCutsTreeCreator_pp()
   Printf("\n\n");
   Printf("Dstar analysis cuts");
   AliRDHFCutsDStartoKpipi  *analysisCutsDstartoKpipi = makeInputCutsDstartoKpipi_pp(1,"DstartoKpipiAnalysisCuts",minCent,maxCent);
+  Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctopKpi filtering cuts");
   AliRDHFCutsLctopKpi *looseCutsLctopKpi = makeInputCutsLctopKpi_pp(0,"LctopKpiFilteringCuts",minCent,maxCent);

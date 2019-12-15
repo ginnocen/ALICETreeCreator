@@ -45,6 +45,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCuts->SetMinNCrossedRowsTPC(70);
   esdTrackCuts->SetMinNClustersITS(0);
@@ -64,8 +67,11 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
   esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);//(kTRUE);
   esdTrackCutsV0daughters->SetMinNClustersITS(0);//(4); // default is 5
-  esdTrackCutsV0daughters->SetMinNClustersTPC(70);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCutsV0daughters->SetMinNCrossedRowsTPC(70);
   esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
   esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);

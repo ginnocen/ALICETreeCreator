@@ -42,8 +42,11 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetPtRange(0.4,1.e10);
   esdTrackCuts->SetEtaRange(-0.8,+0.8);
-  esdTrackCuts->SetMinNClustersTPC(70);
+  //Should not use SetMinNClustersTPC anymore, not well described in MC
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCuts->SetMinNCrossedRowsTPC(70);
   
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
