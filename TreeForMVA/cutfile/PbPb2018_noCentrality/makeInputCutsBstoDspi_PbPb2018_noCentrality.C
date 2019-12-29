@@ -82,7 +82,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     //Filtering ITS3 MC
     //Float_t cutsArrayDstoKKpi[20]={0.3,0.3,0.3,0.,0.,0.,0.06,0.,0.,0.9,0.,100000.,0.02,0.0001,-1.,1.,0.,0.,0.,-1.};
 
-    anacutsval[0][0]=0.12; //tighter than filtering
+    anacutsval[0][0]=0.07; //tighter than filtering
     anacutsval[1][0]=0.5; //tighter than filtering
     anacutsval[2][0]=0.5; //tighter than filtering
     anacutsval[3][0]=0.;
@@ -102,8 +102,8 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[17][0]=0.; //Open for ML optimisation
     anacutsval[18][0]=0.; //Open for ML optimisation
     anacutsval[19][0]=-1; //Open for ML optimisation
-    
-    anacutsval[0][1]=0.12; //tighter than filtering
+
+    anacutsval[0][1]=0.07; //tighter than filtering
     anacutsval[1][1]=0.5; //tighter than filtering
     anacutsval[2][1]=0.5; //tighter than filtering
     anacutsval[3][1]=0.;
@@ -115,7 +115,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[9][1]=0.9; //filtering
     anacutsval[10][1]=0.;
     anacutsval[11][1]=0.1; //tighter than filtering
-    anacutsval[12][1]=0.15; //tighter than filtering
+    anacutsval[12][1]=0.01; //tighter than filtering
     anacutsval[13][1]=0.0001; //filtering
     anacutsval[14][1]=-1; //Open for ML optimisation
     anacutsval[15][1]=1.; //Open for ML optimisation
