@@ -89,7 +89,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[4][0]=0.;
     anacutsval[5][0]=0.;
     anacutsval[6][0]=0.035; //tighter than filtering
-    anacutsval[7][0]=0.; //=Looser than first trial, check size
+    anacutsval[7][0]=0.01; //=tighter than filtering (0.0, bkg level otherwise too high)
     anacutsval[8][0]=0.;
     anacutsval[9][0]=0.9; //filtering
     anacutsval[10][0]=0.;
@@ -110,7 +110,7 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[4][1]=0.;
     anacutsval[5][1]=0.;
     anacutsval[6][1]=0.035; //tighter than filtering
-    anacutsval[7][1]=0.; //=Looser than first trial, check size
+    anacutsval[7][1]=0.01; //=tighter than filtering (0.0, bkg level otherwise too high)
     anacutsval[8][1]=0.;
     anacutsval[9][1]=0.9; //filtering
     anacutsval[10][1]=0.;
