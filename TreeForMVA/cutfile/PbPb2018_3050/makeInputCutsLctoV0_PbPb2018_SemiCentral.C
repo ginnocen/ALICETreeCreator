@@ -10,6 +10,27 @@
  */
 
 const Int_t nvars=21;
+//        Lc inv. mass if K0S [GeV/c2]
+//        Lc inv. mass if Lambda [GeV/c2]
+//        K0S inv. mass [GeV/c2]
+//        Lambda/LambdaBar inv. mass[GeV/c2]
+//        pT min bachelor track [GeV/c]
+//        pT min V0-positive track [GeV/c]
+//        pT min V0-negative track [GeV/c]
+//        dca cascade (prong-to-prong) cut [cm]
+//        dca V0 (prong-to-prong) cut [number of sigmas]
+//        V0 cosPA min wrt PV
+//        d0 max bachelor wrt PV [cm]
+//        d0 max V0 wrt PV [cm]
+//        mass K0S veto [GeV/c2]
+//        mass Lambda/LambdaBar veto [GeV/c2]
+//        mass Gamma veto [GeV/c2]
+//        pT min V0 track [GeV/c]
+//        Max Proton emission angle in Lc CMS
+//        Min Proton emission angle in Lc CMS
+//        Resigned d0
+//        V0 qT/|alpha|
+//        V0 type
 
 AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=30.,Float_t maxc=50.,Bool_t isMC=kFALSE)
 {
@@ -50,7 +71,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCutsV0daughters->SetMinNCrossedRowsTPC(70);
-  esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
   esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
@@ -59,31 +79,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-  cutsLctoV0->SetUseTrackSelectionWithFilterBits();
+  cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
   
   if(whichCuts==0){
-    
-    //        Lc inv. mass if K0S [GeV/c2]
-    //        Lc inv. mass if Lambda [GeV/c2]
-    //        K0S inv. mass [GeV/c2]
-    //        Lambda/LambdaBar inv. mass[GeV/c2]
-    //        pT min bachelor track [GeV/c]
-    //        pT min V0-positive track [GeV/c]
-    //        pT min V0-negative track [GeV/c]
-    //        dca cascade (prong-to-prong) cut [cm]
-    //        dca V0 (prong-to-prong) cut [number of sigmas]
-    //        V0 cosPA min wrt PV
-    //        d0 max bachelor wrt PV [cm]
-    //        d0 max V0 wrt PV [cm]
-    //        mass K0S veto [GeV/c2]
-    //        mass Lambda/LambdaBar veto [GeV/c2]
-    //        mass Gamma veto [GeV/c2]
-    //        pT min V0 track [GeV/c]
-    //        Max Proton emission angle in Lc CMS
-    //        Min Proton emission angle in Lc CMS
-    //        Resigned d0
-    //        V0 qT/|alpha|
-    //        V0 type
     const Int_t nptbins=2;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
@@ -179,7 +177,6 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetMinPtCandidate(1.0);
     cutsLctoV0->SetMaxPtCandidate(50.);
     
-    
   }
   
   //Do not recalculate the vertex
@@ -208,5 +205,3 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   return cutsLctoV0;
   
 }
-
-

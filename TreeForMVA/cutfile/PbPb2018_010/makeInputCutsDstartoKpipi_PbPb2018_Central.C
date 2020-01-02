@@ -446,7 +446,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   //event selection
   cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);
   cutsDstartoKpipi->SetTriggerClass("");
-  if(!isMC) cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  if(!isMC) cutsDstartoKpipi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
   else      cutsDstartoKpipi->SetTriggerMask(AliVEvent::kAny);
   cutsDstartoKpipi->SetMinCentrality(minc);
   cutsDstartoKpipi->SetMaxCentrality(maxc);

@@ -370,7 +370,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
   cutsD0toKpi->SetTriggerClass("");
-  if(!isMC) cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kSemiCentral);
+  if(!isMC) cutsD0toKpi->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
   else      cutsD0toKpi->SetTriggerMask(AliVEvent::kAny);
   cutsD0toKpi->SetMinCentrality(minc);
   cutsD0toKpi->SetMaxCentrality(maxc);
