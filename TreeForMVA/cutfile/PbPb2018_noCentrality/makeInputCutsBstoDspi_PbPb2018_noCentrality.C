@@ -10,7 +10,7 @@
  */
 
 
-AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE,Bool_t usePreSelect=kTRUE)
 {
   
   AliRDHFCutsDstoKKpi* cuts=new AliRDHFCutsDstoKKpi();
@@ -34,10 +34,6 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
-
-  //New wrt filtering
-  esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
-  esdTrackCuts->SetMinNCrossedRowsTPC(70);
 
   cuts->AddTrackCuts(esdTrackCuts);
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
@@ -125,7 +121,16 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     anacutsval[19][1]=-1; //Open for ML optimisation
     
     cuts->SetCuts(20,nptbins,anacutsval);
-    cuts->SetMinPtCandidate(2.);
+    cuts->SetMinPtCandidate(1.);
+    
+    //AliAODPidHF* pidObj=new AliAODPidHF();
+    //Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
+    //pidObj->SetSigma(sigmasBac);
+    //pidObj->SetAsym(kFALSE);
+    //pidObj->SetMatch(1);
+    //pidObj->SetTPC(kTRUE);
+    //pidObj->SetTOF(kTRUE);
+    //cuts->SetPidHF(pidObj);
     
     cuts->SetPidOption(0); //0=kConservative,1=kStrong
     Bool_t pidflag=usePID;
@@ -274,19 +279,22 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetCuts(nvars,nptbins,anacutsval);
     cuts->Setd0MeasMinusExpCut(nptbins,topomCuts);
     cuts->Setd0Cut(nptbins,d0Cuts);
-    
-    cuts->SetPidOption(1); //0=kConservative,1=kStrong
-    cuts->SetMaxPtStrongPid(8.);
-    
+
     cuts->SetMinPtCandidate(2.);
     cuts->SetMaxPtCandidate(36.);
-    cuts->SetMaxPtStrongPid(9999.);
+
+    cuts->SetPidOption(0); //0=kConservative,1=kStrong
+    //cuts->SetMaxPtStrongPid(8.);
+    //cuts->SetMaxPtStrongPid(9999.);
     
     Bool_t pidflag=usePID;
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
+
+  //Use Ds PreSelect
+  if(usePreSelect) cuts->SetUsePreSelect(2);
   
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
