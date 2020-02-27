@@ -1,4 +1,3 @@
-#if !defined (__CINT__) || defined (__CLING__)
 #include "AliAnalysisAlien.h"
 #include "AliAnalysisManager.h"
 #include "AliAODInputHandler.h"
@@ -8,7 +7,7 @@
 #include "AliAnalysisTaskPIDResponse.h"
 
 #include "AliAnalysisTaskSEHFTreeCreator.h"
-#endif
+#include "AliAnalysisTaskSED0Mass.h"
 
 using namespace std;
 enum system {kpp, kpPb, kPbPb};
@@ -21,17 +20,17 @@ TString runMode="full";
 TString aliPhysVersion="vAN-20190701_ROOT6-1";
 TString gridDataDir;
 TString gridDataPattern="/pass1/AOD194";
-
 TString gridWorkingDir="testNtupleCreator";
 TString gridOutputDir="output";
 
 const Int_t nruns = 1;
 Int_t runlist[nruns] = {246994};
 
+
 TString cutFile="../TreeForMVA/cutfile/pp/D0DsDplusDstarLcBplusBsLbCuts_pp.root";
 
 
-void runAnalysis(Bool_t isRunOnMC=kFALSE)
+void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
 {
   TGrid::Connect("alien://");
   
@@ -58,10 +57,10 @@ void runAnalysis(Bool_t isRunOnMC=kFALSE)
   mgr->SetInputEventHandler(aodH);
   
   
-  AliPhysicsSelectionTask *physseltask = reinterpret_cast<AliPhysicsSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s (%d)",
-				  gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C"),isRunOnMC)));
+  AliPhysicsSelectionTask *physseltask = reinterpret_cast<AliPhysicsSelectionTask *>(gInterpreter->ProcessLine(Form(".x %s(%d, %d)",
+				  gSystem->ExpandPathName("$ALICE_PHYSICS/OADB/macros/AddTaskPhysicsSelection.C"),isRunOnMC, kTRUE)));
   
-  AliAnalysisTaskPIDResponse *pidResp = reinterpret_cast<AliAnalysisTaskPIDResponse *>(gInterpreter->ProcessLine(Form(".x %s (%d)",
+  AliAnalysisTaskPIDResponse *pidResp = reinterpret_cast<AliAnalysisTaskPIDResponse *>(gInterpreter->ProcessLine(Form(".x %s(%d)",
 				  gSystem->ExpandPathName("$ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C"),isRunOnMC)));
   
   if(System==kpPb || System==kPbPb) {
@@ -70,13 +69,13 @@ void runAnalysis(Bool_t isRunOnMC=kFALSE)
     multSel->SetAlternateOADBFullManualBypassMC("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/data/OADB-LHC18q-DefaultMC-HIJING.root");
   }
   
-  //AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,\"%s\",\"%s\", %d,%d,%d)",
-  //				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),
-  //				  isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kTRUE, kTRUE)));
+  AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,\"%s\",\"%s\", %d,%d,%d)",
+  				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),
+  				  isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kTRUE, kTRUE)));
 
-  AliAnalysisTaskSED0Mass *taskd0 = reinterpret_cast<AliAnalysisTaskSED0Mass*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,%d,%d,%d,%d,%d,%d, \"%s\",\"%s\",\"%s\")",
- 				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskD0Mass.C"),
- 				  0, 0, kTRUE, 0, 0, 0, 0, 0, "AAA", cutFile.Data(), "D0toKpiFilteringCuts")));
+  //AliAnalysisTaskSED0Mass *taskd0 = reinterpret_cast<AliAnalysisTaskSED0Mass*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,%d,%d,%d,%d,%d,%d, \"%s\",\"%s\",\"%s\")",
+  //				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskD0Mass.C"),
+  //				  0, kFALSE, kTRUE, kFALSE, 0, 0, 0, 0, "AAA", cutFile.Data(), "D0toKpiFilteringCuts")));
   if(System==kPbPb) {
     AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s",
 				    gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
@@ -94,6 +93,6 @@ void runAnalysis(Bool_t isRunOnMC=kFALSE)
   chainAOD->Add(Form("%s/AliAOD.root",pathToLocalAODfiles.Data()));
   chainAODfriend->Add(Form("%s/AliAOD.VertexingHF.root",pathToLocalAODfiles.Data()));
   chainAOD->AddFriend(chainAODfriend);
-  mgr->StartAnalysis("local", chainAOD, 1000, 0);
+  mgr->StartAnalysis("local", chainAOD, 999999, 0);
     
 }
