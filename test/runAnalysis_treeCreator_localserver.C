@@ -42,7 +42,7 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
     std::cout<<"Running on MC"<<std::endl;
   }
   if (isRunOnMC == kFALSE){
-    pathToLocalAODfiles = "/data/AOD208/AOD208/0010";
+    pathToLocalAODfiles = "/data/AOD208/AOD208/0009";
     gridDataDir="/alice/data/2018/LHC18f";
     System=kpp;
   }
@@ -70,12 +70,12 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
   }
   
   AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,\"%s\",\"%s\", %d,%d,%d)",
-  				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),
+   				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),
   				  isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kTRUE, kTRUE)));
 
-  //AliAnalysisTaskSED0Mass *taskd0 = reinterpret_cast<AliAnalysisTaskSED0Mass*>(gInterpreter->ProcessLine(Form(".x %s (%d,%d,%d,%d,%d,%d,%d,%d, \"%s\",\"%s\",\"%s\")",
-  //				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskD0Mass.C"),
-  //				  0, kFALSE, kTRUE, kFALSE, 0, 0, 0, 0, "AAA", cutFile.Data(), "D0toKpiFilteringCuts")));
+  AliAnalysisTaskSEDvsMultiplicity  *tasklcvsmult = reinterpret_cast<AliAnalysisTaskSEDvsMultiplicity *>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%f,%d,%d,%d,%d,%d,%d,%d)",
+  				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskDvsMultiplicity.C"),
+  				  0,kFALSE,0,4122,"LcpKpi2016_V0_010",cutFile.Data(),"LctopKpiAnalysisCuts","",12.25,kTRUE,kFALSE, AliAnalysisTaskSEDvsMultiplicity::kVZERO,AliAnalysisTaskSEDvsMultiplicity::kEta10,kFALSE,16,kFALSE)));
   if(System==kPbPb) {
     AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s",
 				    gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
@@ -93,6 +93,6 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
   chainAOD->Add(Form("%s/AliAOD.root",pathToLocalAODfiles.Data()));
   chainAODfriend->Add(Form("%s/AliAOD.VertexingHF.root",pathToLocalAODfiles.Data()));
   chainAOD->AddFriend(chainAODfriend);
-  mgr->StartAnalysis("local", chainAOD, 999999, 0);
+  mgr->StartAnalysis("local", chainAOD, 9999, 0);
     
 }
