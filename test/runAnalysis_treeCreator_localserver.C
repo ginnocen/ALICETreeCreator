@@ -27,22 +27,20 @@ const Int_t nruns = 1;
 Int_t runlist[nruns] = {246994};
 
 
-TString cutFile="../TreeForMVA/cutfile/pp/D0DsDplusDstarLcBplusBsLbCuts_pp.root";
+TString cutFile="/home/ginnocen/ALICETreeCreator/TreeForMVA/cutfile/pp/D0DsDplusDstarLcBplusBsLbCuts_pp.root";
 
-
-void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
+Bool_t isRunOnMC=kFALSE;
+void runAnalysis_treeCreator_localserver(TString pathToLocalAODfiles="/data/AOD208/AOD208/0009")
 {
   TGrid::Connect("alien://");
   
   Int_t System=-1;
   if (isRunOnMC == kTRUE) {
-    pathToLocalAODfiles = "/data2/highmultppAOD/mc/LHC18f4a";
     gridDataDir="/alice/sim/2018/LHC18f4a";
     System=kpp;
     std::cout<<"Running on MC"<<std::endl;
   }
   if (isRunOnMC == kFALSE){
-    pathToLocalAODfiles = "/data/AOD208/AOD208/0009";
     gridDataDir="/alice/data/2018/LHC18f";
     System=kpp;
   }
@@ -69,14 +67,14 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
     multSel->SetAlternateOADBFullManualBypassMC("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/data/OADB-LHC18q-DefaultMC-HIJING.root");
   }
   
-  AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,\"%s\",\"%s\", %d,%d,%d)",
+  AliAnalysisTaskSEHFTreeCreator *task = reinterpret_cast<AliAnalysisTaskSEHFTreeCreator*>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,\"%s\",\"%s\",%d,%d,%d, %d,%d,%d,%d,%d,%d)",
    				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/treeHF/macros/AddTaskHFTreeCreator.C"),
-  				  isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kTRUE, kTRUE)));
+  				  isRunOnMC, 0, "HFTreeCreator", cutFile.Data(), 1, kTRUE, kTRUE, 1, 0, 0, 0, 0, 1)));
 
-  AliAnalysisTaskSEDvsMultiplicity  *tasklcvsmult = reinterpret_cast<AliAnalysisTaskSEDvsMultiplicity *>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%f,%d,%d,%d,%d,%d,%d,%d)",
-  				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskDvsMultiplicity.C"),
-				  0,kFALSE,0,4122,"LcpK0s_vsMult18","Lc2pK0SCuts.root","LctoV0AnalysisCuts","alien:///alice/cern.ch/user/l/ldellost/LcvsMult/ntrackl18.root",12.25,
-				  kTRUE,kFALSE, AliAnalysisTaskSEDvsMultiplicity::kNtrk10,AliAnalysisTaskSEDvsMultiplicity::kEta10,kFALSE,18,kTRUE)));
+  //AliAnalysisTaskSEDvsMultiplicity  *tasklcvsmult = reinterpret_cast<AliAnalysisTaskSEDvsMultiplicity *>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%f,%d,%d,%d,%d,%d,%d,%d)",
+  //				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskDvsMultiplicity.C"), 0,kFALSE,0,4122,
+  //				  "LcpK0s_vsMult18","/home/ginnocen/ALICETreeCreator/test/Lc2pK0SCuts.root","LctoV0AnalysisCuts","alien:///alice/cern.ch/user/l/ldellost/LcvsMult/ntrackl18.root",12.25,
+  //				  kTRUE,kFALSE, AliAnalysisTaskSEDvsMultiplicity::kNtrk10,AliAnalysisTaskSEDvsMultiplicity::kEta10,kFALSE,18,kTRUE)));
   if(System==kPbPb) {
     AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s",
 				    gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
@@ -94,6 +92,6 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
   chainAOD->Add(Form("%s/AliAOD.root",pathToLocalAODfiles.Data()));
   chainAODfriend->Add(Form("%s/AliAOD.VertexingHF.root",pathToLocalAODfiles.Data()));
   chainAOD->AddFriend(chainAODfriend);
-  mgr->StartAnalysis("local", chainAOD, 9999, 0);
+  mgr->StartAnalysis("local", chainAOD, 999999, 0);
     
 }
