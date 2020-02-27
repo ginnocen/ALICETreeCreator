@@ -75,7 +75,8 @@ void runAnalysis_treeCreator_localserver(Bool_t isRunOnMC=kFALSE)
 
   AliAnalysisTaskSEDvsMultiplicity  *tasklcvsmult = reinterpret_cast<AliAnalysisTaskSEDvsMultiplicity *>(gInterpreter->ProcessLine(Form(".x %s(%d,%d,%d,%d,\"%s\",\"%s\",\"%s\",\"%s\",%f,%d,%d,%d,%d,%d,%d,%d)",
   				  gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskDvsMultiplicity.C"),
-  				  0,kFALSE,0,4122,"LcpKpi2016_V0_010",cutFile.Data(),"LctopKpiAnalysisCuts","",12.25,kTRUE,kFALSE, AliAnalysisTaskSEDvsMultiplicity::kVZERO,AliAnalysisTaskSEDvsMultiplicity::kEta10,kFALSE,16,kFALSE)));
+				  0,kFALSE,0,4122,"LcpK0s_vsMult18","Lc2pK0SCuts.root","LctoV0AnalysisCuts","alien:///alice/cern.ch/user/l/ldellost/LcvsMult/ntrackl18.root",12.25,
+				  kTRUE,kFALSE, AliAnalysisTaskSEDvsMultiplicity::kNtrk10,AliAnalysisTaskSEDvsMultiplicity::kEta10,kFALSE,18,kTRUE)));
   if(System==kPbPb) {
     AliAnalysisTaskSECleanupVertexingHF *taskclean =reinterpret_cast<AliAnalysisTaskSECleanupVertexingHF *>(gInterpreter->ProcessLine(Form(".x %s",
 				    gSystem->ExpandPathName("$ALICE_PHYSICS/PWGHF/vertexingHF/macros/AddTaskCleanupVertexingHF.C"))));
