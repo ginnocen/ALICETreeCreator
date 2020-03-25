@@ -124,7 +124,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi_pp(Int_t whichCuts=0, TString nameCut
     SetupCombinedPID2(cuts,0.);
     cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kCombinedpPb);
     
-    Bool_t pidflag=kFALSE;
+    Bool_t pidflag=kTRUE;
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for analysis cuts"<<endl;
     else cout<<"PID is not used for analysis cuts"<<endl;

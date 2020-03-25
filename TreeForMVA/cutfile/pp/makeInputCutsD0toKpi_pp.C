@@ -84,72 +84,120 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     cutsD0toKpi->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
-  }
-  else if(whichCuts==1){
-    
+  } else if(whichCuts==1){
+    //UPDATE 25/03/20, use the same topological cuts as STD 13TeV analysis of Cristina.
+    //Note: PID selection is NOT changed. Also kFirst requirement for pT < 3 not added
+
     const Int_t nvars=11;
-    
-    const Int_t nptbins=17;
+    const Int_t nptbins=25;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
     ptbins[0]=0.;
     ptbins[1]=0.5;
-    ptbins[2]=1.;
-    ptbins[3]=2.;
-    ptbins[4]=3.;
-    ptbins[5]=4.;
-    ptbins[6]=5.;
-    ptbins[7]=6.;
-    ptbins[8]=7.;
-    ptbins[9]=8.;
-    ptbins[10]=10.;
-    ptbins[11]=12.;
-    ptbins[12]=16.;
-    ptbins[13]=20.;
-    ptbins[14]=24.;
-    ptbins[15]=36.;
-    ptbins[16]=50.;
-    ptbins[17]=9999.;
-    
-    //m    dca      cost*  ptk ptpi  d0k          d0pi       d0d0          cosp  cosxy normdxy
-    Float_t cutsMatrixD0toKpiStand[nptbins][nvars]=  {{0.400,350.*1E-4, 0.8, 0.5, 0.5, 1000.*1E-4, 1000.*1E-4, -2000. *1E-8, 0.7,  0.,0.},/* pt<0.5*/
-      {0.400,350.*1E-4, 0.8, 0.5, 0.5, 1000.*1E-4, 1000.*1E-4, -2000. *1E-8, 0.7,  0.,0.},/* 0.5<pt<1*/
-      {0.400,300.*1E-4, 0.8, 0.4, 0.4, 1000.*1E-4, 1000.*1E-4, -25000.*1E-8, 0.8,  0.,0.},/* 1<pt<2 */
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -20000.*1E-8, 0.9,   0.,0.},/* 2<pt<3 *///d0d0 e cosp
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -12000.*1E-8, 0.9,   0.,0.},/* 3<pt<4 */
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -8000. *1E-8, 0.85,  0.,0.},/* 4<pt<5 */
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -8000. *1E-8, 0.85,  0.,0.},/* 5<pt<6 */
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -8000. *1E-8, 0.85,  0.,0.},/* 6<pt<7 */
-      {0.400,300.*1E-4, 0.8, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -7000. *1E-8, 0.85,  0.,0.},/* 7<pt<8 */
-      {0.400,300.*1E-4, 0.9, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -5000. *1E-8, 0.85,  0.,0.},/* 8<pt<10 */
-      {0.400,300.*1E-4, 0.9, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, -5000. *1E-8, 0.85,  0.,0.},/* 10<pt<12 */
-      {0.400,300.*1E-4, 1.0, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, 10000. *1E-8, 0.85,  0.,0.},/* 12<pt<16 */
-      {0.400,300.*1E-4, 1.0, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, 999999.*1E-8, 0.85,  0.,0.},/* 16<pt<20 */
-      {0.400,300.*1E-4, 1.0, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, 999999.*1E-8, 0.85,  0.,0.},/* 20<pt<24 */
-      {0.400,300.*1E-4, 1.0, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, 999999.*1E-8, 0.85,  0.,0.},/* 24<pt<36 */
-      {0.400,300.*1E-4, 1.0, 0.7, 0.7, 1000.*1E-4, 1000.*1E-4, 999999.*1E-8, 0.85,  0.,0.},/* 36<pt<50 */
-      {0.400,300.*1E-4, 1.0, 0.6, 0.6, 1000.*1E-4, 1000.*1E-4, 999999.*1E-8, 0.8,   0.,0.}};/* pt>50 */
-    
-    //CREATE TRANSPOSE MATRIX...REVERSE INDICES as required by AliRDHFCuts
-    Float_t **cutsMatrixTransposeStand=new Float_t*[nvars];
-    for(Int_t iv=0;iv<nvars;iv++)cutsMatrixTransposeStand[iv]=new Float_t[nptbins];
-    
-    for (Int_t ibin=0;ibin<nptbins;ibin++){
-      for (Int_t ivar = 0; ivar<nvars; ivar++){
-        cutsMatrixTransposeStand[ivar][ibin]=cutsMatrixD0toKpiStand[ibin][ivar];
-      }
-    }
-    
-    cutsD0toKpi->SetPtBins(nptbins+1,ptbins);
+    ptbins[2]=1.0;
+    ptbins[3]=1.5;
+    ptbins[4]=2.0;
+    ptbins[5]=2.5;
+    ptbins[6]=3.0;
+    ptbins[7]=3.5;
+    ptbins[8]=4.0;
+    ptbins[9]=4.5;
+    ptbins[10]=5.0;
+    ptbins[11]=5.5;
+    ptbins[12]=6.0;
+    ptbins[13]=6.5;
+    ptbins[14]=7.0;
+    ptbins[15]=7.5;
+    ptbins[16]=8.;
+    ptbins[17]=9.;
+    ptbins[18]=10.;
+    ptbins[19]=12.;
+    ptbins[20]=16.;
+    ptbins[21]=20.;
+    ptbins[22]=24.;
+    ptbins[23]=36.;
+    ptbins[24]=50.;
+    ptbins[25]=99999.;
+
     cutsD0toKpi->SetGlobalIndex(nvars,nptbins);
-    cutsD0toKpi->SetMinPtCandidate(1.);
-    cutsD0toKpi->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
+    cutsD0toKpi->SetPtBins(nptbins+1,ptbins);
+
+    Float_t** fCutsRD;
+    fCutsRD=new Float_t*[nvars];
+    for(Int_t iv=0;iv<nvars;iv++){
+      fCutsRD[iv]=new Float_t[nptbins];
+    }
+
+    for(int ic = 0; ic < 25; ic++) fCutsRD[0][ic] = 0.4;
+
+    fCutsRD[1][0] = 0.035;
+    fCutsRD[1][1] = 0.035;
+    for(int ic = 2; ic < 25; ic++) fCutsRD[1][ic] = 0.03;
+
+    for(int ic = 0; ic < 16; ic++) fCutsRD[2][ic] = 0.8;
+    for(int ic = 16; ic < 19; ic++) fCutsRD[2][ic] = 0.9;
+    for(int ic = 19; ic < 25; ic++) fCutsRD[2][ic] = 1.0;
+
+    fCutsRD[3][0] = 0.5;
+    fCutsRD[3][1] = 0.5;
+    fCutsRD[3][2] = 0.4;
+    fCutsRD[3][3] = 0.4;
+    for(int ic = 4; ic < 24; ic++) fCutsRD[3][ic] = 0.7;
+    fCutsRD[3][24] = 0.6;
+
+    fCutsRD[4][0] = 0.5;
+    fCutsRD[4][1] = 0.5;
+    fCutsRD[4][2] = 0.4;
+    fCutsRD[4][3] = 0.4;
+    for(int ic = 4; ic < 24; ic++) fCutsRD[4][ic] = 0.7;
+    fCutsRD[4][24] = 0.6;
+
+    for(int ic = 0; ic < 25; ic++) fCutsRD[5][ic] = 0.1;
+
+    for(int ic = 0; ic < 25; ic++) fCutsRD[6][ic] = 0.1;
+
+    fCutsRD[7][0] = -5e-05;
+    fCutsRD[7][1] = -5e-05;
+    fCutsRD[7][2] = -0.00025;
+    fCutsRD[7][3] = -0.00025;
+    fCutsRD[7][4] = -0.0002;
+    fCutsRD[7][5] = -0.0002;
+    fCutsRD[7][6] = -0.00012;
+    fCutsRD[7][7] = -0.00012;
+    fCutsRD[7][8] = -8e-05;
+    fCutsRD[7][9] = -8e-05;
+    fCutsRD[7][10] = -8e-05;
+    fCutsRD[7][11] = -8e-05;
+    fCutsRD[7][12] = -8e-05;
+    fCutsRD[7][13] = -8e-05;
+    fCutsRD[7][14] = -7e-05;
+    fCutsRD[7][15] = -7e-05;
+    fCutsRD[7][16] = -5e-05;
+    fCutsRD[7][17] = -5e-05;
+    fCutsRD[7][18] = -5e-05;
+    fCutsRD[7][19] = 0.0001;
+    fCutsRD[7][20] = 0.00999999;
+    fCutsRD[7][21] = 0.00999999;
+    fCutsRD[7][22] = 0.00999999;
+    fCutsRD[7][23] = 0.00999999;
+    fCutsRD[7][24] = 0.00999999;
+
+    fCutsRD[8][0] = 0.8;
+    fCutsRD[8][1] = 0.8;
+    fCutsRD[8][2] = 0.8;
+    fCutsRD[8][3] = 0.8;
+    fCutsRD[8][4] = 0.9;
+    fCutsRD[8][5] = 0.9;
+    for(int ic = 6; ic < 24; ic++) fCutsRD[8][ic] = 0.85;
+    fCutsRD[8][24] = 0.8;
+
+    for(int ic = 0; ic < 25; ic++) fCutsRD[9][ic] = 0.;
+
+    for(int ic = 0; ic < 25; ic++) fCutsRD[10][ic] = 0.;
+
+    cutsD0toKpi->SetCuts(nvars,nptbins,fCutsRD);
     
     cutsD0toKpi->SetUseSpecialCuts(kTRUE);
-    
-    for(Int_t iv=0;iv<nvars;iv++) delete [] cutsMatrixTransposeStand[iv];
-    delete [] cutsMatrixTransposeStand;
-    cutsMatrixTransposeStand=NULL;
     
     //pid settings
     AliAODPidHF* pidObj=new AliAODPidHF();
