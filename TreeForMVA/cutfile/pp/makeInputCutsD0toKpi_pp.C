@@ -79,6 +79,12 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi_pp(Int_t whichCuts=0, TString nameCuts=
     pidObj->SetSigmaForTOFCompat(3.);
     pidObj->SetOldPid(kFALSE);
     
+    // This is kTRUE by default, set it to kFALSE otherwise it will apply
+    // an additional PID selection on candidates < 2GeV (default) resulting
+    // in cutting away most of them
+    // in this way also comply with the STD analysis done by Cristina
+    // with D0Mass task
+    cutsD0toKpi->SetLowPt(kFALSE);
     cutsD0toKpi->SetPidHF(pidObj);
     Bool_t pidflag=kTRUE;
     cutsD0toKpi->SetUsePID(pidflag);
