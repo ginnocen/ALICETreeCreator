@@ -336,7 +336,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     Double_t plims[nlims]={0.6,0.8}; //TPC limits in momentum [GeV/c]
     Bool_t compat=kTRUE; //effective only for this mode
     Bool_t asym=kTRUE;
-    Double_t sigmas[5]={2.,1.,0.,3.,0.}; //to be checked and to be modified with new implementation of setters by Rossella
+    Double_t sigmas[5]={4.,4.,4.,4.,4.}; //to be checked and to be modified with new implementation of setters by Rossella
     pidObj->SetAsym(asym);// if you want to use the asymmetric bands in TPC
     pidObj->SetMatch(mode);
     pidObj->SetPLimit(plims,nlims);
@@ -346,8 +346,8 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     pidObj->SetTOF(kTRUE);
     
     pidObj->SetPCompatTOF(2.);
-    pidObj->SetSigmaForTPCCompat(3.);
-    pidObj->SetSigmaForTOFCompat(3.);
+    pidObj->SetSigmaForTPCCompat(4.);
+    pidObj->SetSigmaForTOFCompat(4.);
     
     pidObj->SetOldPid(kFALSE);
     
@@ -365,7 +365,7 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  //if(!isMC) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);
