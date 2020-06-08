@@ -28,7 +28,7 @@ void makeCutsTreeCreator_PbPb2018_Central(Bool_t isMC = kFALSE)
   AliRDHFCutsD0toKpi  *looseCutsD0toKpi    = makeInputCutsD0toKpi(0,"D0toKpiFilteringCuts",minCent,maxCent,isMC);
   Printf("\n\n");
   Printf("D0 analysis cuts");
-  AliRDHFCutsD0toKpi  *analysisCutsD0toKpi = makeInputCutsD0toKpi(1,"D0toKpiCuts",minCent,maxCent,isMC);
+  AliRDHFCutsD0toKpi  *analysisCutsD0toKpi = makeInputCutsD0toKpi(1,"D0toKpiAnalysisCuts",minCent,maxCent,isMC);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Ds filtering cuts");
@@ -87,12 +87,11 @@ void makeCutsTreeCreator_PbPb2018_Central(Bool_t isMC = kFALSE)
   AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi(1,"LbtoLcpiAnalysisCuts",minCent,maxCent,isMC);
   
   TFile* fout;
-  if(!isMC) fout=new TFile("D0QA_PbPb2018_Central.root","recreate");
+  if(!isMC) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_Central.root","recreate");
   else fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_MC_Central.root","recreate");
   fout->cd();
-//  looseCutsD0toKpi->Write();
+  looseCutsD0toKpi->Write();
   analysisCutsD0toKpi->Write();
-  /*
   looseCutsDstoKKpi->Write();
   analysisCutsDstoKKpi->Write();
   looseCutsDplustoKpipi->Write();
@@ -109,7 +108,6 @@ void makeCutsTreeCreator_PbPb2018_Central(Bool_t isMC = kFALSE)
   analysisCutsBstoDspi->Write();
   looseCutsLbtoLcpi->Write();
   analysisCutsLbtoLcpi->Write();
-  */
   fout->Close();
   
 }
