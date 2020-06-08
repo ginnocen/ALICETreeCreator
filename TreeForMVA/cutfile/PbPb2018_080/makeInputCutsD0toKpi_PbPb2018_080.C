@@ -25,9 +25,14 @@
 //     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
 
 
-AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE)
+AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0., Float_t maxc=80., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsD0toKpi* cutsD0toKpi=new AliRDHFCutsD0toKpi();
   cutsD0toKpi->SetName(nameCuts.Data());
   cutsD0toKpi->SetTitle(nameCuts.Data());
@@ -54,8 +59,12 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   cutsD0toKpi->AddTrackCuts(esdTrackCuts);
   
   cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 5);
-  cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kTRUE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cutsD0toKpi->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     const Int_t nptbinsD0=2;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};
@@ -361,11 +370,16 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     cutsD0toKpi->SetUseSpecialCuts(kFALSE);
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cutsD0toKpi->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  //if(!isMC) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  //NOT READY FOR 0-80!
+  if(!isMC && PIDcorrection) cutsD0toKpi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cutsD0toKpi->SetUsePhysicsSelection(kTRUE);

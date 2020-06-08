@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE,Bool_t doPreSelect=kFALSE,Bool_t doBin24 = kFALSE)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0., Float_t maxc=80., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Bool_t PIDcorrection=kTRUE, Int_t TPCClsPID = 50, Double_t minpt = 4, Bool_t spdkAny=kTRUE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -45,18 +45,20 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCuts->SetRequireSigmaToVertex(kFALSE);
   esdTrackCuts->SetRequireTPCRefit(kTRUE);
   esdTrackCuts->SetRequireITSRefit(kTRUE);
-  esdTrackCuts->SetMinNClustersITS(0);
   //Should not use SetMinNClustersTPC anymore, not well described in MC
   //Two lines below replace this cut (for value 70)
-  //  esdTrackCuts->SetMinNClustersTPC(50); //filtering
+  //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCuts->SetMinNCrossedRowsTPC(70);
-  esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
+  //UPDATE 08/06/20, make kAny default. With the spdhits_prong# variables
+  //we can always do the kFirst selection in MLHEP (to be tested though)
+  if(spdkAny) esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
+  else        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
   esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
-  esdTrackCuts->SetPtRange(0.5,1.e10);
+  esdTrackCuts->SetPtRange(0.3,1.e10);  //Changed from 0.5->0.3 for bin 2-4, for pT>4 effect countered with topo cuts
   esdTrackCuts->SetEtaRange(-0.8,+0.8);
   esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
   
@@ -65,12 +67,11 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
   esdTrackCutsV0daughters->SetRequireTPCRefit(kTRUE);
   esdTrackCutsV0daughters->SetRequireITSRefit(kFALSE);
-  esdTrackCutsV0daughters->SetMinNClustersITS(0);
   //Should not use SetMinNClustersTPC anymore, not well described in MC
-  //Two lines below replace this cut
-  //  esdTrackCutsV0daughters->SetMinNClustersTPC(70);
-  esdTrackCutsV0daughters->SetMinNCrossedRowsTPC(70);
+  //Two lines below replace this cut (for value 70)
+  //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCutsV0daughters->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
+  esdTrackCutsV0daughters->SetMinNCrossedRowsTPC(70);
   esdTrackCutsV0daughters->SetMinDCAToVertexXY(0.);
   esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
@@ -79,7 +80,10 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
   cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
   
   if(whichCuts==0){
     const Int_t nptbins=2;
@@ -90,8 +94,10 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[2]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-      0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
-      0.2,0.,0.03,0.05,0.7,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1};
+      0.2,0.,0.03,0.05,0.3,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
+      0.2,0.,0.03,0.05,0.5,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1
+    };
+    
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
     for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -101,15 +107,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
       }
     }
     
-    if(doBin24 && !isMC) {
-      cutsLctoV0->SetMinPtCandidate(2.);
-      cutsLctoV0->SetMaxPtCandidate(4.);
-    } else if(isMC){
-      cutsLctoV0->SetMinPtCandidate(2.);
-    } else {
-      cutsLctoV0->SetMinPtCandidate(4.);
-    }
-    
+    cutsLctoV0->SetMinPtCandidate(minpt);
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
     cutsLctoV0->SetPidSelectionFlag(11);
@@ -184,14 +182,16 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     
   }
   
-  //PreSelect, acting before FillRecoCasc
-  cutsLctoV0->SetUsePreSelect(doPreSelect);
-  
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cutsLctoV0->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  //if(!isMC) cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  //NOT READY FOR 0-80!
+  if(!isMC && PIDcorrection) cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kTRUE);

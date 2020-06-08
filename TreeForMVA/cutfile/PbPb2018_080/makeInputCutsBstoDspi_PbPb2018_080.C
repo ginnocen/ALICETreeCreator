@@ -10,9 +10,14 @@
  */
 
 
-AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE)
+AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0., Float_t maxc=80., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsDstoKKpi* cuts=new AliRDHFCutsDstoKKpi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());
@@ -37,8 +42,12 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
   cuts->AddTrackCuts(esdTrackCuts);
-  cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cuts->SetUseTrackSelectionWithFilterBits(kTRUE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cuts->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     cuts->SetStandardCutsPbPb2010();
     cuts->AddTrackCuts(esdTrackCuts);
@@ -276,11 +285,16 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
     
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cuts->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  //if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  //NOT READY FOR 0-80!
+  if(!isMC && PIDcorrection) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
