@@ -30,9 +30,14 @@
 //printf(    "NormDecayLenghtXY" > %f\n",fCutsRD[15]);
 
 
-AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE)
+AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsDStartoKpipi* cutsDstartoKpipi=new AliRDHFCutsDStartoKpipi();
   cutsDstartoKpipi->SetName(nameCuts.Data());
   cutsDstartoKpipi->SetTitle(nameCuts.Data());
@@ -441,7 +446,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   cutsDstartoKpipi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cutsDstartoKpipi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  if(!isMC && PIDcorrection) cutsDstartoKpipi->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cutsDstartoKpipi->SetUsePhysicsSelection(kTRUE);

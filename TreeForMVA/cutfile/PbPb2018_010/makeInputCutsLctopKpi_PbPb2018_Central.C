@@ -21,9 +21,14 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE)
+AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());
@@ -172,7 +177,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  if(!isMC && PIDcorrection) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
 
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);

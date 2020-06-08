@@ -9,9 +9,14 @@
  whichCuts=1, nameCuts="DplustoKpipiAnalysisCuts"
  */
 
-AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=20.,Bool_t isMC=kFALSE)
+AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString nameCuts="DplustoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsDplustoKpipi* cuts=new AliRDHFCutsDplustoKpipi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());
@@ -282,7 +287,7 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
   //Temporary PID fix for 2018 PbPb (only to be used on data)
-  if(!isMC) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+  if(!isMC && PIDcorrection) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
   
   //event selection
   cuts->SetUsePhysicsSelection(kTRUE);
