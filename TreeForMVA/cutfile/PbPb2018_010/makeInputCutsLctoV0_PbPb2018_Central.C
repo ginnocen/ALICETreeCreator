@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE, Double_t minpt = 4, Bool_t spdkAny=kTRUE)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE, Int_t TPCClsPID = 50, Double_t minpt = 4, Bool_t spdkAny=kTRUE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -80,8 +80,10 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
-  //UPDATE 08/06/20, set to kFALSE like all other HF hadrons (to be crosschecked though)
-  cutsLctoV0->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
   
   if(whichCuts==0){
     const Int_t nptbins=2;

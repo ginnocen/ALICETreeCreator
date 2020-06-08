@@ -25,7 +25,7 @@
 //     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
 
 
-AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -59,8 +59,12 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
   cutsD0toKpi->AddTrackCuts(esdTrackCuts);
   
   cutsD0toKpi->SetSelectCandTrackSPDFirst(kTRUE, 5);
-  cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cutsD0toKpi->SetUseTrackSelectionWithFilterBits(kTRUE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cutsD0toKpi->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     const Int_t nptbinsD0=2;
     Float_t ptlimitsD0[nptbinsD0+1]={0.,5.,1000000.};

@@ -10,7 +10,7 @@
  */
 
 
-AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="BstoDspiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -42,8 +42,12 @@ AliRDHFCutsDstoKKpi *makeInputCutsBstoDspi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
   cuts->AddTrackCuts(esdTrackCuts);
-  cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cuts->SetUseTrackSelectionWithFilterBits(kTRUE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cuts->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     cuts->SetStandardCutsPbPb2010();
     cuts->AddTrackCuts(esdTrackCuts);
