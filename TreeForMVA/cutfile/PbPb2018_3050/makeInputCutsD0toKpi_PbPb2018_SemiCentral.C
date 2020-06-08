@@ -25,7 +25,7 @@
 //     printf("    NormDecayLenghtXY    > %f\n",fD0toKpiCuts[10]);
 
 
-AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=30., Float_t maxc=50., Bool_t isMC=kFALSE, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0toKpiFilteringCuts", Float_t minc=30., Float_t maxc=50., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
 
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -349,6 +349,10 @@ AliRDHFCutsD0toKpi *makeInputCutsD0toKpi(Int_t whichCuts=0, TString nameCuts="D0
     cutsD0toKpi->SetUseSpecialCuts(kFALSE);
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cutsD0toKpi->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cutsD0toKpi->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   

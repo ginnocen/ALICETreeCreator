@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Bool_t PIDcorrection=kTRUE, Int_t TPCClsPID = 50, Double_t minpt = 4, Bool_t spdkAny=kTRUE)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Bool_t PIDcorrection=kTRUE, Int_t TPCClsPID = 50, Double_t minpt = 4, Bool_t spdkAny=kTRUE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -182,6 +182,10 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cutsLctoV0->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
