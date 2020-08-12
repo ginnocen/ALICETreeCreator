@@ -21,7 +21,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kTRUE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -77,36 +77,67 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   }
   
   //0-8
+  //rdcutsvalmine[0][0]=0.13;   //inv mass window
+  //rdcutsvalmine[1][0]=0.5;    // pTK
+  //rdcutsvalmine[2][0]=0.625;   // pTP
+  //rdcutsvalmine[3][0]=0.;      // d0K
+  //rdcutsvalmine[4][0]=0.;      // d0Pi
+  //rdcutsvalmine[5][0]=0.025;  // dist12
+  //rdcutsvalmine[6][0]=0.035;   // sigmavert
+  //rdcutsvalmine[7][0]=0.00625; // dist prim-sec
+  //rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
+  //rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
+  //rdcutsvalmine[10][0]=0.;     // Sum d0^2
+  //rdcutsvalmine[11][0]=0.0375; // dca cut
+  //rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
+  //8-999
+  //rdcutsvalmine[0][1]=0.13;   //inv mass window
+  //rdcutsvalmine[1][1]=0.5;    // pTK
+  //rdcutsvalmine[2][1]=0.625;   // pTP
+  //rdcutsvalmine[3][1]=0.;      // d0K
+  //rdcutsvalmine[4][1]=0.;      // d0Pi
+  //rdcutsvalmine[5][1]=0.0125;  // dist12
+  //rdcutsvalmine[6][1]=0.045;   // sigmavert
+  //rdcutsvalmine[7][1]=0.00625; // dist prim-sec
+  //rdcutsvalmine[8][1]=0.8;     // pM=Max{pT1,pT2,pT3}
+  //rdcutsvalmine[9][1]=0.25;    // cosThetaPoint
+  //rdcutsvalmine[10][1]=0.;     // Sum d0^2
+  //rdcutsvalmine[11][1]=0.0375; // dca cut
+  //rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
+
+
+   //0-8
   rdcutsvalmine[0][0]=0.13;   //inv mass window
   rdcutsvalmine[1][0]=0.5;    // pTK
-  rdcutsvalmine[2][0]=0.625;   // pTP
+  rdcutsvalmine[2][0]=0.5;   // pTP
   rdcutsvalmine[3][0]=0.;      // d0K
   rdcutsvalmine[4][0]=0.;      // d0Pi
-  rdcutsvalmine[5][0]=0.025;  // dist12
-  rdcutsvalmine[6][0]=0.035;   // sigmavert
-  rdcutsvalmine[7][0]=0.00625; // dist prim-sec
-  rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
+  rdcutsvalmine[5][0]=0.0;  // dist12
+  rdcutsvalmine[6][0]=0.06;   // sigmavert
+  rdcutsvalmine[7][0]=0.015; // dist prim-sec
+  rdcutsvalmine[8][0]=0.;     // pM=Max{pT1,pT2,pT3}
+  rdcutsvalmine[9][0]=0.8;    // cosThetaPoint
   rdcutsvalmine[10][0]=0.;     // Sum d0^2
-  rdcutsvalmine[11][0]=0.0375; // dca cut
+  rdcutsvalmine[11][0]=0.05; // dca cut
   rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
   //8-999
   rdcutsvalmine[0][1]=0.13;   //inv mass window
   rdcutsvalmine[1][1]=0.5;    // pTK
-  rdcutsvalmine[2][1]=0.625;   // pTP
+  rdcutsvalmine[2][1]=0.5;   // pTP
   rdcutsvalmine[3][1]=0.;      // d0K
   rdcutsvalmine[4][1]=0.;      // d0Pi
-  rdcutsvalmine[5][1]=0.0125;  // dist12
-  rdcutsvalmine[6][1]=0.045;   // sigmavert
-  rdcutsvalmine[7][1]=0.00625; // dist prim-sec
-  rdcutsvalmine[8][1]=0.8;     // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][1]=0.25;    // cosThetaPoint
+  rdcutsvalmine[5][1]=0.0;  // dist12
+  rdcutsvalmine[6][1]=0.06;   // sigmavert
+  rdcutsvalmine[7][1]=0.00; // dist prim-sec
+  rdcutsvalmine[8][1]=0.;     // pM=Max{pT1,pT2,pT3}
+  rdcutsvalmine[9][1]=0.;    // cosThetaPoint
   rdcutsvalmine[10][1]=0.;     // Sum d0^2
-  rdcutsvalmine[11][1]=0.0375; // dca cut
+  rdcutsvalmine[11][1]=0.05; // dca cut
   rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
+  //{0.13,0.5,0.5,0.,0.,0.,0.06,0.,0.,0.,0.,0.05,0.5};
   
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
-  cuts->SetMinPtCandidate(4.);
+  cuts->SetMinPtCandidate(6.);
   
   AliAODPidHF* pidObjp=new AliAODPidHF();
   AliAODPidHF* pidObjK=new AliAODPidHF();
