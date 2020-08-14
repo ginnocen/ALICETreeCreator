@@ -77,21 +77,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     rdcutsvalmine[iv]=new Float_t[nptbinsLc];
   }
   
-  //    //0-8
-  //    rdcutsvalmine[0][0]=0.13;   //inv mass window
-  //    rdcutsvalmine[1][0]=0.5;    // pTK
-  //    rdcutsvalmine[2][0]=0.625;   // pTP
-  //    rdcutsvalmine[3][0]=0.;      // d0K
-  //    rdcutsvalmine[4][0]=0.;      // d0Pi
-  //    rdcutsvalmine[5][0]=0.025;  // dist12
-  //    rdcutsvalmine[6][0]=0.035;   // sigmavert
-  //    rdcutsvalmine[7][0]=0.00625; // dist prim-sec
-  //    rdcutsvalmine[8][0]=0.8;     // pM=Max{pT1,pT2,pT3}
-  //    rdcutsvalmine[9][0]=0.90;    // cosThetaPoint
-  //    rdcutsvalmine[10][0]=0.;     // Sum d0^2
-  //    rdcutsvalmine[11][0]=0.0375; // dca cut
-  //    rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
-  //    //8-999
+   //0-8
   rdcutsvalmine[0][0]=0.13;   //inv mass window
   rdcutsvalmine[1][0]=0.5;    // pTK
   rdcutsvalmine[2][0]=0.5;   // pTP
@@ -99,13 +85,28 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[4][0]=0.;      // d0Pi
   rdcutsvalmine[5][0]=0.0;  // dist12
   rdcutsvalmine[6][0]=0.06;   // sigmavert
-  rdcutsvalmine[7][0]=0.00; // dist prim-sec
+  rdcutsvalmine[7][0]=0.015; // dist prim-sec
   rdcutsvalmine[8][0]=0.;     // pM=Max{pT1,pT2,pT3}
-  rdcutsvalmine[9][0]=0.;    // cosThetaPoint
+  rdcutsvalmine[9][0]=0.8;    // cosThetaPoint
   rdcutsvalmine[10][0]=0.;     // Sum d0^2
   rdcutsvalmine[11][0]=0.05; // dca cut
   rdcutsvalmine[12][0]=0.5;    // cut on pTpion [GeV/c]
+  //8-999
+  rdcutsvalmine[0][1]=0.13;   //inv mass window
+  rdcutsvalmine[1][1]=0.5;    // pTK
+  rdcutsvalmine[2][1]=0.5;   // pTP
+  rdcutsvalmine[3][1]=0.;      // d0K
+  rdcutsvalmine[4][1]=0.;      // d0Pi
+  rdcutsvalmine[5][1]=0.0;  // dist12
+  rdcutsvalmine[6][1]=0.06;   // sigmavert
+  rdcutsvalmine[7][1]=0.00; // dist prim-sec
+  rdcutsvalmine[8][1]=0.;     // pM=Max{pT1,pT2,pT3}
+  rdcutsvalmine[9][1]=0.;    // cosThetaPoint
+  rdcutsvalmine[10][1]=0.;     // Sum d0^2
+  rdcutsvalmine[11][1]=0.05; // dca cut
+  rdcutsvalmine[12][1]=0.5;    // cut on pTpion [GeV/c]
   //{0.13,0.5,0.5,0.,0.,0.,0.06,0.,0.,0.,0.,0.05,0.5};
+
   
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
   cuts->SetMinPtCandidate(2.);
@@ -118,7 +119,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     // PID
     // Set here since no default PIDHF object created in RDHF
     // 1. kaon
-    Double_t sigmasK[5]={4.,1.,1.,4.,2.};
+    Double_t sigmasK[5]={3.,1.,1.,3.,2.};
     pidObjK->SetSigma(sigmasK);
     //    pidObjK->SetAsym(kTRUE);
     pidObjK->SetMatch(1);
@@ -133,14 +134,14 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     pidObjpi->SetMatch(1);
     pidObjpi->SetTPC(kTRUE);
     pidObjpi->SetTOF(kTRUE);
-    Double_t sigmaspi[5]={4.,0.,0.,4.,0.};
+    Double_t sigmaspi[5]={3.,0.,0.,3.,0.};
     pidObjpi->SetSigma(sigmaspi);
     //  pidObjpi->SetTOFdecide(kTRUE);
     pidObjpi->SetTOFdecide(kTRUE);
     
     // 3. proton
     AliAODPidHF* pidObjp=new AliAODPidHF();
-    Double_t sigmasp[5]={4.,1.,1.,4.,2.};
+    Double_t sigmasp[5]={3.,1.,1.,3.,2.};
     pidObjp->SetSigma(sigmasp);
     //    pidObjp->SetAsym(kTRUE);
     pidObjp->SetMatch(1);
