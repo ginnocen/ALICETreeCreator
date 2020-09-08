@@ -105,10 +105,10 @@ void makeCutsTreeCreator_PbPb2018_080(Bool_t isMC = kFALSE, Int_t OptPreSelect =
     cout << "\033[1;31m----------------------\033[0m\n\n";
   }
   
-  TString fname = "D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_";
+  TString fname = "cutobjects/D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_";
   if(isMC) fname += "MC_";
   else     fname += "Data_";
-  if(OptPreSelect) fname += "PreSelect_";
+  if(OptPreSelect) fname += Form("PreSelect%d_",OptPreSelect);
   else             fname += "noPreSelect_";
   if(PIDcorrection) fname += "DDPIDCorr_";
   else              fname += "noPIDCorr_";
