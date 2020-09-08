@@ -100,7 +100,7 @@ void makeCutsTreeCreator_PbPb2018_Central(Bool_t isMC = kTRUE, Int_t OptPreSelec
     cout << "\033[1;31m----------------------\033[0m\n\n";
   }
 
-  TString fname = "D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_";
+  TString fname = "cutobjects/D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_";
   if(isMC) fname += "MC_";
   else     fname += "Data_";
   if(OptPreSelect) fname += "PreSelect_";
