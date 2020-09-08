@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 4, Bool_t usePID=kTRUE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -79,8 +79,12 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
+  //TODO: Should this be false or true for ITS Upgrade?
   cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     const Int_t nptbins=2;
     Float_t* ptbins;
@@ -101,7 +105,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
       }
     }
     
-    cutsLctoV0->SetMinPtCandidate(4.);
+    cutsLctoV0->SetMinPtCandidate(minpt);
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
     cutsLctoV0->SetPidSelectionFlag(11);
@@ -181,13 +185,21 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cutsLctoV0->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cutsLctoV0->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC && PIDcorrection) cutsLctoV0->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+
   //event selection
   cutsLctoV0->SetUsePhysicsSelection(kFALSE);
   cutsLctoV0->SetTriggerClass("");
-  cutsLctoV0->SetTriggerMask(AliVEvent::kAny);
+  if(!isMC) cutsLctoV0->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+  else      cutsLctoV0->SetTriggerMask(AliVEvent::kAny);
   cutsLctoV0->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cutsLctoV0->SetMaxVtxZ(10.);
   cutsLctoV0->SetCutOnzVertexSPD(3);

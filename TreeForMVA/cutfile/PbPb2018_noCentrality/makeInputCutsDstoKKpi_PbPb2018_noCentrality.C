@@ -10,9 +10,14 @@
  */
 
 
-AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="DstoKKpiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="DstoKKpiFilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Bool_t usePID=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsDstoKKpi* cuts=new AliRDHFCutsDstoKKpi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());
@@ -38,8 +43,12 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   
   cuts->AddTrackCuts(esdTrackCuts);
+  //TODO: Should this be false or true for ITS Upgrade?
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cuts->SetMinNumTPCClsForPID(TPCClsPID);
+
   if(whichCuts==0){
     cuts->SetStandardCutsPbPb2010();
     cuts->AddTrackCuts(esdTrackCuts);
@@ -282,13 +291,21 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cuts->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC && PIDcorrection) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+
   //event selection
   cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kAny);
+  if(!isMC) cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+  else      cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);
@@ -301,5 +318,3 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi(Int_t whichCuts=0, TString nameCuts="
   return cuts;
   
 }
-
-

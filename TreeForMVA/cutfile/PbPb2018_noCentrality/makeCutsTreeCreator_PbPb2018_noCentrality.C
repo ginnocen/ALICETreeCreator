@@ -22,75 +22,97 @@ Float_t minCent=0.;
 Float_t maxCent=100.;
 
 
-void makeCutsTreeCreator_PbPb2018_noCentrality(Bool_t usePID = kTRUE, Bool_t usePreSelectBs = kTRUE)
+void makeCutsTreeCreator_PbPb2018_noCentrality(Int_t OptPreSelect = 1, Bool_t usePID = kTRUE, Double_t minptLc = 2)
 {
+  //Used for ITS Upgrade studies, so always MC
+  Bool_t isMC = kTRUE;
+  Bool_t PIDcorrection = kFALSE;
+  Int_t TPCClsPID = 0;
+  
   Printf("D0 filtering cuts");
-  AliRDHFCutsD0toKpi  *looseCutsD0toKpi    = makeInputCutsD0toKpi(0,"D0toKpiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsD0toKpi  *looseCutsD0toKpi    = makeInputCutsD0toKpi(0, "D0toKpiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("D0 analysis cuts");
-  AliRDHFCutsD0toKpi  *analysisCutsD0toKpi = makeInputCutsD0toKpi(1,"D0toKpiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsD0toKpi  *analysisCutsD0toKpi = makeInputCutsD0toKpi(1, "D0toKpiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Ds filtering cuts");
-  AliRDHFCutsDstoKKpi  *looseCutsDstoKKpi    = makeInputCutsDstoKKpi(0,"DstoKKpiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDstoKKpi  *looseCutsDstoKKpi    = makeInputCutsDstoKKpi(0, "DstoKKpiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("Ds analysis cuts");
-  AliRDHFCutsDstoKKpi  *analysisCutsDstoKKpi = makeInputCutsDstoKKpi(1,"DstoKKpiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDstoKKpi  *analysisCutsDstoKKpi = makeInputCutsDstoKKpi(1, "DstoKKpiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Dplus filtering cuts");
-  AliRDHFCutsDplustoKpipi  *looseCutsDplustoKpipi    = makeInputCutsDplustoKpipi(0,"DplustoKpipiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDplustoKpipi  *looseCutsDplustoKpipi    = makeInputCutsDplustoKpipi(0, "DplustoKpipiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("Dplus analysis cuts");
-  AliRDHFCutsDplustoKpipi  *analysisCutsDplustoKpipi = makeInputCutsDplustoKpipi(1,"DplustoKpipiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDplustoKpipi  *analysisCutsDplustoKpipi = makeInputCutsDplustoKpipi(1, "DplustoKpipiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Dstar filtering cuts");
-  AliRDHFCutsDStartoKpipi  *looseCutsDStartoKpipi    = makeInputCutsDstartoKpipi(0,"DstartoKpipiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDStartoKpipi  *looseCutsDStartoKpipi    = makeInputCutsDstartoKpipi(0, "DstartoKpipiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("Dstar analysis cuts");
-  AliRDHFCutsDStartoKpipi  *analysisCutsDStartoKpipi = makeInputCutsDstartoKpipi(1,"DstartoKpipiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsDStartoKpipi  *analysisCutsDStartoKpipi = makeInputCutsDstartoKpipi(1, "DstartoKpipiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctopKpi filtering cuts");
-  AliRDHFCutsLctopKpi  *looseCutsLctopKpi    = makeInputCutsLctopKpi(0,"LctopKpiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctopKpi  *looseCutsLctopKpi    = makeInputCutsLctopKpi(0, "LctopKpiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   Printf("\n\n");
   Printf("LctopKpi analysis cuts");
-  AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1,"LctopKpiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctopKpi  *analysisCutsLctopKpi = makeInputCutsLctopKpi(1, "LctopKpiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("Bplus filtering cuts");
-  AliRDHFCutsD0toKpi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0,"BplustoD0piFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsD0toKpi  *looseCutsBplustoD0pi    = makeInputCutsBplustoD0pi(0, "BplustoD0piFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("Bplus analysis cuts");
-  AliRDHFCutsD0toKpi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1,"BplustoD0piAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsD0toKpi  *analysisCutsBplustoD0pi = makeInputCutsBplustoD0pi(1, "BplustoD0piAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("LctoV0bachelor filtering cuts");
-  AliRDHFCutsLctoV0  *looseCutsLctoV0bachelor    = makeInputCutsLctoV0(0,"Lc2V0bachelorFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctoV0  *looseCutsLctoV0bachelor    = makeInputCutsLctoV0(0, "Lc2V0bachelorFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   Printf("\n\n");
   Printf("LctoV0bachelor analysis cuts");
-  AliRDHFCutsLctoV0  *analysisCutsLctoV0bachelor = makeInputCutsLctoV0(1,"Lc2V0bachelorAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctoV0  *analysisCutsLctoV0bachelor = makeInputCutsLctoV0(1, "Lc2V0bachelorAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   Printf("*************************************************************");
   Printf("\n\n");
   Printf("Bs filtering cuts");
-  AliRDHFCutsDstoKKpi  *looseCutsBstoDspi    = makeInputCutsBstoDspi(0,"BstoDspiFilteringCuts",minCent,maxCent,usePID,usePreSelectBs);
+  AliRDHFCutsDstoKKpi  *looseCutsBstoDspi    = makeInputCutsBstoDspi(0, "BstoDspiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("Bs analysis cuts");
-  AliRDHFCutsDstoKKpi  *analysisCutsBstoDspi = makeInputCutsBstoDspi(1,"BstoDspiAnalysisCuts",minCent,maxCent,usePID,usePreSelectBs);
+  AliRDHFCutsDstoKKpi  *analysisCutsBstoDspi = makeInputCutsBstoDspi(1, "BstoDspiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, usePID);
   Printf("\n\n");
   Printf("*************************************************************");
   Printf("LbtoLcpi filtering cuts");
-  AliRDHFCutsLctopKpi *looseCutsLbtoLcpi = makeInputCutsLbtoLcpi(0,"LbtoLcpiFilteringCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctopKpi *looseCutsLbtoLcpi = makeInputCutsLbtoLcpi(0, "LbtoLcpiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   Printf("\n\n");
   Printf("LbtoLcpi analysis cuts");
-  AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi(1,"LbtoLcpiAnalysisCuts",minCent,maxCent,usePID);
+  AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi(1, "LbtoLcpiAnalysisCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection, minptLc, usePID);
   
-  TFile* fout;
-  if(usePID && usePreSelectBs) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPS_ConsvPID_usePreSelect.root","recreate");
-  else if(usePID && !usePreSelectBs) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPS_ConsvPID.root","recreate");
-  else if(!usePID && !usePreSelectBs) fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPS.root","recreate");
-  else       fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_kAny_noCentnoPSnoPID_usePreSelect.root","recreate");
+  if(OptPreSelect){
+    cout << "\n\033[1;31m--Info (08/06/20)--\033[0m\n";
+    cout << "  PreSelect enabled, but not yet implemented for all HF hadrons." << endl;
+    cout << "  Please check (and implement if needed)" << endl;
+    cout << "\033[1;31m----------------------\033[0m\n\n";
+  }
+  
+  TString fname = "cutobjects/D0DsDplusDstarLcBplusBsLbCuts_PbPb2018_";
+  if(isMC) fname += "MC_";
+  else     fname += "Data_";
+  if(usePID) fname += "noCentnoPS_";
+  else       fname += "noCentnoPSnoPID_";
+  if(OptPreSelect) fname += Form("PreSelect%d_",OptPreSelect);
+  else             fname += "noPreSelect_";
+  if(PIDcorrection) fname += "DDPIDCorr_";
+  if(TPCClsPID > 0) fname += Form("TPCClsPID%d_",TPCClsPID);
+  fname += Form("LcMinpT%d",(int)(1000*minptLc));
+  fname += ".root";
+  
+  cout << "\n\nSaving cut objects in: " << fname << endl;
+  
+  TFile* fout = new TFile(fname.Data(),"recreate");
   fout->cd();
   looseCutsD0toKpi->Write();
   analysisCutsD0toKpi->Write();
