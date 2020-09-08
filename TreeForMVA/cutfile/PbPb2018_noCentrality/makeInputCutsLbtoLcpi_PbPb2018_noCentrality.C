@@ -21,9 +21,14 @@ void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100.,Bool_t usePID=kTRUE)
+AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 1, Bool_t usePID=kTRUE)
 {
   
+  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+  cout << "  Don't blindly trust these cuts." << endl;
+  cout << "  Relatively old and never tested." << endl;
+  cout << "\033[1;31m----------------------\033[0m\n\n";
+
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());
@@ -48,8 +53,12 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   
   cuts->SetStandardCutsPbPb2010();
   cuts->AddTrackCuts(esdTrackCuts);
+  //TODO: Should this be false or true for ITS Upgrade?
   cuts->SetUseTrackSelectionWithFilterBits(kFALSE);
   
+  //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
+  cuts->SetMinNumTPCClsForPID(TPCClsPID);
+
   // cuts
   const Int_t nvars=13;
   const Int_t nptbinsLc=1;
@@ -82,7 +91,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   rdcutsvalmine[12][0]=0.3;   // cut on pTpion [GeV/c]
 
   cuts->SetCuts(nvars,nptbinsLc,rdcutsvalmine);
-  cuts->SetMinPtCandidate(1.);
+  cuts->SetMinPtCandidate(minpt);
   
   AliAODPidHF* pidObjp=new AliAODPidHF();
   AliAODPidHF* pidObjK=new AliAODPidHF();
@@ -132,8 +141,6 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetUsePID(pidflag);
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
-
-    cuts->AddTrackCuts(esdTrackCuts);
   } else if(whichCuts==1){
     // PID
     AliAODPidHF* pidObjp=new AliAODPidHF();
@@ -161,13 +168,21 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
     else cout<<"PID is not used for analysis cuts"<<endl;
   }
   
+  //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
+  //NOTE: actual function not implemented for all HF hadrons yet (please check)
+  cuts->SetUsePreSelect(OptPreSelect);
+
   //Do not recalculate the vertex
   cuts->SetRemoveDaughtersFromPrim(kFALSE); //activate for pp
   
+  //Temporary PID fix for 2018 PbPb (only to be used on data)
+  if(!isMC && PIDcorrection) cuts->EnableNsigmaDataDrivenCorrection(kTRUE, AliAODPidHF::kPbPb010);
+
   //event selection
   cuts->SetUsePhysicsSelection(kFALSE);
   cuts->SetTriggerClass("");
-  cuts->SetTriggerMask(AliVEvent::kAny);
+  if(!isMC) cuts->SetTriggerMask(AliVEvent::kINT7 | AliVEvent::kCentral);
+  else      cuts->SetTriggerMask(AliVEvent::kAny);
   cuts->SetOptPileup(AliRDHFCuts::kNoPileupSelection);
   cuts->SetMaxVtxZ(10.);
   cuts->SetCutOnzVertexSPD(3);
@@ -179,5 +194,3 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   
   return cuts;
 }
-
-

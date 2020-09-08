@@ -24,11 +24,6 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
 AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kTRUE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
 {
   
-  cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
-  cout << "  Don't blindly trust these cuts." << endl;
-  cout << "  Relatively old and never tested." << endl;
-  cout << "\033[1;31m----------------------\033[0m\n\n";
-
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
   cuts->SetName(nameCuts.Data());
   cuts->SetTitle(nameCuts.Data());

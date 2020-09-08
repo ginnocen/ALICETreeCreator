@@ -54,7 +54,6 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
   esdTrackCuts->SetPtRange(0.5,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
-  esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.005*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   cuts->AddTrackCuts(esdTrackCuts);
   //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
@@ -97,17 +96,10 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cutsArrayD0toKpi[9][1]=0.7;
     cutsArrayD0toKpi[10][1]=0.;
     
-    //cuts->SetStandardCutsPbPb2011();
     cuts->SetMinPtCandidate(1.);
-    cuts->SetUsePID(kFALSE);
     cuts->SetUseSpecialCuts(kFALSE);
     cuts->SetPtBins(nptbinsD0+1,ptlimitsD0);
     cuts->SetCuts(11,nptbinsD0,cutsArrayD0toKpi);
-    
-    Bool_t pidflag=kTRUE;
-    cuts->SetUsePID(pidflag);
-    if(pidflag) cout<<"PID is used"<<endl;
-    else cout<<"PID is not used"<<endl;
     
     //pid settings
     AliAODPidHF* pidObj=new AliAODPidHF();
@@ -136,6 +128,11 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cuts->SetUseDefaultPID(kFALSE); //to use the AliAODPidHF
     
     cuts->SetPidHF(pidObj);
+    
+    Bool_t pidflag=kTRUE;
+    cuts->SetUsePID(pidflag);
+    if(pidflag) cout<<"PID is used"<<endl;
+    else cout<<"PID is not used"<<endl;
   }
   else if(whichCuts==1){
     
@@ -332,11 +329,6 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     cuts->SetCuts(nvars,nptbins,cutsMatrixTransposeStand);
     cuts->Setd0MeasMinusExpCut(nptbins,d0MeasMinusExpCut);
     
-    Bool_t pidflag=kTRUE;
-    cuts->SetUsePID(pidflag);
-    if(pidflag) cout<<"PID is used"<<endl;
-    else cout<<"PID is not used"<<endl;
-    
     //pid settings
     AliAODPidHF* pidObj=new AliAODPidHF();
     //pidObj->SetName("pid4D0");
@@ -368,6 +360,11 @@ AliRDHFCutsD0toKpi *makeInputCutsBplustoD0pi(Int_t whichCuts=0, TString nameCuts
     
     //Do not recalculate the vertex
     cuts->SetUseSpecialCuts(kFALSE);
+    
+    Bool_t pidflag=kTRUE;
+    cuts->SetUsePID(pidflag);
+    if(pidflag) cout<<"PID is used"<<endl;
+    else cout<<"PID is not used"<<endl;
   }
   
   //UPDATE 08/06/20: PreSelect, acting before FillRecoCasc.
