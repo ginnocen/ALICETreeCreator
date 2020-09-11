@@ -86,7 +86,11 @@ void makeCutsTreeCreator_pp()
   Printf("LbtoLcpi analysis cuts");
   AliRDHFCutsLctopKpi *analysisCutsLbtoLcpi= makeInputCutsLbtoLcpi_pp(1,"LbtoLcpiAnalysisCuts",minCent,maxCent);
   
-  TFile* fout=new TFile("D0DsDplusDstarLcBplusBsLbCuts_pp.root","recreate");
+  TString fname = "cutobjects/D0DsDplusDstarLcBplusBsLbCuts_pp_kAny.root";
+  
+  cout << "\n\nSaving cut objects in: " << fname << endl;
+
+  TFile* fout=new TFile(fname.Data(),"recreate");
   fout->cd();
   looseCutsD0toKpi->Write();
   analysisCutsD0toKpi->Write();

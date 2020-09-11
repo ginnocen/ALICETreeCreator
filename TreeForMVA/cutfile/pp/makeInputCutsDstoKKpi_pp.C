@@ -40,11 +40,8 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     
     Int_t nptbins=2;
     Float_t ptlimits[2]={1.,1000000.};
-    Float_t cutsArrayDstoKKpi[20]={0.3,0.3,0.3,0.,0.,0.005,0.06,0.,0.,0.7,0.,1000.,0.02,0.1,-1.,1.,0.,0.,0.,-1.};
-    //Reduce output possibilities even more:
-    //  - cosThetaPoint 0.7 -> 0.85 for pT<5
-    //  - PID 4sigma to 3sigma
-    //  - Turn on decLen (0.02)
+    //UPDATE 11/09/20, tightened a few cuts (delta_mass_KK, cos_p, cos_p_xy, PID below)
+    Float_t cutsArrayDstoKKpi[20]={0.3, 0.3, 0.3, 0., 0., 0.005, 0.06, 0., 0., 0.85, 0., 1000., 0.015, 0.1, -1., 1., 0., 0., 0., 0.85};
     
     cuts->SetMinPtCandidate(0.);
     cuts->SetPtBins(nptbins,ptlimits);
@@ -52,17 +49,11 @@ AliRDHFCutsDstoKKpi *makeInputCutsDstoKKpi_pp(Int_t whichCuts=0, TString nameCut
     
     //UPDATE 21/06/19, enable PID selection to reduce output size
     //UPDATE 03/10/19, set 4 sigma instead of 3 to select more signal
-    AliAODPidHF* pidObj=new AliAODPidHF();
-    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-    pidObj->SetSigma(sigmasBac);
-    pidObj->SetAsym(kFALSE);
-    pidObj->SetMatch(1);
-    pidObj->SetTPC(kTRUE);
-    pidObj->SetTOF(kTRUE);
-    
-    cuts->SetPidHF(pidObj);
+    //UPDATE 31/08/20, set 5 sigma, to leave even more room for ML optimisation (only to be used with downsampling!)
+    //UPDATE 11/09/20, use conservative PID strategy for Ds (smaller output, and worked fine for nonprompt Ds and Ds 5TeV)
     Bool_t pidflag=kTRUE;
     cuts->SetUsePID(pidflag);
+    cuts->SetPidOption(0); //0=kConservative,1=kStrong
     if(pidflag) cout<<"PID is used for filtering cuts"<<endl;
     else cout<<"PID is not used for filtering cuts"<<endl;
     
