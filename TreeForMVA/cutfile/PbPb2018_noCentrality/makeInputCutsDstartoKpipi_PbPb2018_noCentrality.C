@@ -59,6 +59,8 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   esdTrackCuts->SetPtRange(0.4,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
   
   //soft pion selections
@@ -71,8 +73,8 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   esdTrackCutsSoftPi->SetPtRange(0.0,1.e10);
   cutsDstartoKpipi->AddTrackCutsSoftPi(esdTrackCutsSoftPi);
   
-  //TODO: Should this be false or true for ITS Upgrade?
-  cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kFALSE);
+  //UPDATE 05/11/20 (08/06/20), set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
+  cutsDstartoKpipi->SetUseTrackSelectionWithFilterBits(kTRUE);
   
   //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
   cutsDstartoKpipi->SetMinNumTPCClsForPID(TPCClsPID);

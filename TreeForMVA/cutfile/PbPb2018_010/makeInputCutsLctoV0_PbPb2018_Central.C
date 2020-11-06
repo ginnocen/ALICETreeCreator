@@ -51,17 +51,20 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCuts->SetMinNCrossedRowsTPC(70);
   //UPDATE 08/06/20, make kAny default. With the spdhits_prong# variables
-  //we can always do the kFirst selection in MLHEP (to be tested though)
+  //we can always do the kFirst selection in MLHEP
   if(spdkAny) esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kAny);
   else        esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD, AliESDtrackCuts::kFirst);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))"); //filtering
   esdTrackCuts->SetMinDCAToVertexXY(0.);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
+  //NB: Minimum in filtering is 0.5 for all centralities (see SetTrackFilterBachelor)
   esdTrackCuts->SetPtRange(0.5,1.e10);
   esdTrackCuts->SetEtaRange(-0.8,+0.8);
   esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
-  
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+
   // V0 daughters cuts
   AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
   esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
@@ -76,7 +79,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
   esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
-  
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCutsV0daughters->SetMaxChi2PerClusterTPC(2.5);
+
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
@@ -109,19 +114,10 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     
     cutsLctoV0->SetMinPtCandidate(minpt);
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
-    
-    cutsLctoV0->SetPidSelectionFlag(11);
-    //pid settings
-    //1. bachelor: default one
+
+    //UPDATE 05/11/20: Update PID strategy 11 -> 13 (= 3sigma TPC && TOF, of TPC when no TOF)
+    cutsLctoV0->SetPidSelectionFlag(13);
     AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-    Double_t sigmasBac[5]={4.,4.,4.,4.,4.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-    pidObjBachelor->SetSigma(sigmasBac);
-    pidObjBachelor->SetAsym(kFALSE);
-    pidObjBachelor->SetMatch(1);
-    pidObjBachelor->SetTPC(kTRUE);
-    pidObjBachelor->SetTOF(kTRUE);
-    pidObjBachelor->SetTOFdecide(kFALSE);
-    
     cutsLctoV0->SetPidHF(pidObjBachelor);
     Bool_t pidflag=kTRUE;
     cutsLctoV0->SetUsePID(pidflag);

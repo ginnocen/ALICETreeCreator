@@ -52,7 +52,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   //  esdTrackCuts->SetMinNClustersTPC(70);
   esdTrackCuts->SetMinRatioCrossedRowsOverFindableClustersTPC(0.8);
   esdTrackCuts->SetMinNCrossedRowsTPC(70);
-
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cuts->AddTrackCuts(esdTrackCuts);
   //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
   cuts->SetUseTrackSelectionWithFilterBits(kTRUE);
