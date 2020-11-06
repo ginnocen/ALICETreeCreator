@@ -59,7 +59,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCuts->SetPtRange(0.5,1.e10);
   esdTrackCuts->SetEtaRange(-0.8,+0.8);
   esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
-  
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+
   // V0 daughters cuts
   AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
   esdTrackCutsV0daughters->SetRequireSigmaToVertex(kFALSE);
@@ -75,11 +77,14 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCutsV0daughters->SetPtRange(0.,1.e10);
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
   esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
-  
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCutsV0daughters->SetMaxChi2PerClusterTPC(2.5);
+
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);
   cutsLctoV0->SetKinkRejection(!esdTrackCuts->GetAcceptKinkDaughters());
   //TODO: Should this be false or true for ITS Upgrade?
+  //UPDATE 05/11/20 (08/06/20), set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
   cutsLctoV0->SetUseTrackSelectionWithFilterBits(kTRUE);
   
   //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
@@ -108,18 +113,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetMinPtCandidate(minpt);
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
-    cutsLctoV0->SetPidSelectionFlag(11);
-    //pid settings
-    //1. bachelor: default one
+    //UPDATE 05/11/20: Update PID strategy 11 -> 13 (= 3sigma TPC && TOF, of TPC when no TOF)
+    cutsLctoV0->SetPidSelectionFlag(13);
     AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-    pidObjBachelor->SetSigma(sigmasBac);
-    pidObjBachelor->SetAsym(kFALSE);
-    pidObjBachelor->SetMatch(1);
-    pidObjBachelor->SetTPC(kTRUE);
-    pidObjBachelor->SetTOF(kTRUE);
-    pidObjBachelor->SetTOFdecide(kFALSE);
-    
     cutsLctoV0->SetPidHF(pidObjBachelor);
     
     Bool_t pidflag=usePID;

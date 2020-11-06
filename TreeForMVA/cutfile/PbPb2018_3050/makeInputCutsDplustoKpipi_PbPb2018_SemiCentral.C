@@ -39,6 +39,8 @@ AliRDHFCutsDplustoKpipi *makeInputCutsDplustoKpipi(Int_t whichCuts=0, TString na
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0025*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cuts->AddTrackCuts(esdTrackCuts);
   
   cuts->SetScaleNormDLxyBypOverPt(kFALSE);

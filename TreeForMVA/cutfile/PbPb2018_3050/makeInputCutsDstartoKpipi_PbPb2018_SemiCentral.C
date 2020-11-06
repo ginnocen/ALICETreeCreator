@@ -59,6 +59,8 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   esdTrackCuts->SetPtRange(0.4,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
+  //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
+  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
   
   //soft pion selections
