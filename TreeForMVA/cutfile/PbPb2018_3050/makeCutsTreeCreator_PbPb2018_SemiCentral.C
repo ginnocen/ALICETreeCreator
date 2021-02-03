@@ -30,6 +30,13 @@ void makeCutsTreeCreator_PbPb2018_SemiCentral(Bool_t isMC = kFALSE, Int_t OptPre
     PIDcorrection = kFALSE;
     cout << "\033[1;31m----------------------\033[0m\n\n";
   }
+  if(isMC){
+    cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
+    cout << "  Turning off centrality selection..." << endl;
+    minCent=-1;
+    maxCent=101.;
+    cout << "\033[1;31m----------------------\033[0m\n\n";
+  }
   
   Printf("D0 filtering cuts");
   AliRDHFCutsD0toKpi  *looseCutsD0toKpi    = makeInputCutsD0toKpi(0, "D0toKpiFilteringCuts", minCent, maxCent, isMC, OptPreSelect, TPCClsPID, PIDcorrection);
@@ -136,4 +143,8 @@ void makeCutsTreeCreator_PbPb2018_SemiCentral(Bool_t isMC = kFALSE, Int_t OptPre
   analysisCutsLbtoLcpi->Write();
   fout->Close();
   
+  if(isMC){
+    minCent=30;
+    maxCent=50;
+  }
 }
