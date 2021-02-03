@@ -90,19 +90,43 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   //UPDATE 08/06/20, Add cut on TPC clusters for PID (similar to geometrical cut)
   cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
   
+  //UPDATE 25/11/20, to reduce output size
+  cutsLctoV0->SetSelectCandTrackSPDFirst(kTRUE,4);
+  
   if(whichCuts==0){
-    const Int_t nptbins=2;
+    const Int_t nptbins=3;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
     ptbins[0]=0.;
-    ptbins[1]=4.;
-    ptbins[2]=999.;
+    ptbins[1]=2.;
+    ptbins[2]=4.;
+    ptbins[3]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-      0.2,0.,0.03,0.05,0.5,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
-      0.2,0.,0.03,0.05,0.5,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.0, -9999., 0., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.5, -9999., 0., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.998, 3., 1.5, 0., 0.005, 0.1, 0.5, 9999., -9999., -9999., 0.15, 1
     };
-    
+       //New cuts = 30% output size old cuts (27.9% when cuts below are enabled as well)
+       //Including pt [2-4] is 300% output size old cuts
+       //Including pt [1-4] is 490% output size old cuts
+       //pT K0s 0.5->0.7 (17253 -> 16313 = 5%)
+       //signd0 to 0 for [0-4] + adding [2-4]: 170% output size old cuts
+       //signd0 to 0 for [0-4] + adding [1-4]: 260% output size old cuts
+       //+ cosPA 0.998->0.9998 for [0-4] + adding [1-4]: 188% output size old cuts
+       //+ 0.0025 -> 0.005 pT dep d0 cut + adding [1-4]: 147% output size old cuts
+       //+ 0.0025 -> 0.005 pT dep d0 cut + adding [2-4]: 104% output size old cuts
+           //- signd0 to 0 for [0-4] + adding [2-4]: 184% (just as test)
+           //- signd0 to 0 for [0-4] + adding [1-4]: 269% (just as test)
+       //+ 0.5 max proton emission angle [0-2] + adding [1-4]: 144%
+       //+ 0.0 max proton emission angle [0-2] + adding [1-4]: 129%
+       //+ 0.5 max proton emission angle [2-4] + adding [1-4]: 124%
+           //- 0.005 pT dep d0 cut + adding [1-4]: 156% (just as test)
+      //+ kFirst requirement [1-4] + adding [1-4]: 94%
+      //+ kFirst requirement [1-2] + adding [1-4]: 117%
+           //0.005->0.004 pT dep d0 cut + adding [1-4]: 103% (just as test)
+      //-0.005 (->0.0025) pT dep d0 cut + adding [1-4]: 121%
+
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
     for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
