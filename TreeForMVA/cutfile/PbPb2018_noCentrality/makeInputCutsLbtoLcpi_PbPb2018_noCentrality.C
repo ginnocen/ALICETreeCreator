@@ -21,7 +21,7 @@ void SetupCombinedPID2(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 1, Bool_t usePID=kTRUE)
+AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 1, Bool_t usePID=kTRUE, Bool_t ispass1 = kFALSE)
 {
   
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -51,7 +51,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLbtoLcpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0015*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
-  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+  if(!ispass1) esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cuts->SetStandardCutsPbPb2010();
   cuts->AddTrackCuts(esdTrackCuts);
   //UPDATE 05/11/20 (08/06/20), set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
