@@ -21,7 +21,7 @@ void SetupCombinedPID(AliRDHFCutsLctopKpi *cutsObj,Double_t threshold) {
   return;
 }
 
-AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kTRUE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="LctoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=10., Bool_t isMC=kTRUE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Bool_t ispass1 = kFALSE)
 {
   
   AliRDHFCutsLctopKpi* cuts=new AliRDHFCutsLctopKpi();
@@ -47,7 +47,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
   //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
-  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+  if(!ispass1) esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cuts->AddTrackCuts(esdTrackCuts);
   //UPDATE 08/06/20, set to kTRUE as should be done for all other HF hadrons (pK0s was true, others false)
   cuts->SetUseTrackSelectionWithFilterBits(kTRUE);

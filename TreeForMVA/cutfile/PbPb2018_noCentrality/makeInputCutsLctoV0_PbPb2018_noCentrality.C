@@ -32,7 +32,7 @@ const Int_t nvars=21;
 //        V0 qT/|alpha|
 //        V0 type
 
-AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 4, Bool_t usePID=kTRUE)
+AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Double_t minpt = 4, Bool_t usePID=kTRUE, Bool_t ispass1 = kFALSE)
 {
   
   AliRDHFCutsLctoV0* cutsLctoV0=new AliRDHFCutsLctoV0();
@@ -60,7 +60,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCuts->SetEtaRange(-0.8,+0.8);
   esdTrackCuts->SetAcceptKinkDaughters(kFALSE);
   //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
-  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+  if(!ispass1) esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
 
   // V0 daughters cuts
   AliESDtrackCuts* esdTrackCutsV0daughters=new AliESDtrackCuts();
@@ -78,7 +78,7 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   esdTrackCutsV0daughters->SetEtaRange(-0.8,+0.8);
   esdTrackCutsV0daughters->SetAcceptKinkDaughters(kFALSE);
   //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
-  esdTrackCutsV0daughters->SetMaxChi2PerClusterTPC(2.5);
+  if(!ispass1) esdTrackCutsV0daughters->SetMaxChi2PerClusterTPC(2.5);
 
   cutsLctoV0->AddTrackCuts(esdTrackCuts);
   cutsLctoV0->AddTrackCutsV0daughters(esdTrackCutsV0daughters);

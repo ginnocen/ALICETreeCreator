@@ -30,7 +30,7 @@
 //printf(    "NormDecayLenghtXY" > %f\n",fCutsRD[15]);
 
 
-AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=80., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE)
+AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString nameCuts="DstartoKpipiFilteringCuts", Float_t minc=0., Float_t maxc=80., Bool_t isMC=kFALSE, Int_t OptPreSelect = 1, Int_t TPCClsPID = 50, Bool_t PIDcorrection=kTRUE, Bool_t ispass1 = kFALSE)
 {
   
   cout << "\n\033[1;31m--Warning (08/06/20)--\033[0m\n";
@@ -60,7 +60,7 @@ AliRDHFCutsDStartoKpipi *makeInputCutsDstartoKpipi(Int_t whichCuts=0, TString na
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   //UPDATE 04/11/10, set chi2 per TPC cluster to 2.5 instead of 4
-  esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
+  if(!ispass1) esdTrackCuts->SetMaxChi2PerClusterTPC(2.5);
   cutsDstartoKpipi->AddTrackCuts(esdTrackCuts);
   
   //soft pion selections
