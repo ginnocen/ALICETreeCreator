@@ -92,17 +92,30 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
   
   if(whichCuts==0){
-    const Int_t nptbins=2;
+    const Int_t nptbins=3;
     Float_t* ptbins;
     ptbins=new Float_t[nptbins+1];
     ptbins[0]=0.;
-    ptbins[1]=4.;
-    ptbins[2]=999.;
+    ptbins[1]=2.;
+    ptbins[2]=4.;
+    ptbins[3]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
+    //Update 22/02/21: Same cuts used as 0-10%
     Float_t cuts[nptbins][nvars]={
-      0.2,0.,0.03,0.05,0.5,0.0,0.0,10.,2.,0.998,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1,
-      0.2,0.,0.03,0.05,0.5,0.0,0.0,10.,2.,0.999,1.,3.,0.,0.,0.,0.7,9999.,-9999.,-9999.,-9999.,1
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.0, -9999., -9999., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.5, -9999., -9999., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.998, 3., 1.5, 0., 0.005, 0.1, 0.5, 9999., -9999., -9999., 0.15, 1
     };
+    //Difference 15o cuts
+    //[1] 1000 -> 0.0   //fine
+    //[3] 9999 -> 0.05  //fine
+    //[4] 1 -> 0        //fine
+    //[5] 0.1 -> 0      //fine
+    //[6] 0.1 -> 0      //fine
+    //[7] 1 -> 1000     //fine
+    //[10] 0.1 -> 3     //fine
+    //[15] 1 -> 0.5      //fine
+    //[16] 0.5 -> 0/0.5/-9999 //fine
     
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
@@ -160,19 +173,13 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     cutsLctoV0->SetCuts(nvars,nptbins,prodcutsval);
     
     //pid settings
-    //1. bachelor: default one
+    //UPDATE 22/02/21: Update PID strategy to Yosukes one (case 10)
+    cutsLctoV0->SetPidSelectionFlag(10);
     AliAODPidHF* pidObjBachelor = new AliAODPidHF();
-    Double_t sigmasBac[5]={3.,3.,3.,3.,3.}; // 0, 1(A), 2(A) -> TPC; 3 -> TOF; 4 -> ITS
-    pidObjBachelor->SetSigma(sigmasBac);
-    pidObjBachelor->SetAsym(kFALSE);
-    pidObjBachelor->SetMatch(1);
-    pidObjBachelor->SetTPC(kTRUE);
-    pidObjBachelor->SetTOF(kTRUE);
-    pidObjBachelor->SetTOFdecide(kFALSE);
-    
     cutsLctoV0->SetPidHF(pidObjBachelor);
     Bool_t pidflag=kTRUE;
     cutsLctoV0->SetUsePID(pidflag);
+    cutsLctoV0->SetLowPtCut(3);
     
     cutsLctoV0->SetMinPtCandidate(1.0);
     cutsLctoV0->SetMaxPtCandidate(50.);

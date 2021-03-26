@@ -91,7 +91,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
   cutsLctoV0->SetMinNumTPCClsForPID(TPCClsPID);
   
   //UPDATE 25/11/20, to reduce output size
-  cutsLctoV0->SetSelectCandTrackSPDFirst(kTRUE,4);
+  //UPDATE 15/02/21, disable again, no good reason to use kFirst
+  //cutsLctoV0->SetSelectCandTrackSPDFirst(kTRUE,4);
   
   if(whichCuts==0){
     const Int_t nptbins=3;
@@ -103,10 +104,12 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[3]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.0, -9999., 0., 0.15, 1,
-      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.5, -9999., 0., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.0, -9999., -9999., 0.15, 1,
+      0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.9998, 3., 1.5, 0., 0.005, 0.1, 0.5, 0.5, -9999., -9999., 0.15, 1,
       0.2, 0.0, 0.01, 0.05, 0.0, 0.0, 0.0, 1000., 0.4, 0.998, 3., 1.5, 0., 0.005, 0.1, 0.5, 9999., -9999., -9999., 0.15, 1
     };
+    //UPDATE 15/02/21, disable preselection on signd0, biasing the result
+
        //New cuts = 30% output size old cuts (27.9% when cuts below are enabled as well)
        //Including pt [2-4] is 300% output size old cuts
        //Including pt [1-4] is 490% output size old cuts
