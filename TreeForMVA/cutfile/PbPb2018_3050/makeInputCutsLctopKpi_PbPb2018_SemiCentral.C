@@ -157,6 +157,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetPidpion(pidObjpi);
     
     cuts->SetUsePID(kTRUE);
+
+    cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kNSigmaPbPb);
   }
   else if(whichCuts==1){
     // PID

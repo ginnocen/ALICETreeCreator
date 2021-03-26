@@ -42,7 +42,7 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
   esdTrackCuts->SetClusterRequirementITS(AliESDtrackCuts::kSPD,AliESDtrackCuts::kAny);
   esdTrackCuts->SetEtaRange(-0.8,0.8);
   esdTrackCuts->SetMinDCAToVertexXY(0.);
-  esdTrackCuts->SetPtRange(0.5,1.e10);
+  esdTrackCuts->SetPtRange(0.6,1.e10);
   esdTrackCuts->SetMaxDCAToVertexXY(1.);
   esdTrackCuts->SetMaxDCAToVertexZ(1.);
   esdTrackCuts->SetMinDCAToVertexXYPtDep("0.0060*TMath::Max(0.,(1-TMath::Floor(TMath::Abs(pt)/2.)))");
@@ -181,6 +181,8 @@ AliRDHFCutsLctopKpi *makeInputCutsLctopKpi(Int_t whichCuts=0, TString nameCuts="
     cuts->SetPidpion(pidObjpi);
     
     cuts->SetUsePID(kTRUE);
+
+    cuts->SetPIDStrategy(AliRDHFCutsLctopKpi::kNSigmaPbPb);
   }
   else if(whichCuts==1){
     // PID

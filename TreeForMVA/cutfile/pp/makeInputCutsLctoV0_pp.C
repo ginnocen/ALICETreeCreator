@@ -9,7 +9,7 @@
  whichCuts=1, nameCuts="LctoV0AnalysisCuts"
  */
 
-const Int_t nvars=21;
+const Int_t nvars=23;
 //        Lc inv. mass if K0S [GeV/c2]
 //        Lc inv. mass if Lambda [GeV/c2]
 //        K0S inv. mass [GeV/c2]
@@ -30,6 +30,8 @@ const Int_t nvars=21;
 //        Min Proton emission angle in Lc CMS
 //        Resigned d0
 //        V0 qT/|alpha|
+//        V0 min radius
+//        V0 max radius
 //        V0 type
 
 AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="LctoV0FilteringCuts", Float_t minc=0.,Float_t maxc=100.)
@@ -87,8 +89,8 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
     ptbins[2]=999.;
     cutsLctoV0->SetPtBins(nptbins+1,ptbins);
     Float_t cuts[nptbins][nvars]={
-      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0,
-      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0};
+      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0,1000.,1.,
+      0.2,0.,0.03,0.05,0.0,0.0,0.0,1000.,0.8,0.997,3.,1.5,0.,0.,0.,0.,0.9,-0.9,-0.8,1.8,0.0,1000.,1.};
     Float_t** prodcutsval;
     prodcutsval=new Float_t*[nvars];
     for(Int_t ic=0;ic<nvars;ic++){prodcutsval[ic]=new Float_t[nptbins];}
@@ -155,7 +157,9 @@ AliRDHFCutsLctoV0 *makeInputCutsLctoV0(Int_t whichCuts=0, TString nameCuts="Lcto
       anacutsval[17][ipt2]=-9999; // min cos proton emission angle in Lc CMS max
       anacutsval[18][ipt2]=-9999; // Re-signed d0 min [cm]
       anacutsval[19][ipt2]=-9999; // V0 qT/|alpha| min
-      anacutsval[20][ipt2]=0.;    // V0 type cut
+      anacutsval[20][ipt2]=0.;    // V0 min radius
+      anacutsval[21][ipt2]=1000.; // V0 max radius
+      anacutsval[22][ipt2]=1.;    // V0 type cut
     }
 
     anacutsval[2][0]=0.008; // inv. mass V0 if K0S [GeV/c2]
